@@ -39,7 +39,7 @@ public class Job implements Serializable {
 		return jobId.substring(0, jobId.indexOf("_"));
 	}
 	
-	public int getNumFrames() {
+	public int getSubframe() {
 		String[] tokens = jobId.split("_");
 		return Integer.valueOf(tokens[2]);
 	}

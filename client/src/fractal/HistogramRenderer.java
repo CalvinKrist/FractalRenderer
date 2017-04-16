@@ -11,8 +11,10 @@ import util.Utils;
 public class HistogramRenderer {	
 	
 	//TODO: turn palate from Color[] to int[]
-	public static int[][] renderHistogramColoring(int width, int height, int rWidth, int rHeight, double xPos, double yPos, int maxIterations, Color[] palate) {
+	public static int[][] renderHistogramColoring(int width, int height, double rWidth, double rHeight, double xPos, double yPos, Color[] palate) {
 
+		//TODO: make maxIterations a function of the viewport size
+		int maxIterations = 400;
 		double[][] info = new double[width * height][4];
 		int o = 0;
 		
