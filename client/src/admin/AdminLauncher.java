@@ -107,6 +107,8 @@ public class AdminLauncher {
 	}
 	
 	private static boolean login(DbxClientV2 client, String username, String pass) {
+		return true;
+		/*
 		try {
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
 			client.files().download("/loginFile.txt").download(os);
@@ -114,7 +116,7 @@ public class AdminLauncher {
 			return aString.contains(":" + username + ":");
 		} catch(Exception e) {
 			return false;
-		}
+		} */
 	}
 
 }

@@ -6,18 +6,35 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.Socket;
 
 import javax.swing.*;
+
+import util.Constants;
+import util.SocketWrapper;
 
 public class Display extends JPanel {
 	
 	private JTextField zoom, xPos, yPos, zoomSpeed;
 	private Color bgColor = new Color(244, 244, 244);
+	private Font labelFont = new Font("Arial", 12, 12);
 	
-	public static final int DISPLAY_WIDTH = 200;
-	public static final int DISPLAY_HEIGHT = 200;
+	private JLabel numUsersLabel, frameCountLabel, avgRenderTimeLabel;
+	
+	public static final int DISPLAY_WIDTH = 320;
+	public static final int DISPLAY_HEIGHT = 320;
+	
+	private SocketWrapper server;
 	
 	public Display() {
+		//TODO: get serve iP
+		String serverIP = "";
+		try {
+			server = new SocketWrapper(new Socket(serverIP, Constants.PORT));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		this.setLayout(new BorderLayout());
 		this.setBackground(bgColor);
@@ -46,13 +63,17 @@ public class Display extends JPanel {
 	
 	private JPanel createParameters() {
 		zoom = new JTextField(10);
-		zoom.setFont(new Font("Arial", 12, 12));
+		zoom.setFont(labelFont);
+		zoom.setText("l8r");
 		xPos = new JTextField(10);
-		xPos.setFont(new Font("Arial", 12, 12));
+		xPos.setText("l8r");
+		xPos.setFont(labelFont);
 		yPos = new JTextField(10);
-		yPos.setFont(new Font("Arial", 12, 12));
+		yPos.setFont(labelFont);
+		yPos.setText("l8r");
 		zoomSpeed = new JTextField(10);
-		zoomSpeed.setFont(new Font("Arial", 12, 12));
+		zoomSpeed.setFont(labelFont);
+		zoomSpeed.setText("l8r");
 		
 		JPanel p = new JPanel();
 		p.setBackground(bgColor);
@@ -62,7 +83,7 @@ public class Display extends JPanel {
 		JPanel zSpeed = new JPanel();
 		zSpeed.setBackground(bgColor);
 		JLabel speedLabel = new JLabel("Speed:");
-		speedLabel.setFont(new Font("Arial", 12, 12));
+		speedLabel.setFont(labelFont);
 		zSpeed.add(speedLabel);
 		zSpeed.add(zoomSpeed);
 		zoomSpeed.setAlignmentY(0);
@@ -82,7 +103,7 @@ public class Display extends JPanel {
 		JPanel zoomPanel = new JPanel();
 		zoomPanel.setBackground(bgColor);
 		JLabel zoomLabel = new JLabel("Zoom:");
-		zoomLabel.setFont(new Font("Arial", 12, 12));
+		zoomLabel.setFont(labelFont);
 		zoomPanel.add(zoomLabel);
 		zoomPanel.add(zoom);
 		zoom.setAlignmentY(0);
@@ -104,7 +125,7 @@ public class Display extends JPanel {
 		JPanel yPosP = new JPanel();
 		yPosP.setBackground(bgColor);
 		JLabel yPosLabel = new JLabel("Y-Pos:");
-		yPosLabel.setFont(new Font("Arial", 12, 12));
+		yPosLabel.setFont(labelFont);
 		yPosP.add(yPosLabel);
 		yPosP.add(yPos);
 		yPos.setAlignmentY(0);
@@ -124,7 +145,7 @@ public class Display extends JPanel {
 		JPanel xPosP = new JPanel();
 		xPosP.setBackground(bgColor);
 		JLabel xPosLabel = new JLabel("X-Pos:");
-		xPosLabel.setFont(new Font("Arial", 12, 12));
+		xPosLabel.setFont(labelFont);
 		xPosP.add(xPosLabel);
 		xPosP.add(xPos);
 		xPos.setAlignmentY(0);
@@ -156,6 +177,22 @@ public class Display extends JPanel {
 	private JPanel createStatistics() {
 		JPanel p = new JPanel();
 		p.setBackground(bgColor);
+		p.setLayout(new GridLayout(4, 1));
+		
+		frameCountLabel = new JLabel("  Frame Count: l8r");
+		frameCountLabel.setAlignmentY(0);
+		frameCountLabel.setFont(labelFont);
+		avgRenderTimeLabel = new JLabel("  Average Render Time: l8r");
+		avgRenderTimeLabel.setAlignmentY(0);
+		avgRenderTimeLabel.setFont(labelFont);
+		numUsersLabel = new JLabel("  User Count: l8r");
+		numUsersLabel.setAlignmentY(0);
+		numUsersLabel.setFont(labelFont);
+		
+		p.add(frameCountLabel, 3, 0);
+		p.add(avgRenderTimeLabel, 2, 0);
+		p.add(numUsersLabel, 1, 0);
+		
 		
 		JLabel title = new JLabel("Statistics");
 		title.setFont(new Font("Arial", 12, 18));
@@ -164,7 +201,7 @@ public class Display extends JPanel {
 		JPanel wrapper = new JPanel();
 		wrapper.setBackground(bgColor);
 		wrapper.add(title);
-		p.add(wrapper);
+		p.add(wrapper, 0, 0);
 		
 		return p;
 	}
