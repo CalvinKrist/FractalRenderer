@@ -25,7 +25,7 @@
       <VBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
          <children>
             <Label text="Chat" />
-            <TextArea />
+            <TextArea editable="false" />
             <TextField />
             <VBox alignment="TOP_CENTER">
                <children>
