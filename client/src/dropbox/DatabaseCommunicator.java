@@ -1,5 +1,6 @@
 package dropbox;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -61,6 +62,18 @@ public class DatabaseCommunicator {
 			System.out.println("File not found.");
 		} 
 	}
+	
+	public void uploadByString(String file, String destFilePath) {
+		try (InputStream in = new ByteArrayInputStream(file.getBytes())) {
+			try {
+				client.files().delete("/" + destFilePath);
+			} finally {
+				FileMetadata metadata = client.files().uploadBuilder("/" + destFilePath).uploadAndFinish(in);
+			}
+		} catch (DbxException | IOException e) {
+			e.printStackTrace();
+		} 
+	}
 
 	/**
 	 * Downloads a file from the Dropbox account
@@ -101,7 +114,7 @@ public class DatabaseCommunicator {
 	 * @param localFilePath		the file path pointing to the downloaded file
 	 * @param targetFilePath	the file path pointing to the file to be downloaded in the Dropbox account
 	 */
-	public String downloadFileAsString(String localFilePath, String targetFilePath) {
+	public String downloadFileAsString(String targetFilePath) {
 		ListFolderResult result;
 		try {
 			result = client.files().listFolder("");
@@ -115,19 +128,14 @@ public class DatabaseCommunicator {
 			e2.printStackTrace();
 		}
 		OutputStream out;
-		try {
-			out = new FileOutputStream(localFilePath);
 			try {
 				ByteArrayOutputStream os = new ByteArrayOutputStream();
-				client.files().download("/loginFile.txt").download(os);
+				client.files().download("/" + targetFilePath).download(os);
 				String aString = new String(os.toByteArray(),"UTF-8");
 				return aString;
 			} catch (DbxException | IOException e) {
 				e.printStackTrace();
 			}
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		}
 		return null;
 	}
 

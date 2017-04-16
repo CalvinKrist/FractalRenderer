@@ -1,7 +1,10 @@
 package util;
 
 import java.awt.Color;
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 
 public class Utils {	
 	
@@ -15,6 +18,14 @@ public class Utils {
 	
 	public static Double interpolateDouble(Double d1, Double d2, int stepCount, int totalSteps) {
 		return (d2 - d1) * stepCount / totalSteps + d1;
+	}
+	
+	public static String getExternalIP() throws IOException {
+		URL whatismyip = new URL("http://checkip.amazonaws.com");
+		BufferedReader in = new BufferedReader(new InputStreamReader(
+	                whatismyip.openStream()));
+
+		return in.readLine(); //you get the IP as a String
 	}
 	
 	public static Color[] getColorPalate() {
