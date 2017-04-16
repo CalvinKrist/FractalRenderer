@@ -12,12 +12,12 @@
 <?import javafx.scene.layout.VBox?>
 
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <left>
       <VBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
          <children>
             <Label text="Stats" />
-            <TreeView prefHeight="339.0" prefWidth="190.0" />
+            <TreeView />
          </children>
       </VBox>
    </left>
@@ -25,12 +25,12 @@
       <VBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
          <children>
             <Label text="Chat" />
-            <TextArea prefHeight="200.0" prefWidth="200.0" />
+            <TextArea />
             <TextField />
             <VBox alignment="TOP_CENTER">
                <children>
                   <Button mnemonicParsing="false" text="New" />
-                  <HBox prefHeight="100.0" prefWidth="200.0" />
+                  <HBox />
                </children>
             </VBox>
          </children>
@@ -53,7 +53,7 @@
    <top>
       <VBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
          <children>
-            <Region minHeight="10.0" />
+            <Region />
             <Label text="Live:" />
          </children>
       </VBox>
