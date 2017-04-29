@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -12,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 
 
-<BorderPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="466.0" prefWidth="872.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <left>
       <VBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
          <children>
@@ -22,11 +23,11 @@
       </VBox>
    </left>
    <right>
-      <VBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
+      <VBox alignment="TOP_CENTER" prefHeight="417.0" prefWidth="245.0" BorderPane.alignment="CENTER">
          <children>
             <Label text="Chat" />
-            <TextArea editable="false" />
-            <TextField />
+            <TextArea editable="false" prefHeight="172.0" prefWidth="363.0" />
+            <TextField prefHeight="25.0" prefWidth="286.0" />
             <VBox alignment="TOP_CENTER">
                <children>
                   <Button mnemonicParsing="false" text="New" />
@@ -53,8 +54,12 @@
    <top>
       <VBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
          <children>
-            <Region />
-            <Label text="Live:" />
+            <Region prefHeight="15.0">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </Region>
+            <Label text="Live: -1" />
          </children>
       </VBox>
    </top>
