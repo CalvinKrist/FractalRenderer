@@ -1,8 +1,10 @@
 package util;
 
-public class Point {
+import java.io.Serializable;
+
+public class Point implements Serializable {
 	
-	private double x, y;
+	public double x, y;
 	
 	public Point(double x, double y) {
 		this.x = x;
@@ -37,6 +39,11 @@ public class Point {
 	
 	public void setY(double d) {
 		y = d;
+	}
+	
+	@Override
+	public int hashCode() {
+		return new String(x + ", " + y).hashCode();
 	}
 
 }

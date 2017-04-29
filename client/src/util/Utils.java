@@ -5,19 +5,56 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class Utils {	
 	
-	public static Color interpolateColors(Color color1, Color color2, int stepCount, int totalSteps) {
-		int red = (color2.getRed() - color1.getRed()) * stepCount / totalSteps;
-		int green = (color2.getGreen() - color1.getGreen()) * stepCount / totalSteps;
-		int blue = (color2.getBlue() - color1.getBlue()) * stepCount / totalSteps;
-		
-		return new Color(color1.getRed() + red, color1.getGreen() + green, color1.getBlue() + blue);
+	public static Color interpolateColors(Color color1, Color color2, double stepCount, double totalSteps) {
+		int red = (int)((color2.getRed() - color1.getRed()) * stepCount / totalSteps);
+		int green = (int)((color2.getGreen() - color1.getGreen()) * stepCount / totalSteps);
+		int blue = (int)((color2.getBlue() - color1.getBlue()) * stepCount / totalSteps);
+		int a = (int)((color2.getAlpha() - color1.getAlpha()) * (stepCount / totalSteps));
+		return new Color(color1.getRed() + red, color1.getGreen() + green, color1.getBlue() + blue, color1.getAlpha() + a);
+	}
+	
+	public static Color interpolateColors(Color color1, Color color2, double fraction) {
+		int red = (int)((color2.getRed() - color1.getRed()) * fraction);
+		int green = (int)((color2.getGreen() - color1.getGreen()) * fraction);
+		int blue = (int)((color2.getBlue() - color1.getBlue()) * fraction);
+		int a = (int)((color2.getAlpha() - color1.getAlpha()) * fraction);
+		return new Color(color1.getRed() + red, color1.getGreen() + green, color1.getBlue() + blue, color1.getAlpha() + a);
 	}
 	
 	public static Double interpolateDouble(Double d1, Double d2, int stepCount, int totalSteps) {
 		return (d2 - d1) * stepCount / totalSteps + d1;
+	}
+	
+	public static Color[] getColorPalate() {
+		int numColors = 1000;
+		Color[] palate = new Color[numColors];
+		int mark = (int)(numColors * .93);
+		for(int i = 0; i < mark; i++) 
+			palate[i] = Utils.interpolateColors(new Color(100, 0, 200, 255), new Color(255 / 2, 255 / 2, 0, 255), (double)i / mark);
+		for(int i = mark; i < numColors; i++)
+			palate[i] = Utils.interpolateColors(new Color(255 / 2, 255 / 2, 0, 255), new Color(255, 255, 0, 255), ((double)i - mark) / (numColors - mark));
+		return palate;
+	}
+	
+	public static Color[] getColorPalateAlt() {
+		int numColors = 1000;
+		Color[] palate = new Color[numColors];
+		for(int i = 0; i < numColors; i++)
+			palate[i] = Utils.interpolateColors(new Color(100, 0, 200, 0), new Color(255, 80, 100, 255), (double)i / numColors);
+		return palate;
+	}
+	
+	public static Color[] getColorPalateLooped(Color[] oldPalate) {
+		Color[] palate = new Color[oldPalate.length * 2];
+		for(int i = 0; i < oldPalate.length; i++)
+			palate[i] = oldPalate[i];
+		for(int i = oldPalate.length; i < palate.length; i++)
+			palate[i] = oldPalate[oldPalate.length - (i - oldPalate.length) - 1];
+		return palate;
 	}
 	
 	public static String getExternalIP() throws IOException {
@@ -26,18 +63,6 @@ public class Utils {
 	                whatismyip.openStream()));
 
 		return in.readLine(); //you get the IP as a String
-	}
-	
-	public static Color[] getColorPalate() {
-		int numColors = 1000;
-		Color[] palate = new Color[numColors];
-		int limit = (int)(numColors * 0.8);
-		for(int i = 0; i < limit; i++)
-			palate[i] = Utils.interpolateColors(new Color(0, 0, 0), new Color(120, 0, 120), i, limit);
-		for(int i = limit; i < numColors; i++) {
-			palate[i] = Utils.interpolateColors(palate[limit - 1], new Color(255, 255, 0), i - limit, numColors - limit);
-		}
-		return palate;
 	}
 	
 	public static double[][] mergeSort(double[][] array) {

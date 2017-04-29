@@ -109,6 +109,7 @@ public class Client {
 		double rHeight = (double) j.getParameters().getNextParameter();
 		int width = (int) j.getParameters().getNextParameter();
 		int height = (int) j.getParameters().getNextParameter();
+		//TODO: integreate new fractal system
 		j.setImage(HistogramRenderer.renderHistogramColoring(width, height, rWidth, rHeight, xPos, yPos, Utils.getColorPalate()));
 		server.sendMessage(j);
 	}

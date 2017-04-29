@@ -36,6 +36,13 @@ public class SocketAdder extends Thread {
 					w.addNoConnectionListener(new NoConnectionListener() {
 						public void response(Exception e) {
 							synchronized(children) {
+								try {
+									w.dispose();
+									w.join();
+								} catch (IOException | InterruptedException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
 								children.remove(w);
 								server.moveFromUncompletedToUnassigned(w);
 							}

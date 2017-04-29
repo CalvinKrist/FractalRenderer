@@ -1,6 +1,8 @@
 package util;
 
-public class DataTag {
+import java.io.Serializable;
+
+public class DataTag implements Serializable {
 	
 	private String id, value;
 	

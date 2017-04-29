@@ -19,16 +19,6 @@ import server.NoConnectionListener;
 public class SocketWrapper extends Thread {
 	
 	/**
-	 * the stream used to send data to the other socket
-	 */
-	protected OutputStream output;
-	
-	/**
-	 * the stream used to receive input from the other socket
-	 */
-	protected InputStream input;
-	
-	/**
 	 * 
 	 */
 	protected ObjectOutputStream objOut;
@@ -46,10 +36,8 @@ public class SocketWrapper extends Thread {
 	protected MessageListener messageListener;
 	
 	public SocketWrapper(Socket s) throws IOException {
-		output = s.getOutputStream();
-		objOut = new ObjectOutputStream(output);
-		input = s.getInputStream();
-		objIn = new ObjectInputStream(input);
+		objOut = new ObjectOutputStream(s.getOutputStream());
+		objIn = new ObjectInputStream(s.getInputStream());
 		
 		connectListener = new NoConnectionListener() {
 			public void response(Exception e) {
@@ -72,8 +60,8 @@ public class SocketWrapper extends Thread {
 	 * @throws IOException
 	 */
 	public void dispose() throws IOException {
-		output.close();
-		input.close();
+		objOut.close();
+		objIn.close();
 	}
 	
 	public void sendMessage(Object m) {
