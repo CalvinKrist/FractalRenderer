@@ -28,7 +28,7 @@ public class FractalEditor extends Scene {
 		TreeView layers = new TreeView();
 		VBox trees = new VBox();
 		Dimension d = new Dimension(850,200);
-		Window gradient = new Window(d);
+		Window gradient = new Window(d,50);
 
 		fractalEditor.setContent(gradient);
 
