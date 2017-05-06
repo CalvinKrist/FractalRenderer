@@ -12,22 +12,27 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
 public class FractalEditor extends Scene {
+	
+	BorderPane bp;
 
-	public FractalEditor(Parent arg0) {
-		super(arg0);
+	public FractalEditor() {
+		super(new BorderPane());
+		bp = (BorderPane) this.getRoot();
+		initialize();
 	}
 	private void initialize(){
-		BorderPane bp = new BorderPane();
+		
 		ImageView fractalView = new ImageView();
 		SwingNode fractalEditor = new SwingNode();
 		TreeView parameters = new TreeView();
 		TreeView layers = new TreeView();
 		VBox trees = new VBox();
-		Dimension d = new Dimension(650,200);
+		Dimension d = new Dimension(850,200);
 		Window gradient = new Window(d);
 
 		fractalEditor.setContent(gradient);
 
+		
 		trees.getChildren().addAll(parameters,layers);
 
 		bp.setCenter(fractalView);

@@ -1,7 +1,6 @@
 package application;
 
 import javafx.application.Application;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 
@@ -11,8 +10,7 @@ public class Main extends Application {
 		try {
 			// Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
 		        primaryStage.setTitle("Hello World");
-		        AnchorPane root = new AnchorPane();
-		        primaryStage.setScene(new FractalEditor(root));
+		        primaryStage.setScene(new FractalEditor());
 		        primaryStage.show();
 		/*	BorderPane root = new BorderPane();
 			Scene scene = new Scene(root,400,400);
