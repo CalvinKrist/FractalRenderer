@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -9,10 +10,12 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JPanel;
+
 import util.Utils;
 
 @SuppressWarnings("rawtypes")
-public class Window {
+public class Window extends JPanel {
 	
 	private Dimension dimension;
 	private Rectangle opacityRect, gradientRect, colorRect;
@@ -41,7 +44,9 @@ public class Window {
 		addOpacityButton(gradientRect.x + gradientRect.width, 1.0);
 	}
 	
-	public void render(Graphics2D g) {
+	@Override
+	public void paint(Graphics g2) {
+		Graphics2D g = (Graphics2D)g2;
 		g.setColor(Color.white);
 		g.fillRect(0, 0, dimension.width, dimension.height);
 		
