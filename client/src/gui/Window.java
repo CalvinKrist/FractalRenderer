@@ -7,6 +7,8 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +17,7 @@ import javax.swing.JPanel;
 import util.Utils;
 
 @SuppressWarnings("rawtypes")
-public class Window extends JPanel {
+public class Window extends JPanel implements MouseListener, MouseMotionListener {
 	
 	private Dimension dimension;
 	private Rectangle opacityRect, gradientRect, colorRect;
@@ -28,6 +30,9 @@ public class Window extends JPanel {
 	
 	public Window(Dimension dimension) {
 		this.dimension = dimension;
+		this.setPreferredSize(dimension);
+		this.addMouseListener(this);
+		this.addMouseMotionListener(this);
 		opacityButtonHeight = (int)(dimension.height * 0.2);
 		colorButtonHeight = (int)(dimension.height * 0.8);
 		
@@ -129,7 +134,8 @@ public class Window extends JPanel {
                     list.add(j, list.remove(j - 1));
 	}
 	
-	public void mouseClicked(Point p) {
+	public void mouseClicked(MouseEvent e) {
+		Point p = e.getPoint();
 		if(selectedButton == null) {
 			if(colorRect.contains(p))
 				addColorButton(p.x);
@@ -164,7 +170,8 @@ public class Window extends JPanel {
 		}
 	}
 	
-	public void mousePressed(Point p) {
+	public void mousePressed(MouseEvent e) {
+		Point p = e.getPoint();
 		selectedButton = null;
 		if(colorRect.contains(p)) {
 			for(ArrowButton b : colorList) 
@@ -184,5 +191,13 @@ public class Window extends JPanel {
 					b.setSelected(false);
 		}
 	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {}
+
+	@Override
+	public void mouseExited(MouseEvent e) {}
+
+	public void mouseMoved(MouseEvent e) {}
 
 }
