@@ -65,6 +65,8 @@ public class ColorArrowMenu extends JPanel {
 			location.x -= f.getWidth() * 2 / 1.75;
 		f.setLocation(location);
 		f.setResizable(false);
+		f.setFocusable(true);
+		f.requestFocus();
 	}
 	
 	public ColorArrowMenu(ArrowButton<Color> button, List<ArrowButton<Color>> colorList, JPanel p) {
@@ -113,6 +115,8 @@ public class ColorArrowMenu extends JPanel {
 			location.x -= f.getWidth() * 2 / 1.75;
 		f.setLocation(location);
 		f.setResizable(false);
+		f.setFocusable(true);
+		f.requestFocus();
 	}
 	
 }
