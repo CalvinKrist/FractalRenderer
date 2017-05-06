@@ -25,12 +25,13 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	private List<ArrowButton<Color>> colorList;
 	private List<ArrowButton<Double>> opacityList;
 	private ArrowButton selectedButton;
+	private SquareButton bgButton;
 	
 	private int opacityButtonHeight, colorButtonHeight;
 	
-	public Window(Dimension dimension) {
+	public Window(Dimension dimension, int additionalWidth) {
 		this.dimension = dimension;
-		this.setPreferredSize(dimension);
+		this.setPreferredSize(new Dimension(dimension.width + additionalWidth, dimension.height));
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 		opacityButtonHeight = (int)(dimension.height * 0.2);
@@ -47,13 +48,16 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 		addColorButton(gradientRect.x + gradientRect.width, Color.white);
 		addOpacityButton(gradientRect.x, 1.0);
 		addOpacityButton(gradientRect.x + gradientRect.width, 1.0);
+		
+		Point p = new Point(dimension.width + additionalWidth / 2, dimension.height / 2);
+		bgButton = new SquareButton(additionalWidth, p);
 	}
 	
 	@Override
 	public void paint(Graphics g2) {
 		Graphics2D g = (Graphics2D)g2;
 		g.setColor(Color.white);
-		g.fillRect(0, 0, dimension.width, dimension.height);
+		g.fillRect(0, 0, this.getWidth(), this.getHeight());
 		
 		for(ArrowButton b: colorList)
 			b.draw(g);
@@ -66,9 +70,10 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 			g.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), opacity));
 			g.fillRect(x, gradientRect.y, 1, gradientRect.height);	
 		}
-		System.out.println();
 		g.setColor(Color.black);
 		g.drawRect(gradientRect.x, gradientRect.y, gradientRect.width, gradientRect.height);
+		
+		bgButton.draw(g);
 	}
 	
 	private Double getOpacityAtPoint(int x) {
@@ -137,19 +142,22 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	public void mouseClicked(MouseEvent e) {
 		Point p = e.getPoint();
 		if(selectedButton == null) {
-			if(colorRect.contains(p))
+			if(bgButton.isClicked(p)) {
+				ColorArrowMenu menu = new ColorArrowMenu(bgButton, colorList, this);
+			} else if(colorRect.contains(p))
 				addColorButton(p.x);
 			else if(opacityRect.contains(p))
 				addOpacityButton(p.x);
 		} else {
 			if(selectedButton.isSquareClicked(p)) {
 				if(selectedButton.isDown()) {
-					OpacityArrowMenu menu = new OpacityArrowMenu(selectedButton, opacityList);
+					OpacityArrowMenu menu = new OpacityArrowMenu(selectedButton, opacityList, this);
 				} else {
-					ColorArrowMenu menu = new ColorArrowMenu(selectedButton, colorList);
+					ColorArrowMenu menu = new ColorArrowMenu(selectedButton, colorList, this);
 				}
 			}
 		}
+		repaint();
 	}
 	
 	public void mouseReleased(MouseEvent e) {
@@ -168,6 +176,7 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 			else
 				sortButtonList(opacityList);
 		}
+		repaint();
 	}
 	
 	public void mousePressed(MouseEvent e) {
@@ -190,6 +199,7 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 				} else
 					b.setSelected(false);
 		}
+		repaint();
 	}
 
 	@Override

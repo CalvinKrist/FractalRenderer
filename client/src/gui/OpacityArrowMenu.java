@@ -21,7 +21,7 @@ import util.Constants;
 
 public class OpacityArrowMenu extends JPanel {
 	
-	public OpacityArrowMenu(ArrowButton<Double> button, List<ArrowButton<Double>> opacityList) {
+	public OpacityArrowMenu(ArrowButton<Double> button, List<ArrowButton<Double>> opacityList, JPanel p) {
 		this.setLayout(new BorderLayout());
 		JSlider slider = new JSlider(JSlider.HORIZONTAL, 0, 100, (int)(button.getData() * 100));
 		slider.addChangeListener(new ChangeListener() {
@@ -29,6 +29,7 @@ public class OpacityArrowMenu extends JPanel {
 				double prop = slider.getValue() / 100.0;
 				button.setData(prop);
 				button.setSquareColor(new Color(255 - (int)(255 * prop), 255 - (int)(255 * prop), 255 - (int)(255* prop)));
+				p.repaint();
 			}
 		});
 		slider.setMajorTickSpacing(20);
@@ -50,6 +51,7 @@ public class OpacityArrowMenu extends JPanel {
 				if(opacityList.size() != 1)
 					opacityList.remove(button);
 				f.dispose();
+				p.repaint();
 			}
 		});
 		JButton b2 = new JButton("SELECT");
@@ -57,6 +59,7 @@ public class OpacityArrowMenu extends JPanel {
 		b2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				f.dispose();
+				p.repaint();
 			}
 		});
 		JPanel temp2 = new JPanel();
