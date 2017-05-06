@@ -36,10 +36,13 @@ public class SocketWrapper extends Thread {
 	
 	protected MessageListener messageListener;
 	
+	protected String inetAdress;
+	
 	public SocketWrapper(Socket s) throws IOException {
 		objOut = new ObjectOutputStream(s.getOutputStream());
 		objIn = new ObjectInputStream(s.getInputStream());
-		
+		inetAdress = s.getInetAddress().getHostAddress();
+
 		connectListener = new NoConnectionListener() {
 			public void response(Exception e) {
 				System.out.println("Disconnected.");
@@ -69,13 +72,16 @@ public class SocketWrapper extends Thread {
 		try {
 			objOut.writeObject(m);
 			objOut.flush();
+			Log.log.newLine("Object sent to " + inetAdress + ": " + m.getClass().getName() + "." + m.toString());
 		} catch (IOException e) {
 			connectListener.response(e);
 			try {
 				this.join();
 			} catch (InterruptedException e1) {
-				e1.printStackTrace();
+				Log.log.newLine("Unable to join SocketWrapper thread.");
+				Log.log.addError(e1);
 			}
+			
 		}
 	}
 	
@@ -92,16 +98,22 @@ public class SocketWrapper extends Thread {
 			try {
 				Object m = objIn.readObject();
 				messageListener.messageRecieved(m);
+				Log.log.newLine("Object recieved from " + inetAdress + ": " + m.getClass().getName() + "." + m.toString());
 				
 			} catch (IOException | ClassNotFoundException e) {
 				connectListener.response(e);
 				try {
 					this.join();
 				} catch (InterruptedException e1) {
-					e1.printStackTrace();
+					Log.log.newLine("Unable to join SocketWrapper thread.");
+					Log.log.addError(e1);
 				}
 			}
 		}
+	}
+	
+	public String getInetAdress() {
+		return inetAdress;
 	}
 	
 }

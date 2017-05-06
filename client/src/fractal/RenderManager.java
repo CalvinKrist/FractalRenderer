@@ -137,5 +137,16 @@ public class RenderManager {
 		for(Renderer r: layers)
 			r.setScreenResolution(screenResolution);
 	}
+	
+	public String toString() {
+		String s = "";
+		s += "Location: " + location.toString();
+		s += "\nZoom: " + zoom;
+		s += "\nScreen Resolution: " + screenResolution.toString();
+		s += "\nReal Resolution: " + realResolution.toString();
+		for(int i = 0; i < layers.length; i++)
+			s += "\nLayer " + (i + 1) + ": " + layers[i].getClass().getName();
+		return s;
+	}
 
 }

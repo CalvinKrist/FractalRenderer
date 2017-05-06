@@ -41,4 +41,12 @@ public class Parameters implements Serializable {
 		return parameters.keySet();
 	}
 	
+	public String toString() {
+		String s = "";
+		for(String key : keySet()) {
+			s += "[" + key + "," + parameters.get(key) + "]";
+		}
+		return s;
+	}
+	
 }
