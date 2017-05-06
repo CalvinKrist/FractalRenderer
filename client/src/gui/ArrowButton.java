@@ -24,8 +24,7 @@ public class ArrowButton<E> {
 	
 	public void draw(Graphics2D g) {
 		Color c = selected ? Color.white : Color.BLACK;
-		if(selected)
-				System.out.println("selected");
+
 		if(down) {
 			g.setColor(squareColor);
 			g.fillRect(location.x - 6, location.y - 12 - 9, 13, 12);
@@ -34,7 +33,6 @@ public class ArrowButton<E> {
 			
 			int[] xPoints = {location.x, location.x - 6, location.x + 6};
 			int[] yPoints = {location.y, location.y - 9, location.y - 9};
-			
 			g.setColor(c);
 			g.fillPolygon(xPoints, yPoints, 3);
 			g.setColor(Color.black);
@@ -68,6 +66,15 @@ public class ArrowButton<E> {
 		Polygon poly = new Polygon(xPoints, yPoints, 3);
 		Rectangle r = new Rectangle(location.x - 6, location.y + 9, 13, 12);
 		return poly.contains(p) || r.contains(p);
+	}
+	
+	public boolean isSquareClicked(Point p) {
+		Rectangle r = null;
+		if(down)
+			r = new Rectangle(location.x - 6, location.y - 12 - 9, 13, 12);
+		else
+			r = new Rectangle(location.x - 6, location.y + 9, 13, 12);
+		return r.contains(p);
 	}
 	
 	/* GETTERS AND SETTERS */

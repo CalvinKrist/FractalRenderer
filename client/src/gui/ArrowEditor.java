@@ -15,10 +15,6 @@ public class ArrowEditor extends JPanel {
 	private JTextField opacityValue;
 	private Color colorValue;
 	
-	public static void main(String args[]) {
-		ArrowEditor editor = new ArrowEditor(new Window(new Dimension(300, 200)), new Dimension(300, 200));
-	}
-	
 	public ArrowEditor(Window w, Dimension d) {
 		opacityLocation = new JTextField(3);
 		colorLocation = new JTextField(3);

@@ -10,12 +10,14 @@ import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.StringBufferInputStream;
+import java.util.List;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.v1.DbxEntry;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
+import com.dropbox.core.v2.files.ListFolderErrorException;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 import com.dropbox.core.v2.files.UploadErrorException;
@@ -59,7 +61,7 @@ public class DatabaseCommunicator {
 				FileMetadata metadata = client.files().uploadBuilder("/" + destFilePath).uploadAndFinish(in);
 			}
 		} catch (DbxException | IOException e) {
-			System.out.println("File not found.");
+			
 		} 
 	}
 	
@@ -99,12 +101,34 @@ public class DatabaseCommunicator {
 			out = new FileOutputStream(localFilePath);
 			try {
 				client.files().downloadBuilder("/" + targetFilePath).download(out);
+				out.close();
 			} catch (DbxException | IOException e) {
 				e.printStackTrace();
 			}
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 		}
+	}
+	
+	public double getViewWidth(String pictureFilePath, String movieFilePath) throws ListFolderErrorException, DbxException {
+		double maxZoom = 0;
+		List<Metadata> pictureFolder = client.files().listFolder("/" + pictureFilePath).getEntries();
+		List<Metadata> movieFolder = client.files().listFolder("/" + movieFilePath).getEntries();
+		for(Metadata m : pictureFolder) {
+			String zoomString = m.getName().substring(4, m.getName().length() - 4); //remove img_ and .png
+			double zoom = Double.valueOf(zoomString);
+			if(maxZoom < zoom)
+				maxZoom = zoom;
+		}
+		for(Metadata m : movieFolder) {
+			String[] zoomLevels = m.getName().split("-");
+			double zoom = Double.valueOf(zoomLevels[1]);
+			if(maxZoom < zoom)
+				maxZoom = zoom;
+		}
+		if(maxZoom == 0)
+			return 4;
+		return 1 / maxZoom;
 	}
 	
 	/**

@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Scanner;
+
+import dropbox.DatabaseCommunicator;
 
 public class Utils {	
 	
@@ -32,11 +35,8 @@ public class Utils {
 	public static Color[] getColorPalate() {
 		int numColors = 1000;
 		Color[] palate = new Color[numColors];
-		int mark = (int)(numColors * .93);
-		for(int i = 0; i < mark; i++) 
-			palate[i] = Utils.interpolateColors(new Color(100, 0, 200, 255), new Color(255 / 2, 255 / 2, 0, 255), (double)i / mark);
-		for(int i = mark; i < numColors; i++)
-			palate[i] = Utils.interpolateColors(new Color(255 / 2, 255 / 2, 0, 255), new Color(255, 255, 0, 255), ((double)i - mark) / (numColors - mark));
+		for(int i = 0; i < numColors; i++) 
+			palate[i] = Utils.interpolateColors(new Color(255, 0, 255), new Color(255, 255, 0), (double)i / numColors);
 		return palate;
 	}
 	
@@ -63,6 +63,19 @@ public class Utils {
 	                whatismyip.openStream()));
 
 		return in.readLine(); //you get the IP as a String
+	}
+	
+	public static String getServerIpAdress(DatabaseCommunicator database) {
+		Scanner ipFile = new Scanner(database.downloadFileAsString("ipAdress.txt"));
+		DataTag external = new DataTag(ipFile.nextLine());
+		try {
+			if(!external.getValue().equals(Utils.getExternalIP()))
+				return external.getValue();
+			return new DataTag(ipFile.nextLine()).getValue();
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	public static double[][] mergeSort(double[][] array) {

@@ -21,8 +21,8 @@ public class HistogramRenderer extends Renderer {
 
 		for (int i = 0; i < width; i++)
 			for (int k = 0; k < height; k++) {
-				double x = i / (width / rWidth) + xPos - rWidth / 2;
-				double y = k / (height / rWidth) - +yPos - rWidth / 2;
+				double x = (i / (double)width) * rWidth * 2 - rWidth + xPos;
+				double y = (k / (double)height) * rHeight * 2 - rHeight - yPos;
 
 				double z = 0;
 				double zi = 0;
@@ -59,10 +59,10 @@ public class HistogramRenderer extends Renderer {
 		for (int i = 0; i < info.size(); i++) 
 			if ((int) (info.get(i)[3]) == maxIterations) {
 				if(layer == 0) 
-					pixels[(int) (info.get(i)[1])][(int) (info.get(i)[2])] = palette[0].getRGB();
+					pixels[(int) (info.get(i)[1])][(int) (info.get(i)[2])] = palette.getBackground().getRGB();
 				else {
 					Color c1 = new Color(pixels[(int)info.get(i)[1]][(int)info.get(i)[2]]);
-					Color c2 = palette[0];
+					Color c2 = palette.getBackground();
 					double weight = c2.getAlpha() / 255.0;
 					Color finalColor = new Color((int)layerAverage(c1.getRed(), c2.getRed(), weight), (int)layerAverage(c1.getGreen(), c2.getGreen(), weight), (int)layerAverage(c1.getBlue(), c2.getBlue(), weight)); 
 					pixels[(int)info.get(i)[1]][(int)info.get(i)[2]] = finalColor.getRGB(); 
@@ -73,12 +73,11 @@ public class HistogramRenderer extends Renderer {
 		for(int i = 0; i < info.size(); i++) {
 
 			double hue = (double)i / info.size();
-			int index = (int) (hue * (palette.length - 1)) + 1;
 			if(layer == 0) 
-				pixels[(int) (info.get(i)[1])][(int) (info.get(i)[2])] = palette[index].getRGB();
+				pixels[(int) (info.get(i)[1])][(int) (info.get(i)[2])] = palette.colorAt(hue).getRGB();
 			else {
 				Color c1 = new Color(pixels[(int)info.get(i)[1]][(int)info.get(i)[2]]);
-				Color c2 = palette[index];
+				Color c2 = palette.colorAt(hue);
 				double weight = c2.getAlpha() / 255.0;
 				Color finalColor = new Color((int)layerAverage(c1.getRed(), c2.getRed(), weight), (int)layerAverage(c1.getGreen(), c2.getGreen(), weight), (int)layerAverage(c1.getBlue(), c2.getBlue(), weight)); 
 				pixels[(int)info.get(i)[1]][(int)info.get(i)[2]] = finalColor.getRGB(); 
@@ -88,11 +87,6 @@ public class HistogramRenderer extends Renderer {
 
 	protected void calculateIterationsAndBailout(double rWidth, double rHeight) {
 
-	}
-	
-	public void setZoom(double zoom) {
-		zoom /= 2;
-		super.setZoom(zoom);
 	}
 	
 	private double layerAverage(double d1, double d2, double weight) {

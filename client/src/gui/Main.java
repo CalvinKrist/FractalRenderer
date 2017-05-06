@@ -24,7 +24,6 @@ public class Main extends JFrame implements Runnable, MouseInputListener, MouseL
 	private Thread gameThread;
 	
 	private Window window;
-	private ArrowEditor editor;
 	private Dimension dimension;
 
 	public Main() {
@@ -51,9 +50,6 @@ public class Main extends JFrame implements Runnable, MouseInputListener, MouseL
 		setVisible(true);
 		canvas.createBufferStrategy(2);
 		bs = canvas.getBufferStrategy();
-
-		editor = new ArrowEditor(window, dimension);
-		window.setEditor(editor);
 		
 		gameThread = new Thread(this);
 		gameThread.start();
