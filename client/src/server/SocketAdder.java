@@ -31,31 +31,30 @@ public class SocketAdder extends Thread {
 		while(true) {
 			try {
 				Socket s = socket.accept();
+				System.out.println("New Connection.");
 				synchronized(children) {
+					System.out.println("Synchronized with children.");
 					SocketWrapper w = new SocketWrapper(s);
 					w.addNoConnectionListener(new NoConnectionListener() {
 						public void response(Exception e) {
-							synchronized(children) {
-								try {
-									w.dispose();
-									w.join();
-								} catch (IOException | InterruptedException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								}
-								children.remove(w);
-								server.moveFromUncompletedToUnassigned(w);
+							try {
+								w.dispose();
+								w.join();
+							} catch (IOException | InterruptedException e1) {
+								e1.printStackTrace();
 							}
+							children.remove(w);
+							server.moveFromUncompletedToUnassigned(w);
 						}
 					});
 					w.addMessageListener(new MessageListener() {
 						public void messageRecieved(Object o) {
-							//MESSAGE NEVER RECIEVED
 							synchronized(server) {
 								server.handleMessage(o, w);
 							}
 						}
 					});
+					w.sendMessage(server.getParameters());
 					children.add(w);
 					server.assignJob(w);
 					server.assignJob(w);

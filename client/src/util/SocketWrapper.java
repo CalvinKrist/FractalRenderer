@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.net.Socket;
 
 import server.MessageListener;
@@ -64,7 +65,7 @@ public class SocketWrapper extends Thread {
 		objIn.close();
 	}
 	
-	public void sendMessage(Object m) {
+	public void sendMessage(Serializable m) {
 		try {
 			objOut.writeObject(m);
 			objOut.flush();

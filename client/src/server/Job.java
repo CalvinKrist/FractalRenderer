@@ -2,18 +2,18 @@ package server;
 
 import java.io.Serializable;
 
-import util.Parameter;
+import util.Parameters;
 
 public class Job implements Serializable {
 	
 	/**
-	 * format of type_zoom_subframe_numFrames
+	 * format of type_zoom
 	 */
 	private String jobId;
-	private Parameter parameters;
+	private Parameters parameters;
 	private int[][] image;
 	
-	public Job(String jobId, Parameter p) {
+	public Job(String jobId, Parameters p) {
 		this.jobId = jobId;
 		parameters = p;
 		image = null;
@@ -23,7 +23,7 @@ public class Job implements Serializable {
 		return jobId;
 	}
 	
-	public Parameter getParameters() {
+	public Parameters getParameters() {
 		return parameters;
 	}
 	
@@ -31,17 +31,8 @@ public class Job implements Serializable {
 		return jobId + " : " + parameters;
 	}
 	
-	public int getNumFrames() {
-		return Integer.valueOf(jobId.substring(jobId.lastIndexOf("_") + 1));
-	}
-	
 	public String getType() {
 		return jobId.substring(0, jobId.indexOf("_"));
-	}
-	
-	public int getSubframe() {
-		String[] tokens = jobId.split("_");
-		return Integer.valueOf(tokens[2]);
 	}
 	
 	public double getZoom() {
@@ -51,6 +42,10 @@ public class Job implements Serializable {
 	
 	public void setImage(int[][] image) {
 		this.image = image;
+	}
+	
+	public int[][] getImage() {
+		return image;
 	}
 
 }

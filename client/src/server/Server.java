@@ -1,7 +1,11 @@
 package server;
 
+import java.awt.Dimension;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,10 +18,13 @@ import java.util.TreeSet;
 import com.dropbox.core.DbxException;
 
 import dropbox.DatabaseCommunicator;
+import fractal.Palette;
+import fractal.RenderManager;
+import fractal.Renderer;
 import util.Constants;
 import util.DataTag;
 import util.JobComparator;
-import util.Parameter;
+import util.Parameters;
 import util.Point;
 import util.SocketWrapper;
 import util.Utils;
@@ -29,134 +36,133 @@ import util.Utils;
  *
  */
 public class Server {
-	
+
 	/**
 	 * A queue of unassigned jobs that need to be done
 	 */
 	private LinkedList<Job> unnasignedJobs;
-	
+
 	/**
 	 * A list of jobs that were assigned but haven't yet been completed
 	 */
 	private Map<SocketWrapper, Queue<Job>> uncompletedJobs;
-	
-	/**
-	 * Jobs that have been completed and need to be compiled into a product
-	 */
-	private TreeSet<Job> uncompiledJobs;
-	
+
 	/**
 	 * contains a list of wrappers to communicate with all children
 	 */
 	private ArrayList<SocketWrapper> children;
-	
+
 	/**
 	 * A list of all admins connected to the server
 	 */
 	private ArrayList<SocketWrapper> admins;
-	
+
 	/**
 	 * 
 	 */
-	DatabaseCommunicator database;
-	
-	private double viewWidth;
-	private double zoomPercent;
-	private Point position;
-	
+	private DatabaseCommunicator database;
+
+	private Parameters parameters;
+
 	public Server() {
-		
+
 		try {
 			database = new DatabaseCommunicator("eoggPPnSY7QAAAAAAAAASuUXGkHwlV-0cO-lQYLiB0oZF8znalh0XXdg7sCipTuT");
-			
+
+			HashMap<String, Serializable> parameters = new HashMap<String, Serializable>();
 			Scanner s = new Scanner(database.downloadFileAsString("parameters.txt"));
-			viewWidth = Double.valueOf(new DataTag(s.nextLine()).getValue());
-			zoomPercent = Double.valueOf(new DataTag(s.nextLine()).getValue());
-			position = new Point(Double.valueOf(new DataTag(s.nextLine()).getValue()), Double.valueOf(new DataTag(s.nextLine()).getValue()));
+			Dimension screenResolution = new Dimension(Integer.valueOf(new DataTag(s.nextLine()).getValue()),
+					Integer.valueOf(new DataTag(s.nextLine()).getValue()));
+			Double zoomPercent = Double.valueOf(new DataTag(s.nextLine()).getValue());
+			Point position = new Point(Double.valueOf(new DataTag(s.nextLine()).getValue()),
+					Double.valueOf(new DataTag(s.nextLine()).getValue()));
+			while(s.hasNextLine()) {
+				DataTag tag = new DataTag(s.nextLine());
+				Class<?> c = Class.forName("fractal." + tag.getValue());
+				Renderer r = (Renderer)c.newInstance();
+				database.downloadFile(tag.getId() + ".palette", tag.getId() + ".palette");
+				r.setColorPalette(new Palette(tag.getId() + ".palette", true));
+				parameters.put(tag.getId(), r);
+			}
 			
-		} catch (DbxException e1) {
+			
+			parameters.put("radius", database.getViewWidth("images", "videos") * zoomPercent);
+			parameters.put("dZoom", zoomPercent);
+			parameters.put("screenResolution", screenResolution);
+			parameters.put("location", position);
+			this.parameters = new Parameters(parameters);
+		} catch (DbxException | ClassNotFoundException | InstantiationException | IllegalAccessException e1) {
 			e1.printStackTrace();
 		}
 		try {
-			
+
 			String externalIP;
 			externalIP = Utils.getExternalIP();
 			InetAddress i = InetAddress.getLocalHost();
 			String internalIP = i.getHostAddress();
-			
+
 			database.uploadByString("<external:" + externalIP + ">\n<internal:" + internalIP + ">", "ipAdress.txt");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		children = new ArrayList<SocketWrapper>();
 		unnasignedJobs = new LinkedList<Job>();
 		uncompletedJobs = new HashMap<SocketWrapper, Queue<Job>>();
-		uncompiledJobs = new TreeSet<Job>(new JobComparator());
-		
+
 		SocketAdder adder = new SocketAdder(children, this);
 		adder.start();
-		
+
 		System.out.println("Server Started.");
 	}
-	
+
 	public void handleMessage(Object o, SocketWrapper sender) {
-		if(o instanceof Job) {
-			Job j = (Job)o;
-			uncompiledJobs.add(j);
-			uncompletedJobs.get(sender).remove(j);
+		if (o instanceof Job) {
+			uncompletedJobs.get(sender).remove((Job)o);
 			assignJob(sender);
 			System.out.println("New Job Assigned.");
-		} else if(o instanceof String) {
-			String s = (String)o;
+		} else if (o instanceof String) {
+			String s = (String) o;
 		}
 	}
-	
-	private LinkedList<Job> createNextRenderJobSet(int numChildren) {
-		LinkedList<Job> jobs = new LinkedList<Job>();
-		for(int i = 0; i < numChildren; i++) {
-			Double[] params = new Double[6];
-			params[0] = new Double(position.getX());
-			params[1] = new Double(position.getY());
-			params[2] = new Double(viewWidth / numChildren);
-			params[3] = new Double(viewWidth);
-			params[4] = new Double(Constants.WIDTH / numChildren);
-			params[5] = new Double(Constants.WIDTH);
-			Parameter<Double> p = new Parameter<Double>(params);
-			Job b = new Job("render_" + viewWidth + "_" + (1 + i) + "_" + numChildren, p);
-			jobs.add(b);
-		}
-		viewWidth *= zoomPercent;
-		return jobs;
-	}
-	
+
 	public void createNextRenderJobSet() {
-		unnasignedJobs.addAll(createNextRenderJobSet(children.size()));
+		Map<String, Serializable> params = new HashMap<String, Serializable>(4);
+		params.put("zoom", 1 / parameters.getParameter("radius", Double.class));
+		Parameters p = new Parameters(params);
+		Job b = new Job("render_" + parameters.getParameter("radius") + "_", p);
+		unnasignedJobs.add(b);
+		parameters.put("radius", parameters.getParameter("radius", Double.class) * parameters.getParameter("dZoom", Double.class));
 	}
-	
+
 	public void assignJob(SocketWrapper w) {
-		if(unnasignedJobs.size() < 2 || unnasignedJobs.size() < children.size() * 1.5)
+		while (unnasignedJobs.size() < 2 || unnasignedJobs.size() < children.size() + 4)
 			createNextRenderJobSet();
 		Job b = unnasignedJobs.remove();
-		if(b != null) {
+		if (b != null) {
 			w.sendMessage(b);
-			if(!uncompletedJobs.containsKey(w))
+			if (!uncompletedJobs.containsKey(w))
 				uncompletedJobs.put(w, new LinkedList<Job>());
 			uncompletedJobs.get(w).add(b);
 		}
 	}
-	
+
 	/**
-	 * @param w is a socket wrapper 
-	 * Moves the job w was working on from uncompleted to unassigned
+	 * @param w
+	 *            is a socket wrapper Moves the job w was working on from
+	 *            uncompleted to unassigned
 	 */
 	public void moveFromUncompletedToUnassigned(SocketWrapper w) {
 		Queue<Job> jobs = uncompletedJobs.remove(w);
-		synchronized(unnasignedJobs) {
-			for(int i = 0; i < jobs.size(); i++) 
+		synchronized (unnasignedJobs) {
+			for (int i = 0; i < jobs.size(); i++)
 				unnasignedJobs.addAll(jobs);
 			unnasignedJobs.sort(new JobComparator());
 		}
+	}
+	
+	public Parameters getParameters() {
+		return parameters;
 	}
 
 }

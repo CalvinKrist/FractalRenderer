@@ -23,8 +23,6 @@ public class Window {
 	
 	private int opacityButtonHeight, colorButtonHeight;
 	
-	private ArrowEditor editor;
-	
 	public Window(Dimension dimension) {
 		this.dimension = dimension;
 		opacityButtonHeight = (int)(dimension.height * 0.2);
@@ -132,11 +130,19 @@ public class Window {
 				addColorButton(p.x);
 			else if(opacityRect.contains(p))
 				addOpacityButton(p.x);
+		} else {
+			if(selectedButton.isSquareClicked(p)) {
+				if(selectedButton.isDown()) {
+					OpacityArrowMenu menu = new OpacityArrowMenu(selectedButton, opacityList);
+				} else {
+					ColorArrowMenu menu = new ColorArrowMenu(selectedButton, colorList);
+				}
+			}
 		}
 	}
 	
 	public void mouseReleased(MouseEvent e) {
-		//selectedButton = null;
+		
 	}
 	
 	public void mouseDragged(MouseEvent e) {
@@ -172,10 +178,6 @@ public class Window {
 				} else
 					b.setSelected(false);
 		}
-	}
-	
-	public void setEditor(ArrowEditor e) {
-		editor = e;
 	}
 
 }

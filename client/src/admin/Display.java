@@ -18,7 +18,7 @@ public class Display extends JPanel {
 	
 	private JTextField zoom, xPos, yPos, zoomSpeed;
 	private Color bgColor = new Color(244, 244, 244);
-	private Font labelFont = new Font("Arial", 12, 12);
+	private Font labelFont = Constants.smallFont;
 	
 	private JLabel numUsersLabel, frameCountLabel, avgRenderTimeLabel;
 	
@@ -162,7 +162,7 @@ public class Display extends JPanel {
 		p.add(xPosP, 0, 0);
 		
 		JLabel title = new JLabel("Parameters");
-		title.setFont(new Font("Arial", 12, 18));
+		title.setFont(Constants.mediumFont);
 		title.setOpaque(true);
 		title.setBackground(bgColor);
 		JPanel wrapper = new JPanel();
@@ -195,7 +195,7 @@ public class Display extends JPanel {
 		
 		
 		JLabel title = new JLabel("Statistics");
-		title.setFont(new Font("Arial", 12, 18));
+		title.setFont(Constants.mediumFont);
 		title.setOpaque(true);
 		title.setBackground(bgColor);
 		JPanel wrapper = new JPanel();

@@ -10,7 +10,7 @@ import util.Vector2;
 
 public abstract class Renderer implements Serializable {
 	
-	protected Color[] palette;
+	protected Palette palette;
 	protected Point location;
 	protected double zoom; //actual zoom: eg, higher number means it's more zoomed in
 	protected Dimension screenResolution;
@@ -27,7 +27,7 @@ public abstract class Renderer implements Serializable {
 
 	protected abstract void calculateIterationsAndBailout(double rWidth, double rHeight);
 	
-	public void setColorPalette(Color[] palette) {
+	public void setColorPalette(Palette palette) {
 		this.palette = palette;
 	}
 	
