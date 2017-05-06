@@ -9,7 +9,7 @@ public class WindowTester {
 
 	public static void main(String[] args) {
 
-		Window w = new Window(new Dimension(600, 200));
+		Window w = new Window(new Dimension(400, 150), 50);
 		JFrame f = new JFrame();
 		f.setContentPane(w);
 		f.pack();
@@ -17,10 +17,6 @@ public class WindowTester {
 		f.setLocationRelativeTo(null);
 		f.setResizable(false);
 		f.setVisible(true);
-		
-		while(true) {
-			w.repaint();
-		}
 		
 	}
 
