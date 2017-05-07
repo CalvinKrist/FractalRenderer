@@ -11,8 +11,13 @@ import java.net.Socket;
 
 import javax.swing.*;
 
+import com.dropbox.core.DbxException;
+
+import dropbox.DatabaseCommunicator;
 import util.Constants;
+import util.Log;
 import util.SocketWrapper;
+import util.Utils;
 
 public class Display extends JPanel {
 	
@@ -27,13 +32,22 @@ public class Display extends JPanel {
 	
 	private SocketWrapper server;
 	
+	private DatabaseCommunicator database;
+	
 	public Display() {
-		//TODO: get serve iP
-		String serverIP = "";
+		try {
+			database = new DatabaseCommunicator("eoggPPnSY7QAAAAAAAAASuUXGkHwlV-0cO-lQYLiB0oZF8znalh0XXdg7sCipTuT");
+		} catch (DbxException e2) {
+			e2.printStackTrace();
+			Log.log.newLine("Unable to connect to database.");
+			Log.log.addError(e2);
+		}
+		String serverIP = Utils.getServerIpAdress(database);
 		try {
 			server = new SocketWrapper(new Socket(serverIP, Constants.PORT));
 		} catch (IOException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Server not available.");
+			//System.exit(0);
 		}
 		
 		this.setLayout(new BorderLayout());

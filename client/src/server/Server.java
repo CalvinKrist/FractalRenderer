@@ -24,6 +24,7 @@ import fractal.Renderer;
 import util.Constants;
 import util.DataTag;
 import util.JobComparator;
+import util.Log;
 import util.Parameters;
 import util.Point;
 import util.SocketWrapper;
@@ -73,15 +74,19 @@ public class Server {
 			Scanner s = new Scanner(database.downloadFileAsString("parameters.txt"));
 			Dimension screenResolution = new Dimension(Integer.valueOf(new DataTag(s.nextLine()).getValue()),
 					Integer.valueOf(new DataTag(s.nextLine()).getValue()));
+			Log.log.newLine("Screen resolution: " + screenResolution.toString());
 			Double zoomPercent = Double.valueOf(new DataTag(s.nextLine()).getValue());
+			Log.log.newLine("Zoom percent: " + zoomPercent);
 			Point position = new Point(Double.valueOf(new DataTag(s.nextLine()).getValue()),
 					Double.valueOf(new DataTag(s.nextLine()).getValue()));
+			Log.log.newLine("Position: " + position.toString());
 			while(s.hasNextLine()) {
 				DataTag tag = new DataTag(s.nextLine());
 				Class<?> c = Class.forName("fractal." + tag.getValue());
 				Renderer r = (Renderer)c.newInstance();
 				database.downloadFile(tag.getId() + ".palette", tag.getId() + ".palette");
 				r.setColorPalette(new Palette(tag.getId() + ".palette", true));
+				Log.log.newLine("New render layer: " + tag.getId() + " " + c.getName());
 				parameters.put(tag.getId(), r);
 			}
 			
@@ -93,6 +98,7 @@ public class Server {
 			this.parameters = new Parameters(parameters);
 		} catch (DbxException | ClassNotFoundException | InstantiationException | IllegalAccessException e1) {
 			e1.printStackTrace();
+			Log.log.addError(e1);
 		}
 		try {
 
@@ -100,10 +106,12 @@ public class Server {
 			externalIP = Utils.getExternalIP();
 			InetAddress i = InetAddress.getLocalHost();
 			String internalIP = i.getHostAddress();
-
+			
 			database.uploadByString("<external:" + externalIP + ">\n<internal:" + internalIP + ">", "ipAdress.txt");
+			Log.log.newLine("IPAdress added to database.");
 		} catch (IOException e) {
 			e.printStackTrace();
+			Log.log.addError(e);
 		}
 
 		children = new ArrayList<SocketWrapper>();
@@ -113,20 +121,20 @@ public class Server {
 		SocketAdder adder = new SocketAdder(children, this);
 		adder.start();
 
-		System.out.println("Server Started.");
+		Log.log.newLine("Server started.");
 	}
 
 	public void handleMessage(Object o, SocketWrapper sender) {
 		if (o instanceof Job) {
 			uncompletedJobs.get(sender).remove((Job)o);
 			assignJob(sender);
-			System.out.println("New Job Assigned.");
 		} else if (o instanceof String) {
 			String s = (String) o;
 		}
 	}
 
 	public void createNextRenderJobSet() {
+		Log.log.newLine("New render job created at " + 1 / parameters.getParameter("radius", Double.class));
 		Map<String, Serializable> params = new HashMap<String, Serializable>(4);
 		params.put("zoom", 1 / parameters.getParameter("radius", Double.class));
 		Parameters p = new Parameters(params);

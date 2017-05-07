@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import util.Constants;
+import util.Log;
 import util.SocketWrapper;
 
 public class SocketAdder extends Thread {
@@ -31,17 +32,17 @@ public class SocketAdder extends Thread {
 		while(true) {
 			try {
 				Socket s = socket.accept();
-				System.out.println("New Connection.");
+				Log.log.newLine("New connection from " + s.getInetAddress().getHostAddress());
 				synchronized(children) {
-					System.out.println("Synchronized with children.");
 					SocketWrapper w = new SocketWrapper(s);
 					w.addNoConnectionListener(new NoConnectionListener() {
 						public void response(Exception e) {
 							try {
 								w.dispose();
+								Log.log.newLine("User at " + w.getInetAdress() + " disconnected.");
 								w.join();
 							} catch (IOException | InterruptedException e1) {
-								e1.printStackTrace();
+								Log.log.addError(e1);
 							}
 							children.remove(w);
 							server.moveFromUncompletedToUnassigned(w);
@@ -58,9 +59,10 @@ public class SocketAdder extends Thread {
 					children.add(w);
 					server.assignJob(w);
 					server.assignJob(w);
+					Log.log.newLine("User from " + w.getInetAdress() + " added to list.");
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				Log.log.addError(e);
 			}
 		}
 	}

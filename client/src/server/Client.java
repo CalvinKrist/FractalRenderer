@@ -13,6 +13,7 @@ import dropbox.DatabaseCommunicator;
 import fractal.RenderManager;
 import util.Constants;
 import util.DataTag;
+import util.Log;
 import util.Parameters;
 import util.SocketWrapper;
 import util.Utils;
@@ -48,12 +49,14 @@ public class Client {
 			database = new DatabaseCommunicator("eoggPPnSY7QAAAAAAAAASuUXGkHwlV-0cO-lQYLiB0oZF8znalh0XXdg7sCipTuT");
 		} catch (DbxException e2) {
 			e2.printStackTrace();
+			Log.log.newLine("Unable to connect to database.");
+			Log.log.addError(e2);
 		}
 		ipAdress = Utils.getServerIpAdress(database);
-		System.out.println("Attempting to connect...");
+		Log.log.newLine("Connecting to server...");
 		
 		initializeServer();
-		System.out.println("Starting...");
+		Log.log.newLine("Succesfully connected to server.");
 		doJob();
 	}
 	
@@ -66,7 +69,8 @@ public class Client {
 			server = new SocketWrapper(new Socket(ipAdress, Constants.PORT));
 			server.addNoConnectionListener(new NoConnectionListener() {
 				public void response(Exception e) {
-					System.out.println("Disconnected from server.");
+					Log.log.newLine("Disconnected from server.");
+					Log.log.addError(e);
 					checkServer();
 				}
 			});
@@ -78,40 +82,26 @@ public class Client {
 						handleString((String)j);
 					} else if(j instanceof Parameters) {
 						fractal = new RenderManager((Parameters)j);
+						Log.log.newLine("RenderManager recieved: " + fractal.toString());
 					}
 				}
 			});
-			System.out.println("Connected to Server " + ipAdress);
+			Log.log.newLine("Connected to server " + ipAdress);
 			while(fractal == null) {
 				try {
 					Thread.currentThread().wait(100);
 				} catch(Exception e) {}
 			}
 		} catch (Exception e) {
-			System.out.println("Server not available.");
+			Log.log.newLine("Server not available.");
+			Log.log.addError(e);
 			checkServer();
 		}
 	}
 	
 	//Checks to see if there is a new server to connect to. If not, attempts to become server.
 	private void checkServer() {
-		String ipFile = database.downloadFileAsString("ipAdress.txt");
-		if(ipFile.contains(ipAdress)) {
-			
-		} else {
-			fractal = null;
-			String newIp = Utils.getServerIpAdress(database);
-			System.out.println("Connecting to new server at " + newIp);
-			while(jobs.size() != 0)
-				jobs.remove();
-			try {
-				server.join();
-				initializeServer();
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
-			}
-			
-		}
+		
 	}
 	
 	public void handleJob(Job j) {
@@ -138,6 +128,10 @@ public class Client {
 		}
 	}
 	
+	/**
+	 * This method creates the fractal image described by the job and uploads it to the server
+	 * @param j The job that describes what needs to be rendered
+	 */
 	private void renderJob(Job j) {
 		Parameters params = j.getParameters();
 		fractal.setZoom(params.getParameter("zoom", Double.class));
