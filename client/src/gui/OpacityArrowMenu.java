@@ -70,11 +70,7 @@ public class OpacityArrowMenu extends JPanel {
 		f.setContentPane(this);
 		f.setVisible(true);
 		f.pack();
-		Point location = new Point(button.getLocation());
-		location.x += f.getWidth() / 1.6;
-		if(location.x + f.getWidth() > Toolkit.getDefaultToolkit().getScreenSize().width)
-			location.x -= f.getWidth() * 2 / 1.75;
-		f.setLocation(location);
+		f.setLocationRelativeTo(null);
 		f.setResizable(false);
 		f.setFocusable(true);
 		f.requestFocus();

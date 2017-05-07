@@ -10,7 +10,8 @@ public class Main extends Application {
 		try {
 			// Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
 		        primaryStage.setTitle("Hello World");
-		        primaryStage.setScene(new FractalEditor());
+		        primaryStage.setScene(new FractalEditor(850,600));
+		        primaryStage.centerOnScreen();
 		        primaryStage.show();
 		/*	BorderPane root = new BorderPane();
 			Scene scene = new Scene(root,400,400);
