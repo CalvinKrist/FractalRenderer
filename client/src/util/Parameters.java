@@ -17,6 +17,10 @@ public class Parameters implements Serializable {
 		return parameters.get(name);
 	}
 	
+	public boolean contains(String key) {
+		return parameters.containsKey(key);
+	}
+	
 	public <E> E getParameter(String name, Class<E> c) {
 		return (E) parameters.get(name);
 	}
@@ -44,7 +48,7 @@ public class Parameters implements Serializable {
 	public String toString() {
 		String s = "";
 		for(String key : keySet()) {
-			s += "[" + key + "," + parameters.get(key) + "]";
+			s += "[" + key + ":" + parameters.get(key) + "]";
 		}
 		return s;
 	}

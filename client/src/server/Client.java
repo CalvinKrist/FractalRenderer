@@ -60,6 +60,31 @@ public class Client {
 		doJob();
 	}
 	
+	public Client(boolean connectToServer) {
+		fractal = null;
+		jobs = new LinkedList<Job>();
+		try {
+			database = new DatabaseCommunicator("eoggPPnSY7QAAAAAAAAASuUXGkHwlV-0cO-lQYLiB0oZF8znalh0XXdg7sCipTuT");
+		} catch (DbxException e2) {
+			e2.printStackTrace();
+			Log.log.newLine("Unable to connect to database.");
+			Log.log.addError(e2);
+		}
+		if(connectToServer) {
+			ipAdress = Utils.getServerIpAdress(database);
+			Log.log.newLine("Connecting to server...");
+			
+			initializeServer();
+			Log.log.newLine("Succesfully connected to server.");
+		}
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				doJob();
+			}
+		});
+		t.start();
+	}
+	
 	public void handleString(String s) {
 		
 	}
@@ -106,7 +131,6 @@ public class Client {
 	
 	public void handleJob(Job j) {
 		synchronized(jobs) {
-			System.out.println("job added");
 			jobs.add(j);
 		}
 	}
@@ -121,7 +145,7 @@ public class Client {
 					} else if(j.getType().equals("compile")) {
 						compileJob(j);
 					} else {
-						System.out.println("not a render job: " + j.getId());
+						
 					}
 				}
 			}
@@ -144,6 +168,25 @@ public class Client {
 	
 	private void compileJob(Job j) {
 		
+	}
+	
+	public void setServer(SocketWrapper server) {
+		if(this.server != null) 
+			try {
+				this.server.dispose();
+				this.server.join();
+			} catch(InterruptedException e) {
+				Log.log.addError(e);
+			}
+		this.server = server;
+	}
+	
+	public RenderManager getFractal() {
+		return fractal;
+	}
+	
+	public void setFractal(RenderManager fractal) {
+		this.fractal = fractal;
 	}
 
 }

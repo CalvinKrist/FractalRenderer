@@ -6,20 +6,45 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.Socket;
+import java.text.DecimalFormat;
+import java.util.Scanner;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ToolTipManager;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.dropbox.core.DbxException;
 
 import dropbox.DatabaseCommunicator;
+import fractal.RenderManager;
+import server.Client;
+import server.Job;
+import server.MessageListener;
+import server.NoConnectionListener;
 import util.Constants;
+import util.DataTag;
 import util.Log;
+import util.Parameters;
 import util.SocketWrapper;
 import util.Utils;
 
-public class Display extends JPanel {
+public class Display extends JPanel implements Runnable {
 	
 	private JTextField zoom, xPos, yPos, zoomSpeed;
 	private Color bgColor = new Color(244, 244, 244);
@@ -32,11 +57,20 @@ public class Display extends JPanel {
 	
 	private SocketWrapper server;
 	
+	private Client client;
+	
 	private DatabaseCommunicator database;
 	
+	private DecimalFormat df;
+	
+	private Thread t;
+	
 	public Display() {
+		client = new Client(false);
+		df = new DecimalFormat("0.###E0");
 		try {
 			database = new DatabaseCommunicator("eoggPPnSY7QAAAAAAAAASuUXGkHwlV-0cO-lQYLiB0oZF8znalh0XXdg7sCipTuT");
+			Log.log.newLine("Database connection established.");
 		} catch (DbxException e2) {
 			e2.printStackTrace();
 			Log.log.newLine("Unable to connect to database.");
@@ -45,9 +79,22 @@ public class Display extends JPanel {
 		String serverIP = Utils.getServerIpAdress(database);
 		try {
 			server = new SocketWrapper(new Socket(serverIP, Constants.PORT));
+			Log.log.newLine("Connected to server.");
+			server.addMessageListener(new MessageListener() {
+				public void messageRecieved(Object m) {
+					System.out.println(m);
+					handleMessage(m);
+				}
+			});
+			server.addNoConnectionListener(new NoConnectionListener() {
+				public void response(Exception e) {
+					//TODO: if there's no connection...
+				}
+			});
+			client.setServer(server);
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, "Server not available.");
-			//System.exit(0);
+			System.exit(0);
 		}
 		
 		this.setLayout(new BorderLayout());
@@ -63,14 +110,25 @@ public class Display extends JPanel {
 		this.add(new NetworkView(), BorderLayout.CENTER);
 		
 		this.add(menus(), BorderLayout.NORTH);
-		
+		t = new Thread(this);
+		t.start();
 	}
 	
 	private JMenuBar menus() {
+		ToolTipManager.sharedInstance().setInitialDelay(0);
 		JMenuBar bar = new JMenuBar();
 		JMenu view = new JMenu("View");
-		view.add(new JMenuItem("Current Frame"));
-		view.add(new JMenuItem("Network"));
+		JMenuItem serverLog = new JMenuItem("Server Log");
+		serverLog.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				server.sendMessage("logRequest");
+			}
+		});
+		serverLog.setToolTipText("Displays the log of the current server.");
+		view.add(serverLog);
+		JMenuItem adminLog = new JMenuItem("Admin Log");
+		adminLog.setToolTipText("Displays the log created by this admin instance.");
+		view.add(adminLog);
 		bar.add(view);
 		return bar;
 	}
@@ -78,16 +136,16 @@ public class Display extends JPanel {
 	private JPanel createParameters() {
 		zoom = new JTextField(10);
 		zoom.setFont(labelFont);
-		zoom.setText("l8r");
+		zoom.setText("");
 		xPos = new JTextField(10);
-		xPos.setText("l8r");
+		xPos.setText("");
 		xPos.setFont(labelFont);
 		yPos = new JTextField(10);
 		yPos.setFont(labelFont);
-		yPos.setText("l8r");
+		yPos.setText("");
 		zoomSpeed = new JTextField(10);
 		zoomSpeed.setFont(labelFont);
-		zoomSpeed.setText("l8r");
+		zoomSpeed.setText("");
 		
 		JPanel p = new JPanel();
 		p.setBackground(bgColor);
@@ -193,13 +251,13 @@ public class Display extends JPanel {
 		p.setBackground(bgColor);
 		p.setLayout(new GridLayout(4, 1));
 		
-		frameCountLabel = new JLabel("  Frame Count: l8r");
+		frameCountLabel = new JLabel("  Frame Count: ");
 		frameCountLabel.setAlignmentY(0);
 		frameCountLabel.setFont(labelFont);
-		avgRenderTimeLabel = new JLabel("  Average Render Time: l8r");
+		avgRenderTimeLabel = new JLabel("  Average Render Time: ");
 		avgRenderTimeLabel.setAlignmentY(0);
 		avgRenderTimeLabel.setFont(labelFont);
-		numUsersLabel = new JLabel("  User Count: l8r");
+		numUsersLabel = new JLabel("  User Count: ");
 		numUsersLabel.setAlignmentY(0);
 		numUsersLabel.setFont(labelFont);
 		
@@ -218,6 +276,101 @@ public class Display extends JPanel {
 		p.add(wrapper, 0, 0);
 		
 		return p;
+	}
+	
+	@Override
+	public void run() {
+		server.sendMessage("admin");
+		while(true) {
+			try {
+				t.sleep(2000);
+			} catch (InterruptedException e) {
+				Log.log.addError(e);
+			}
+			server.sendMessage("update");
+		}
+	}
+	
+	private boolean allTextFieldsEmpty() {
+		return zoom.getText().equals("") && xPos.getText().equals("") && yPos.getText().equals("") && zoomSpeed.getText().equals("");
+	}
+	
+	public void handleMessage(Object o) {
+		if(o instanceof Parameters) {
+			Parameters params = (Parameters)o;
+			//System.out.println(params);
+			if(params.contains("screenResolution")) {
+				client.setFractal(new RenderManager(params));
+				return;
+			}
+			else if(!params.contains("zoom"))
+				return;
+			System.out.println("SUCCESS");
+			if(allTextFieldsEmpty()) {
+				zoom.setText(df.format(1 / params.getParameter("zoom", Double.class)) + "");
+				xPos.setText(params.getParameter("location", util.Point.class).x + "");
+				yPos.setText(params.getParameter("location", util.Point.class).y + "");
+				zoomSpeed.setText(1 / params.getParameter("zSpeed", Double.class) + "");
+			} else {
+				if(!zoom.isFocusOwner())
+					zoom.setText(df.format(1 / params.getParameter("zoom", Double.class)) + "");
+				if(!xPos.isFocusOwner())
+					xPos.setText(params.getParameter("location", util.Point.class).x + "");
+				if(!yPos.isFocusOwner())
+					yPos.setText(params.getParameter("location", util.Point.class).y + "");
+				if(!zoomSpeed.isFocusOwner())
+					zoomSpeed.setText(1 / params.getParameter("zSpeed", Double.class) + "");
+			}
+			numUsersLabel.setText("  User Count: " + params.getParameter("userCount"));
+			frameCountLabel.setText("  Frame Count: " + params.getParameter("frameCount"));
+		} else if(o instanceof DataTag) {
+			DataTag tag = (DataTag)o;
+			if(tag.getId().equals("log")) {
+				JFrame f = new JFrame("Server Log");
+				JTextArea textArea = new JTextArea(35, 55);
+				JScrollPane scroll = new JScrollPane(textArea);
+				
+				textArea.setText(tag.getValue());
+				scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+				scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+				f.setLayout(new BorderLayout());
+				f.add(scroll, BorderLayout.CENTER);
+				JButton b = new JButton("Save");
+				b.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						JFileChooser fileChooser = new JFileChooser();
+						FileNameExtensionFilter filter = new FileNameExtensionFilter("TEXT FILES", "txt", "text");
+						fileChooser.setFileFilter(filter);
+						fileChooser.setCurrentDirectory(new File("fractals/logs"));
+						fileChooser.showSaveDialog(null);
+						String dir = fileChooser.getSelectedFile().getPath();
+						if(!dir.substring(dir.lastIndexOf(".") + 1).equals("txt")) 
+							dir = dir.substring(0, dir.lastIndexOf(".")) + ".txt";
+						System.out.println("\n\n" + dir + "\n\n");
+						try {
+							PrintWriter out = new PrintWriter(dir);
+							Scanner s = new Scanner(textArea.getText());
+							while(s.hasNextLine())
+								out.println(s.nextLine());
+							out.flush();
+							out.close();
+						} catch (FileNotFoundException e1) {
+							Log.log.addError(e1);
+						}
+					}
+				});
+				JPanel tempPanel = new JPanel();
+				tempPanel.add(b);
+				f.add(tempPanel, BorderLayout.SOUTH);
+				f.pack();
+				f.setLocationRelativeTo(null);
+				f.setResizable(true);
+				f.setVisible(true);
+			}
+		} else if(o instanceof Job) {
+			client.handleJob((Job)o);
+		}
+		
 	}
 	
 }
