@@ -141,13 +141,17 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	
 	public void mouseClicked(MouseEvent e) {
 		Point p = e.getPoint();
+		repaint();
 		if(selectedButton == null) {
 			if(bgButton.isClicked(p)) {
 				ColorArrowMenu menu = new ColorArrowMenu(bgButton, colorList, this);
-			} else if(colorRect.contains(p))
+			} else if(colorRect.contains(p)) {
 				addColorButton(p.x);
-			else if(opacityRect.contains(p))
+				repaint();
+			} else if(opacityRect.contains(p)) {
 				addOpacityButton(p.x);
+				repaint();
+			}
 		} else {
 			if(selectedButton.isSquareClicked(p)) {
 				if(selectedButton.isDown()) {
@@ -157,7 +161,6 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 				}
 			}
 		}
-		repaint();
 	}
 	
 	public void mouseReleased(MouseEvent e) {
@@ -175,8 +178,8 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 				sortButtonList(colorList);
 			else
 				sortButtonList(opacityList);
+			repaint();
 		}
-		repaint();
 	}
 	
 	public void mousePressed(MouseEvent e) {

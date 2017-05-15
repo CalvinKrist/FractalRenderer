@@ -23,6 +23,8 @@ import com.dropbox.core.v2.files.Metadata;
 import com.dropbox.core.v2.files.UploadErrorException;
 import com.dropbox.core.v2.users.FullAccount;
 
+import util.Log;
+
 /**
  * A class that provides methods for communicating with the Dropbox database.
  * 

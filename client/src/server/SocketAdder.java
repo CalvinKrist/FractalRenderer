@@ -32,20 +32,36 @@ public class SocketAdder extends Thread {
 		while(true) {
 			try {
 				Socket s = socket.accept();
+				Log.log.blankLine();
 				Log.log.newLine("New connection from " + s.getInetAddress().getHostAddress());
+				Log.log.blankLine();
 				synchronized(children) {
 					SocketWrapper w = new SocketWrapper(s);
 					w.addNoConnectionListener(new NoConnectionListener() {
 						public void response(Exception e) {
+							System.out.println("\n\n" + children.size());
+							children.remove(w);
+							System.out.println("\n\n" + children.size());
+							server.moveFromUncompletedToUnassigned(w);
 							try {
 								w.dispose();
-								Log.log.newLine("User at " + w.getInetAdress() + " disconnected.");
+								if(server.getAdmins().contains(w)) {
+									Log.log.blankLine();
+									Log.log.newLine("Admin at " + w.getInetAdress() + " disconnected.");
+									Log.log.blankLine();
+								}
+								else {
+									Log.log.blankLine();
+									Log.log.newLine("Client at " + w.getInetAdress() + " disconnected.");
+									Log.log.blankLine();
+								}
+								
 								w.join();
-							} catch (IOException | InterruptedException e1) {
+							} catch (InterruptedException e1) {
 								Log.log.addError(e1);
 							}
-							children.remove(w);
-							server.moveFromUncompletedToUnassigned(w);
+							if(server.getAdmins().contains(w))
+								server.getAdmins().remove(w);
 						}
 					});
 					w.addMessageListener(new MessageListener() {

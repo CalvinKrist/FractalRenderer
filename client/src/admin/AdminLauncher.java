@@ -29,7 +29,7 @@ public class AdminLauncher {
 		loginFrame.setContentPane(loginPanel);
 		loginFrame.pack();
 		loginFrame.setLocationRelativeTo(null);
-		loginFrame.setResizable(false);
+		loginFrame.setResizable(true);
 		loginFrame.setVisible(true);
 		
 	}

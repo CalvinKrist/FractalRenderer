@@ -61,18 +61,24 @@ public class SocketWrapper extends Thread {
 
 	/**
 	 * clears up the data stored by the client
-	 * @throws IOException
 	 */
-	public void dispose() throws IOException {
-		objOut.close();
-		objIn.close();
+	public void dispose() {
+		try {
+			objOut.close();
+			objIn.close();
+		} catch(IOException e) {
+			
+		}
 	}
 	
 	public void sendMessage(Serializable m) {
 		try {
 			objOut.writeObject(m);
 			objOut.flush();
-			Log.log.newLine("Object sent to " + inetAdress + ": " + m.getClass().getName() + "." + m.toString());
+			if(m instanceof DataTag && ((DataTag)m).getId().equals("log"))
+				Log.log.newLine("Log sent to " + inetAdress);
+			else
+				Log.log.newLine(m.getClass().getSimpleName() + " sent to " + inetAdress + ": " + m.toString());
 		} catch (IOException e) {
 			connectListener.response(e);
 			try {
@@ -98,8 +104,10 @@ public class SocketWrapper extends Thread {
 			try {
 				Object m = objIn.readObject();
 				messageListener.messageRecieved(m);
-				Log.log.newLine("Object recieved from " + inetAdress + ": " + m.getClass().getName() + "." + m.toString());
-				
+				if(m instanceof DataTag && ((DataTag)m).getId().equals("log"))
+					Log.log.newLine("Log recieved from " + inetAdress);
+				else
+					Log.log.newLine(m.getClass().getSimpleName() + " recieved from " + inetAdress + ": " + m.toString());
 			} catch (IOException | ClassNotFoundException e) {
 				connectListener.response(e);
 				try {
@@ -108,6 +116,8 @@ public class SocketWrapper extends Thread {
 					Log.log.newLine("Unable to join SocketWrapper thread.");
 					Log.log.addError(e1);
 				}
+			} catch(ClassCastException e) {
+				Log.log.addError(e);
 			}
 		}
 	}

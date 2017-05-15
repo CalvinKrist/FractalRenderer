@@ -90,7 +90,6 @@ public class Server {
 				parameters.put(tag.getId(), r);
 			}
 			
-			
 			parameters.put("radius", database.getViewWidth("images", "videos") * zoomPercent);
 			parameters.put("dZoom", zoomPercent);
 			parameters.put("screenResolution", screenResolution);
@@ -117,10 +116,12 @@ public class Server {
 		children = new ArrayList<SocketWrapper>();
 		unnasignedJobs = new LinkedList<Job>();
 		uncompletedJobs = new HashMap<SocketWrapper, Queue<Job>>();
+		admins = new ArrayList<SocketWrapper>();
 
 		SocketAdder adder = new SocketAdder(children, this);
 		adder.start();
 
+		Log.log.blankLine();
 		Log.log.newLine("Server started.");
 	}
 
@@ -130,7 +131,38 @@ public class Server {
 			assignJob(sender);
 		} else if (o instanceof String) {
 			String s = (String) o;
+			switch(s) {
+			case "admin": Log.log.newLine("User " + sender.getInetAdress() + " promoted to ADMIN.");
+				admins.add(sender);
+				updateAdmin(sender);
+				break;
+			case "update": updateAdmin(sender);
+				break;
+			case "logRequest": sender.sendMessage(new DataTag("log", Log.log.getLog()));
+				break;
+			}
 		}
+	}
+	
+	private void updateAdmin(SocketWrapper admin) {
+		Map<String, Serializable> params = new HashMap<String, Serializable>();
+		double zoomLevel;
+			double zoom = parameters.getParameter("radius", Double.class);
+			for(Job b: unnasignedJobs)
+				zoom /= parameters.getParameter("dZoom", Double.class);
+			params.put("zoom", zoom);
+			zoomLevel = zoom;
+
+		params.put("location", parameters.getParameter("location"));
+		params.put("zSpeed", parameters.getParameter("dZoom"));
+		params.put("userCount", children.size());
+		try {
+			params.put("frameCount", (int)(Math.log(zoomLevel / 4) / Math.log(parameters.getParameter("dZoom", Double.class))));
+		} catch(Exception e) {
+			Log.log.addError(e);
+		}
+		Parameters param = new Parameters(params);
+		admin.sendMessage(param);
 	}
 
 	public void createNextRenderJobSet() {
@@ -161,7 +193,11 @@ public class Server {
 	 *            uncompleted to unassigned
 	 */
 	public void moveFromUncompletedToUnassigned(SocketWrapper w) {
+		if(uncompletedJobs == null)
+			return;
 		Queue<Job> jobs = uncompletedJobs.remove(w);
+		if(jobs == null)
+			return;
 		synchronized (unnasignedJobs) {
 			for (int i = 0; i < jobs.size(); i++)
 				unnasignedJobs.addAll(jobs);
@@ -171,6 +207,10 @@ public class Server {
 	
 	public Parameters getParameters() {
 		return parameters;
+	}
+	
+	public ArrayList<SocketWrapper> getAdmins() {
+		return admins;
 	}
 
 }
