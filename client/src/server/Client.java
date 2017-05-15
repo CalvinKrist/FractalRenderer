@@ -41,8 +41,10 @@ public class Client {
 	private RenderManager fractal;
 	
 	private String ipAdress;
-	
+		
 	public Client() {
+		Log.log.blankLine();
+		Log.log.newLine("Creating new client.");
 		fractal = null;
 		jobs = new LinkedList<Job>();
 		try {
@@ -56,7 +58,8 @@ public class Client {
 		Log.log.newLine("Connecting to server...");
 		
 		initializeServer();
-		Log.log.newLine("Succesfully connected to server.");
+		Log.log.newLine("Succesfully connected to server at " + ipAdress + ".");
+		NetworkManager.network.clientConnection(ipAdress);
 		doJob();
 	}
 	
@@ -75,7 +78,8 @@ public class Client {
 			Log.log.newLine("Connecting to server...");
 			
 			initializeServer();
-			Log.log.newLine("Succesfully connected to server.");
+			Log.log.newLine("Succesfully connected to server at " + ipAdress + ".");
+			NetworkManager.network.clientConnection(ipAdress);
 		}
 		Thread t = new Thread(new Runnable() {
 			public void run() {
@@ -96,7 +100,7 @@ public class Client {
 				public void response(Exception e) {
 					Log.log.newLine("Disconnected from server.");
 					Log.log.addError(e);
-					checkServer();
+					serverNotAvailable();
 				}
 			});
 			server.addMessageListener(new MessageListener() {
@@ -118,17 +122,23 @@ public class Client {
 				} catch(Exception e) {}
 			}
 		} catch (Exception e) {
-			Log.log.newLine("Server not available.");
 			Log.log.addError(e);
-			checkServer();
+			serverNotAvailable();
 		}
 	}
 	
-	//Checks to see if there is a new server to connect to. If not, attempts to become server.
-	private void checkServer() {
-		
+	public void serverNotAvailable() {
+		Log.log.newLine("Server not available. Checking for another server.");
+		String ipAdress = Utils.getServerIpAdress(database);
+		if(ipAdress.equals(this.ipAdress)) {
+			Log.log.newLine("No new server available");
+			NetworkManager.network.clientToServer();
+		} else {
+			this.ipAdress = ipAdress;
+			initializeServer();
+		}
 	}
-	
+
 	public void handleJob(Job j) {
 		synchronized(jobs) {
 			jobs.add(j);
@@ -187,6 +197,10 @@ public class Client {
 	
 	public void setFractal(RenderManager fractal) {
 		this.fractal = fractal;
+	}
+	
+	public void killClient() {
+		server.dispose();
 	}
 
 }

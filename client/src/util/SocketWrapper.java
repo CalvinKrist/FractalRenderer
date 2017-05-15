@@ -66,7 +66,8 @@ public class SocketWrapper extends Thread {
 		try {
 			objOut.close();
 			objIn.close();
-		} catch(IOException e) {
+			this.join();
+		} catch(IOException | InterruptedException e) {
 			
 		}
 	}
@@ -106,7 +107,7 @@ public class SocketWrapper extends Thread {
 				messageListener.messageRecieved(m);
 				if(m instanceof DataTag && ((DataTag)m).getId().equals("log"))
 					Log.log.newLine("Log recieved from " + inetAdress);
-				else
+				else if(m != null)
 					Log.log.newLine(m.getClass().getSimpleName() + " recieved from " + inetAdress + ": " + m.toString());
 			} catch (IOException | ClassNotFoundException e) {
 				connectListener.response(e);

@@ -57,6 +57,8 @@ public class SocketAdder extends Thread {
 								}
 								
 								w.join();
+								if(children.size() == 0)
+									NetworkManager.network.initalizeClient();
 							} catch (InterruptedException e1) {
 								Log.log.addError(e1);
 							}
@@ -76,6 +78,7 @@ public class SocketAdder extends Thread {
 					server.assignJob(w);
 					server.assignJob(w);
 					Log.log.newLine("User from " + w.getInetAdress() + " added to list.");
+					NetworkManager.network.newClientConnection(s.getInetAddress().getHostAddress());
 				}
 			} catch (IOException e) {
 				Log.log.addError(e);

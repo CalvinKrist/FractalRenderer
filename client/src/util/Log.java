@@ -37,8 +37,7 @@ public class Log {
 	
 	/**
 	 * singleton design to that even when a user switched from client to server, it has the same
-	 * log. An effect of this is that, when multiple instances of this program are run on the same
-	 * computer, they add to the same log.
+	 * log. In other words, each JVM instance shares a log
 	 */
 	private Log() {
 		logFile = "";

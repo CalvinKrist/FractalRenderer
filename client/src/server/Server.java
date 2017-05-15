@@ -64,9 +64,12 @@ public class Server {
 	private DatabaseCommunicator database;
 
 	private Parameters parameters;
+	
+	private SocketAdder adder;
 
 	public Server() {
-
+		Log.log.blankLine();
+		Log.log.newLine("Creating new server.");
 		try {
 			database = new DatabaseCommunicator("eoggPPnSY7QAAAAAAAAASuUXGkHwlV-0cO-lQYLiB0oZF8znalh0XXdg7sCipTuT");
 
@@ -118,7 +121,7 @@ public class Server {
 		uncompletedJobs = new HashMap<SocketWrapper, Queue<Job>>();
 		admins = new ArrayList<SocketWrapper>();
 
-		SocketAdder adder = new SocketAdder(children, this);
+		adder = new SocketAdder(children, this);
 		adder.start();
 
 		Log.log.blankLine();
@@ -211,6 +214,16 @@ public class Server {
 	
 	public ArrayList<SocketWrapper> getAdmins() {
 		return admins;
+	}
+	
+	public void killServer() {
+		for(SocketWrapper w: children)
+			w.dispose();
+		try {
+			adder.join();
+		} catch (InterruptedException e) {
+			Log.log.addError(e);
+		}
 	}
 
 }
