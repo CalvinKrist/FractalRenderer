@@ -1,15 +1,20 @@
 package application;
 
+import java.awt.AWTException;
 import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.Robot;
 import java.awt.Toolkit;
-import java.io.FileInputStream;
+import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 
 import gui.Window;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.embed.swing.SwingNode;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
@@ -42,8 +47,9 @@ public class FractalEditor extends Scene {
 	/**
 	 *
 	 * @throws FileNotFoundException
+	 * @throws AWTException 
 	 */
-	public void initialize() throws FileNotFoundException {
+	public void initialize() throws FileNotFoundException, AWTException {
 		SwingNode fractalEditor = new SwingNode();
 		TreeView parameters = new TreeView();
 		TreeView layers = new TreeView();
@@ -61,7 +67,11 @@ public class FractalEditor extends Scene {
 		});
 
 		ImageView fractalView = new ImageView();
-		fractalView.setImage(new Image(new FileInputStream("C:\\Users\\David\\Pictures\\butterfly.jpg")));
+		//fractalView.setImage(new Image(new FileInputStream("C:\\Users\\David\\Pictures\\butterfly.jpg")));
+		Robot robo = new Robot();
+		BufferedImage capture = robo.createScreenCapture(new Rectangle(0,0,Toolkit.getDefaultToolkit().getScreenSize().width,Toolkit.getDefaultToolkit().getScreenSize().height));
+		Image image = SwingFXUtils.toFXImage(capture, null);
+		fractalView.setImage(image);
 		fractalView.fitWidthProperty().bind(bp.minWidthProperty().subtract(trees.minWidthProperty()));
 		fractalView.fitHeightProperty().bind(bp.minHeightProperty().subtract(render.minHeightProperty().add(render.minHeightProperty().subtract(gradient.HEIGHT*65))));
 		//fractalView.setVisible(false);
@@ -73,15 +83,18 @@ public class FractalEditor extends Scene {
 
 		parameters.setRoot(new TreeItem("Parameters"));
 		parameters.getRoot().setExpanded(true);
-		parameters.getRoot().getChildren().add(new TreeItem("Something"));
 
+		TreeItem xPos = new TreeItem();
+		
+		parameters.getRoot().getChildren().addAll(xPos);
+		
 		layers.setRoot(new TreeItem("Layers"));
 		layers.getRoot().setExpanded(true);
-		layers.getRoot().getChildren().add(new TreeItem("Layer1"));
+
 
 
 		fractalEditor.setOnMouseEntered(e -> gradient.repaint());
-		fractalEditor.setOnMouseClicked(e -> gradient.repaint());
+		//fractalEditor.setOnMouseClicked(e -> gradient.repaint());
 
 		trees.getChildren().addAll(parameters, layers);
 		//trees.setPadding(new Insets(5));
