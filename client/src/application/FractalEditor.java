@@ -60,7 +60,7 @@ public class FractalEditor extends Scene {
 		
 
 		ImageView fractalView = new ImageView();
-		fractalView.setImage(new Image(new FileInputStream("C:\\Users\\David\\Pictures\\butterfly.jpg")));
+		fractalView.setImage(new Image(new FileInputStream("C:\\Untitled.png")));
 		fractalView.fitWidthProperty().bind(bp.minWidthProperty().subtract(trees.minWidthProperty()));
 		fractalView.fitHeightProperty().bind(bp.minHeightProperty().subtract(render.minHeightProperty()));
 		//fractalView.setFitWidth(width-200);
