@@ -38,11 +38,19 @@ public class SocketWrapper extends Thread {
 	
 	protected String inetAdress;
 	
-	public SocketWrapper(Socket s) throws IOException {
+	private Log log;
+	
+	private Socket socket;
+	
+	public volatile boolean running = true;
+	
+	public SocketWrapper(Socket s, Log log) throws IOException {
+		this.log = log;
 		objOut = new ObjectOutputStream(s.getOutputStream());
 		objIn = new ObjectInputStream(s.getInputStream());
 		inetAdress = s.getInetAddress().getHostAddress();
-
+		this.socket = s;
+		
 		connectListener = new NoConnectionListener() {
 			public void response(Exception e) {
 				System.out.println("Disconnected.");
@@ -58,36 +66,19 @@ public class SocketWrapper extends Thread {
 		
 		this.start();
 	}
-
-	/**
-	 * clears up the data stored by the client
-	 */
-	public void dispose() {
-		try {
-			objOut.close();
-			objIn.close();
-		} catch(IOException e) {
-			
-		}
-	}
 	
 	public void sendMessage(Serializable m) {
 		try {
 			objOut.writeObject(m);
 			objOut.flush();
 			if(m instanceof DataTag && ((DataTag)m).getId().equals("log"))
-				Log.log.newLine("Log sent to " + inetAdress);
+				log.newLine("Log sent to " + inetAdress);
 			else
-				Log.log.newLine(m.getClass().getSimpleName() + " sent to " + inetAdress + ": " + m.toString());
+				log.newLine(m.getClass().getSimpleName() + " sent to " + inetAdress + ": " + m.toString());
 		} catch (IOException e) {
+			System.out.println("no response");
+			log.addError(e);
 			connectListener.response(e);
-			try {
-				this.join();
-			} catch (InterruptedException e1) {
-				Log.log.newLine("Unable to join SocketWrapper thread.");
-				Log.log.addError(e1);
-			}
-			
 		}
 	}
 	
@@ -100,30 +91,38 @@ public class SocketWrapper extends Thread {
 	}
 	
 	public void run() {
-		while(true) {
+		while(running) {
 			try {
 				Object m = objIn.readObject();
 				messageListener.messageRecieved(m);
 				if(m instanceof DataTag && ((DataTag)m).getId().equals("log"))
-					Log.log.newLine("Log recieved from " + inetAdress);
+					log.newLine("Log recieved from " + inetAdress);
 				else
-					Log.log.newLine(m.getClass().getSimpleName() + " recieved from " + inetAdress + ": " + m.toString());
+					log.newLine(m.getClass().getSimpleName() + " recieved from " + inetAdress + ": " + m.toString());
 			} catch (IOException | ClassNotFoundException e) {
+				log.addError(e);
 				connectListener.response(e);
-				try {
-					this.join();
-				} catch (InterruptedException e1) {
-					Log.log.newLine("Unable to join SocketWrapper thread.");
-					Log.log.addError(e1);
-				}
 			} catch(ClassCastException e) {
-				Log.log.addError(e);
+				log.addError(e);
 			}
 		}
+		try {
+			objIn.close();
+			objOut.close();
+			socket.close();
+		} catch (IOException e1) {
+			log.addError(e1);
+		}
+		
+		log.newLine("SocketWrapper sucesfully closed.");
 	}
 	
 	public String getInetAdress() {
 		return inetAdress;
+	}
+	
+	public void close() {
+		running = false;
 	}
 	
 }

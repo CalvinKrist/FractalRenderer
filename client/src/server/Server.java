@@ -64,29 +64,49 @@ public class Server {
 	private DatabaseCommunicator database;
 
 	private Parameters parameters;
+	
+	private SocketAdder adder;
+	
+	private Log log;
 
-	public Server() {
-
+	public Server(Log log) {
+		this.log = log;
+		log.blankLine();
+		log.newLine("Creating new server.");
 		try {
 			database = new DatabaseCommunicator("eoggPPnSY7QAAAAAAAAASuUXGkHwlV-0cO-lQYLiB0oZF8znalh0XXdg7sCipTuT");
+			
+			try {
+
+				String externalIP;
+				externalIP = Utils.getExternalIP();
+				InetAddress i = InetAddress.getLocalHost();
+				String internalIP = i.getHostAddress();
+				
+				database.uploadByString("<external:" + externalIP + ">\n<internal:" + internalIP + ">", "ipAdress.txt");
+				log.newLine("IPAdress added to database.");
+			} catch (IOException e) {
+				e.printStackTrace();
+				log.addError(e);
+			}
 
 			HashMap<String, Serializable> parameters = new HashMap<String, Serializable>();
 			Scanner s = new Scanner(database.downloadFileAsString("parameters.txt"));
 			Dimension screenResolution = new Dimension(Integer.valueOf(new DataTag(s.nextLine()).getValue()),
 					Integer.valueOf(new DataTag(s.nextLine()).getValue()));
-			Log.log.newLine("Screen resolution: " + screenResolution.toString());
+			log.newLine("Screen resolution: " + screenResolution.toString());
 			Double zoomPercent = Double.valueOf(new DataTag(s.nextLine()).getValue());
-			Log.log.newLine("Zoom percent: " + zoomPercent);
+			log.newLine("Zoom percent: " + zoomPercent);
 			Point position = new Point(Double.valueOf(new DataTag(s.nextLine()).getValue()),
 					Double.valueOf(new DataTag(s.nextLine()).getValue()));
-			Log.log.newLine("Position: " + position.toString());
+			log.newLine("Position: " + position.toString());
 			while(s.hasNextLine()) {
 				DataTag tag = new DataTag(s.nextLine());
 				Class<?> c = Class.forName("fractal." + tag.getValue());
 				Renderer r = (Renderer)c.newInstance();
 				database.downloadFile(tag.getId() + ".palette", tag.getId() + ".palette");
 				r.setColorPalette(new Palette(tag.getId() + ".palette", true));
-				Log.log.newLine("New render layer: " + tag.getId() + " " + c.getName());
+				log.newLine("New render layer: " + tag.getId() + " " + c.getName());
 				parameters.put(tag.getId(), r);
 			}
 			
@@ -97,20 +117,7 @@ public class Server {
 			this.parameters = new Parameters(parameters);
 		} catch (DbxException | ClassNotFoundException | InstantiationException | IllegalAccessException e1) {
 			e1.printStackTrace();
-			Log.log.addError(e1);
-		}
-		try {
-
-			String externalIP;
-			externalIP = Utils.getExternalIP();
-			InetAddress i = InetAddress.getLocalHost();
-			String internalIP = i.getHostAddress();
-			
-			database.uploadByString("<external:" + externalIP + ">\n<internal:" + internalIP + ">", "ipAdress.txt");
-			Log.log.newLine("IPAdress added to database.");
-		} catch (IOException e) {
-			e.printStackTrace();
-			Log.log.addError(e);
+			log.addError(e1);
 		}
 
 		children = new ArrayList<SocketWrapper>();
@@ -118,11 +125,11 @@ public class Server {
 		uncompletedJobs = new HashMap<SocketWrapper, Queue<Job>>();
 		admins = new ArrayList<SocketWrapper>();
 
-		SocketAdder adder = new SocketAdder(children, this);
+		adder = new SocketAdder(children, this);
 		adder.start();
 
-		Log.log.blankLine();
-		Log.log.newLine("Server started.");
+		log.blankLine();
+		log.newLine("Server started.");
 	}
 
 	public void handleMessage(Object o, SocketWrapper sender) {
@@ -132,13 +139,13 @@ public class Server {
 		} else if (o instanceof String) {
 			String s = (String) o;
 			switch(s) {
-			case "admin": Log.log.newLine("User " + sender.getInetAdress() + " promoted to ADMIN.");
+			case "admin": log.newLine("User " + sender.getInetAdress() + " promoted to ADMIN.");
 				admins.add(sender);
 				updateAdmin(sender);
 				break;
 			case "update": updateAdmin(sender);
 				break;
-			case "logRequest": sender.sendMessage(new DataTag("log", Log.log.getLog()));
+			case "logRequest": sender.sendMessage(new DataTag("log", log.getLog()));
 				break;
 			}
 		}
@@ -159,14 +166,14 @@ public class Server {
 		try {
 			params.put("frameCount", (int)(Math.log(zoomLevel / 4) / Math.log(parameters.getParameter("dZoom", Double.class))));
 		} catch(Exception e) {
-			Log.log.addError(e);
+			log.addError(e);
 		}
 		Parameters param = new Parameters(params);
 		admin.sendMessage(param);
 	}
 
 	public void createNextRenderJobSet() {
-		Log.log.newLine("New render job created at " + 1 / parameters.getParameter("radius", Double.class));
+		log.newLine("New render job created at " + 1 / parameters.getParameter("radius", Double.class));
 		Map<String, Serializable> params = new HashMap<String, Serializable>(4);
 		params.put("zoom", 1 / parameters.getParameter("radius", Double.class));
 		Parameters p = new Parameters(params);
@@ -206,11 +213,20 @@ public class Server {
 	}
 	
 	public Parameters getParameters() {
+		System.out.println("returning parametrs " + parameters);
 		return parameters;
 	}
 	
 	public ArrayList<SocketWrapper> getAdmins() {
 		return admins;
+	}
+	
+	public void killServer() {
+		//TODO: shut down server
+	}
+	
+	public Log getLog() {
+		return log;
 	}
 
 }
