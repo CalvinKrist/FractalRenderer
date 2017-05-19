@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.net.Socket;
 import java.text.DecimalFormat;
 import java.util.Scanner;
@@ -57,7 +58,7 @@ public class Display extends JPanel implements Runnable {
 	
 	private SocketWrapper server;
 	
-	private Client client;
+	//private AdminClient client;
 	
 	private DatabaseCommunicator database;
 	
@@ -65,38 +66,44 @@ public class Display extends JPanel implements Runnable {
 	
 	private Thread t;
 	
+	private Log log;
+	
 	public Display() {
-		client = new Client(false);
+		log = new Log();
+		log.setLogLevel(Log.LEVEL_LOG);
+		log.setPrintLevel(Log.LEVEL_LOG);
+		log.setPrintStream(System.out);
+		//client = new AdminClient(log);
 		df = new DecimalFormat("0.###E0");
 		try {
 			database = new DatabaseCommunicator("eoggPPnSY7QAAAAAAAAASuUXGkHwlV-0cO-lQYLiB0oZF8znalh0XXdg7sCipTuT");
-			Log.log.newLine("Database connection established.");
+			log.newLine("Database connection established.");
 		} catch (DbxException e2) {
 			e2.printStackTrace();
-			Log.log.newLine("Unable to connect to database.");
-			Log.log.addError(e2);
+			log.newLine("Unable to connect to database.");
+			log.addError(e2);
 		}
 		String serverIP = Utils.getServerIpAdress(database);
 		try {
-			server = new SocketWrapper(new Socket(serverIP, Constants.PORT));
-			Log.log.newLine("Connected to server.");
+			log.newLine("Connecting to server at " + serverIP + ".");
+			server = new SocketWrapper(new Socket(serverIP, Constants.PORT), log);
+			log.newLine("Connected to server.");
 			server.addMessageListener(new MessageListener() {
 				public void messageRecieved(Object m) {
-					System.out.println(m);
 					handleMessage(m);
 				}
 			});
 			server.addNoConnectionListener(new NoConnectionListener() {
 				public void response(Exception e) {
+					log.newLine("Server diconnected.");
+					log.addError(e);
 					//TODO: if there's no connection...
 				}
 			});
-			client.setServer(server);
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, "Server not available.");
 			System.exit(0);
 		}
-		
 		this.setLayout(new BorderLayout());
 		this.setBackground(bgColor);
 		
@@ -283,11 +290,17 @@ public class Display extends JPanel implements Runnable {
 		server.sendMessage("admin");
 		while(true) {
 			try {
-				t.sleep(2000);
+				t.sleep(5000);
 			} catch (InterruptedException e) {
-				Log.log.addError(e);
+				log.addError(e);
 			}
-			server.sendMessage("update");
+			sendMessage("update");
+		}
+	}
+	
+	public void sendMessage(Serializable j) {
+		synchronized(server) {
+			server.sendMessage(j);
 		}
 	}
 	
@@ -298,14 +311,12 @@ public class Display extends JPanel implements Runnable {
 	public void handleMessage(Object o) {
 		if(o instanceof Parameters) {
 			Parameters params = (Parameters)o;
-			//System.out.println(params);
 			if(params.contains("screenResolution")) {
-				client.setFractal(new RenderManager(params));
+				//client.setFractal(new RenderManager(params));
 				return;
 			}
 			else if(!params.contains("zoom"))
 				return;
-			System.out.println("SUCCESS");
 			if(allTextFieldsEmpty()) {
 				zoom.setText(df.format(1 / params.getParameter("zoom", Double.class)) + "");
 				xPos.setText(params.getParameter("location", util.Point.class).x + "");
@@ -355,7 +366,7 @@ public class Display extends JPanel implements Runnable {
 							out.flush();
 							out.close();
 						} catch (FileNotFoundException e1) {
-							Log.log.addError(e1);
+							log.addError(e1);
 						}
 					}
 				});
@@ -368,7 +379,7 @@ public class Display extends JPanel implements Runnable {
 				f.setVisible(true);
 			}
 		} else if(o instanceof Job) {
-			client.handleJob((Job)o);
+			//client.doJob((Job)o);
 		}
 		
 	}

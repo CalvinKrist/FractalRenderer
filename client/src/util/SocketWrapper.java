@@ -94,15 +94,19 @@ public class SocketWrapper extends Thread {
 		while(running) {
 			try {
 				Object m = objIn.readObject();
+				System.out.println(m);
 				messageListener.messageRecieved(m);
 				if(m instanceof DataTag && ((DataTag)m).getId().equals("log"))
 					log.newLine("Log recieved from " + inetAdress);
 				else
 					log.newLine(m.getClass().getSimpleName() + " recieved from " + inetAdress + ": " + m.toString());
-			} catch (IOException | ClassNotFoundException e) {
+			} catch (IOException e) {
 				log.addError(e);
+				System.out.println();
 				connectListener.response(e);
 			} catch(ClassCastException e) {
+				log.addError(e);
+			} catch(ClassNotFoundException e) {
 				log.addError(e);
 			}
 		}

@@ -36,7 +36,7 @@ import util.Utils;
  * @author Calvin
  *
  */
-public class Server {
+public class Server extends NetworkNode {
 
 	/**
 	 * A queue of unassigned jobs that need to be done
@@ -58,67 +58,62 @@ public class Server {
 	 */
 	private ArrayList<SocketWrapper> admins;
 
-	/**
-	 * 
-	 */
-	private DatabaseCommunicator database;
-
 	private Parameters parameters;
-	
+
 	private SocketAdder adder;
-	
-	private Log log;
 
 	public Server(Log log) {
-		this.log = log;
+		super(log);
 		log.blankLine();
 		log.newLine("Creating new server.");
+
 		try {
-			database = new DatabaseCommunicator("eoggPPnSY7QAAAAAAAAASuUXGkHwlV-0cO-lQYLiB0oZF8znalh0XXdg7sCipTuT");
-			
+
+			String externalIP;
+			externalIP = Utils.getExternalIP();
+			InetAddress i = InetAddress.getLocalHost();
+			String internalIP = i.getHostAddress();
+
+			database.uploadByString("<external:" + externalIP + ">\n<internal:" + internalIP + ">", "ipAdress.txt");
+			log.newLine("IPAdress added to database.");
+		} catch (IOException e) {
+			e.printStackTrace();
+			log.addError(e);
+		}
+
+		HashMap<String, Serializable> parameters = new HashMap<String, Serializable>();
+		Scanner s = new Scanner(database.downloadFileAsString("parameters.txt"));
+		Dimension screenResolution = new Dimension(Integer.valueOf(new DataTag(s.nextLine()).getValue()),
+				Integer.valueOf(new DataTag(s.nextLine()).getValue()));
+		log.newLine("Screen resolution: " + screenResolution.toString());
+		Double zoomPercent = Double.valueOf(new DataTag(s.nextLine()).getValue());
+		log.newLine("Zoom percent: " + zoomPercent);
+		Point position = new Point(Double.valueOf(new DataTag(s.nextLine()).getValue()),
+				Double.valueOf(new DataTag(s.nextLine()).getValue()));
+		log.newLine("Position: " + position.toString());
+		while (s.hasNextLine()) {
 			try {
-
-				String externalIP;
-				externalIP = Utils.getExternalIP();
-				InetAddress i = InetAddress.getLocalHost();
-				String internalIP = i.getHostAddress();
-				
-				database.uploadByString("<external:" + externalIP + ">\n<internal:" + internalIP + ">", "ipAdress.txt");
-				log.newLine("IPAdress added to database.");
-			} catch (IOException e) {
-				e.printStackTrace();
-				log.addError(e);
-			}
-
-			HashMap<String, Serializable> parameters = new HashMap<String, Serializable>();
-			Scanner s = new Scanner(database.downloadFileAsString("parameters.txt"));
-			Dimension screenResolution = new Dimension(Integer.valueOf(new DataTag(s.nextLine()).getValue()),
-					Integer.valueOf(new DataTag(s.nextLine()).getValue()));
-			log.newLine("Screen resolution: " + screenResolution.toString());
-			Double zoomPercent = Double.valueOf(new DataTag(s.nextLine()).getValue());
-			log.newLine("Zoom percent: " + zoomPercent);
-			Point position = new Point(Double.valueOf(new DataTag(s.nextLine()).getValue()),
-					Double.valueOf(new DataTag(s.nextLine()).getValue()));
-			log.newLine("Position: " + position.toString());
-			while(s.hasNextLine()) {
 				DataTag tag = new DataTag(s.nextLine());
 				Class<?> c = Class.forName("fractal." + tag.getValue());
-				Renderer r = (Renderer)c.newInstance();
+				Renderer r = (Renderer) c.newInstance();
 				database.downloadFile(tag.getId() + ".palette", tag.getId() + ".palette");
 				r.setColorPalette(new Palette(tag.getId() + ".palette", true));
 				log.newLine("New render layer: " + tag.getId() + " " + c.getName());
 				parameters.put(tag.getId(), r);
+			} catch(ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+				log.addError(e);
 			}
-			
-			parameters.put("radius", database.getViewWidth("images", "videos") * zoomPercent);
-			parameters.put("dZoom", zoomPercent);
-			parameters.put("screenResolution", screenResolution);
-			parameters.put("location", position);
-			this.parameters = new Parameters(parameters);
-		} catch (DbxException | ClassNotFoundException | InstantiationException | IllegalAccessException e1) {
-			e1.printStackTrace();
-			log.addError(e1);
 		}
+
+		try {
+			parameters.put("radius", database.getViewWidth("images", "videos") * zoomPercent);
+		} catch(DbxException e) {
+			log.addError(e);
+		}
+		parameters.put("dZoom", zoomPercent);
+		parameters.put("screenResolution", screenResolution);
+		parameters.put("location", position);
+		this.parameters = new Parameters(parameters);
 
 		children = new ArrayList<SocketWrapper>();
 		unnasignedJobs = new LinkedList<Job>();
@@ -134,38 +129,42 @@ public class Server {
 
 	public void handleMessage(Object o, SocketWrapper sender) {
 		if (o instanceof Job) {
-			uncompletedJobs.get(sender).remove((Job)o);
+			uncompletedJobs.get(sender).remove((Job) o);
 			assignJob(sender);
 		} else if (o instanceof String) {
 			String s = (String) o;
-			switch(s) {
-			case "admin": log.newLine("User " + sender.getInetAdress() + " promoted to ADMIN.");
+			switch (s) {
+			case "admin":
+				log.newLine("User " + sender.getInetAdress() + " promoted to ADMIN.");
 				admins.add(sender);
 				updateAdmin(sender);
 				break;
-			case "update": updateAdmin(sender);
+			case "update":
+				updateAdmin(sender);
 				break;
-			case "logRequest": sender.sendMessage(new DataTag("log", log.getLog()));
+			case "logRequest":
+				sender.sendMessage(new DataTag("log", log.getLog()));
 				break;
 			}
 		}
 	}
-	
+
 	private void updateAdmin(SocketWrapper admin) {
 		Map<String, Serializable> params = new HashMap<String, Serializable>();
 		double zoomLevel;
-			double zoom = parameters.getParameter("radius", Double.class);
-			for(Job b: unnasignedJobs)
-				zoom /= parameters.getParameter("dZoom", Double.class);
-			params.put("zoom", zoom);
-			zoomLevel = zoom;
+		double zoom = parameters.getParameter("radius", Double.class);
+		for (Job b : unnasignedJobs)
+			zoom /= parameters.getParameter("dZoom", Double.class);
+		params.put("zoom", zoom);
+		zoomLevel = zoom;
 
 		params.put("location", parameters.getParameter("location"));
 		params.put("zSpeed", parameters.getParameter("dZoom"));
 		params.put("userCount", children.size());
 		try {
-			params.put("frameCount", (int)(Math.log(zoomLevel / 4) / Math.log(parameters.getParameter("dZoom", Double.class))));
-		} catch(Exception e) {
+			params.put("frameCount",
+					(int) (Math.log(zoomLevel / 4) / Math.log(parameters.getParameter("dZoom", Double.class))));
+		} catch (Exception e) {
 			log.addError(e);
 		}
 		Parameters param = new Parameters(params);
@@ -179,7 +178,8 @@ public class Server {
 		Parameters p = new Parameters(params);
 		Job b = new Job("render_" + parameters.getParameter("radius") + "_", p);
 		unnasignedJobs.add(b);
-		parameters.put("radius", parameters.getParameter("radius", Double.class) * parameters.getParameter("dZoom", Double.class));
+		parameters.put("radius",
+				parameters.getParameter("radius", Double.class) * parameters.getParameter("dZoom", Double.class));
 	}
 
 	public void assignJob(SocketWrapper w) {
@@ -200,10 +200,10 @@ public class Server {
 	 *            uncompleted to unassigned
 	 */
 	public void moveFromUncompletedToUnassigned(SocketWrapper w) {
-		if(uncompletedJobs == null)
+		if (uncompletedJobs == null)
 			return;
 		Queue<Job> jobs = uncompletedJobs.remove(w);
-		if(jobs == null)
+		if (jobs == null)
 			return;
 		synchronized (unnasignedJobs) {
 			for (int i = 0; i < jobs.size(); i++)
@@ -211,22 +211,18 @@ public class Server {
 			unnasignedJobs.sort(new JobComparator());
 		}
 	}
-	
+
 	public Parameters getParameters() {
 		System.out.println("returning parametrs " + parameters);
 		return parameters;
 	}
-	
+
 	public ArrayList<SocketWrapper> getAdmins() {
 		return admins;
 	}
-	
-	public void killServer() {
-		//TODO: shut down server
-	}
-	
-	public Log getLog() {
-		return log;
+
+	public void kill() {
+		// TODO: shut down server
 	}
 
 }

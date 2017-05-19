@@ -18,7 +18,7 @@ import util.Parameters;
 import util.SocketWrapper;
 import util.Utils;
 
-public class Client {
+public class Client extends NetworkNode {
 
 	/**
 	 * the job the client is assigned
@@ -41,24 +41,15 @@ public class Client {
 	private RenderManager fractal;
 	
 	private String ipAdress;
-	
-	private Log log;
-	
+		
 	public boolean running = true;
 		
 	public Client(Log log) {
-		this.log = log;
+		super(log);
 		log.blankLine();
 		log.newLine("Creating new client.");
 		fractal = null;
 		jobs = new LinkedList<Job>();
-		try {
-			database = new DatabaseCommunicator("eoggPPnSY7QAAAAAAAAASuUXGkHwlV-0cO-lQYLiB0oZF8znalh0XXdg7sCipTuT");
-		} catch (DbxException e2) {
-			e2.printStackTrace();
-			log.newLine("Unable to connect to database.");
-			log.addError(e2);
-		}
 		ipAdress = Utils.getServerIpAdress(database);
 		log.newLine("Connecting to server...");
 		
@@ -66,33 +57,6 @@ public class Client {
 		log.newLine("Succesfully connected to server at " + ipAdress + ".");
 		//NetworkManager.network.clientConnection(ipAdress);
 		doJob();
-	}
-	
-	public Client(boolean connectToServer, Log log) {
-		this.log = log;
-		fractal = null;
-		jobs = new LinkedList<Job>();
-		try {
-			database = new DatabaseCommunicator("eoggPPnSY7QAAAAAAAAASuUXGkHwlV-0cO-lQYLiB0oZF8znalh0XXdg7sCipTuT");
-		} catch (DbxException e2) {
-			e2.printStackTrace();
-			log.newLine("Unable to connect to database.");
-			log.addError(e2);
-		}
-		if(connectToServer) {
-			ipAdress = Utils.getServerIpAdress(database);
-			log.newLine("Connecting to server...");
-			
-			initializeServer();
-			log.newLine("Succesfully connected to server at " + ipAdress + ".");
-			//NetworkManager.network.clientConnection(ipAdress);
-		}
-		Thread t = new Thread(new Runnable() {
-			public void run() {
-				doJob();
-			}
-		});
-		t.start();
 	}
 	
 	public void handleString(String s) {
@@ -187,17 +151,6 @@ public class Client {
 		
 	}
 	
-	public void setServer(SocketWrapper server) {
-		if(this.server != null) 
-			try {
-				//TODO: close server correctly
-				this.server.join();
-			} catch(InterruptedException e) {
-				log.addError(e);
-			}
-		this.server = server;
-	}
-	
 	public RenderManager getFractal() {
 		return fractal;
 	}
@@ -205,9 +158,10 @@ public class Client {
 	public void setFractal(RenderManager fractal) {
 		this.fractal = fractal;
 	}
-	
-	public void killClient() {
-		//TODO: kill client correctly
+
+	@Override
+	public void kill() {
+		//TODO: implement kill method properly
 	}
 
 }
