@@ -67,11 +67,13 @@ public class FractalEditor extends Scene {
 		});
 
 		ImageView fractalView = new ImageView();
+
 		//fractalView.setImage(new Image(new FileInputStream("C:\\Users\\David\\Pictures\\butterfly.jpg")));
 		Robot robo = new Robot();
 		BufferedImage capture = robo.createScreenCapture(new Rectangle(0,0,Toolkit.getDefaultToolkit().getScreenSize().width,Toolkit.getDefaultToolkit().getScreenSize().height));
 		Image image = SwingFXUtils.toFXImage(capture, null);
 		fractalView.setImage(image);
+
 		fractalView.fitWidthProperty().bind(bp.minWidthProperty().subtract(trees.minWidthProperty()));
 		fractalView.fitHeightProperty().bind(bp.minHeightProperty().subtract(render.minHeightProperty().add(render.minHeightProperty().subtract(gradient.HEIGHT*65))));
 		//fractalView.setVisible(false);
