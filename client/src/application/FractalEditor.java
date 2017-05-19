@@ -1,6 +1,7 @@
 package application;
 
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
@@ -9,6 +10,7 @@ import javafx.embed.swing.SwingNode;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -23,12 +25,12 @@ public class FractalEditor extends Scene {
 
 	/**
 	 * This instantiates the Fractal Editor scene
-	 * 
+	 *
 	 * @param x
 	 *            width
 	 * @param y
 	 *            height
-	 * @throws FileNotFoundException 
+	 * @throws FileNotFoundException
 	 */
 	public FractalEditor(int x, int y) throws FileNotFoundException {
 		super(new BorderPane(),x,y);
@@ -38,7 +40,7 @@ public class FractalEditor extends Scene {
 		//initialize();
 	}
 	/**
-	 * 
+	 *
 	 * @throws FileNotFoundException
 	 */
 	public void initialize() throws FileNotFoundException {
@@ -48,46 +50,56 @@ public class FractalEditor extends Scene {
 		VBox trees = new VBox();
 		trees.minHeightProperty().bind(bp.minHeightProperty());
 		trees.minWidthProperty().bind(bp.minWidthProperty().divide(6));
-		Dimension d = new Dimension(width-350, 200);
-		gradient = new Window(d, 50);
-		
+		bp.setPadding(new Insets(5));
+
+
 		Button render = new Button("Render");
 		render.minWidthProperty().bind(trees.minWidthProperty());
 		render.minHeightProperty().bind(trees.minHeightProperty().divide(6));
 		render.setOnAction(e -> {
-			
+
 		});
-		
 
 		ImageView fractalView = new ImageView();
 		fractalView.setImage(new Image(new FileInputStream("C:\\Untitled.png")));
 		fractalView.fitWidthProperty().bind(bp.minWidthProperty().subtract(trees.minWidthProperty()));
-		fractalView.fitHeightProperty().bind(bp.minHeightProperty().subtract(render.minHeightProperty()));
-		//fractalView.setFitWidth(width-200);
-		//fractalView.setFitHeight(height-200);
-		
-		
-		
+		fractalView.fitHeightProperty().bind(bp.minHeightProperty().subtract(render.minHeightProperty().add(render.minHeightProperty().subtract(gradient.HEIGHT*65))));
+		//fractalView.setVisible(false);
+
+		Dimension p = new Dimension((int)(Toolkit.getDefaultToolkit().getScreenSize().width*0.75),Toolkit.getDefaultToolkit().getScreenSize().height/6);
+		System.out.println(p);
+
+		gradient = new Window(p, 50);
+
+		parameters.setRoot(new TreeItem("Parameters"));
+		parameters.getRoot().setExpanded(true);
+		parameters.getRoot().getChildren().add(new TreeItem("Something"));
+
+		layers.setRoot(new TreeItem("Layers"));
+		layers.getRoot().setExpanded(true);
+		layers.getRoot().getChildren().add(new TreeItem("Layer1"));
+
+
 		fractalEditor.setOnMouseEntered(e -> gradient.repaint());
 		fractalEditor.setOnMouseClicked(e -> gradient.repaint());
 
 		trees.getChildren().addAll(parameters, layers);
-		trees.setPadding(new Insets(5));
-		
+		//trees.setPadding(new Insets(5));
+
 		VBox center = new VBox();
 		center.getChildren().addAll(fractalView,fractalEditor);
-		center.setPadding(new Insets(20));
-		
-		
+		//center.setPadding(new Insets(5));
+
+
 		trees.getChildren().add(render);
 
 		bp.setCenter(center);
 		bp.setRight(trees);
-		
+
 		bp.minWidthProperty().bind(this.widthProperty());
 		bp.minHeightProperty().bind(this.heightProperty());
 		fractalEditor.setContent(gradient);
 	}
-	
+
 
 }
