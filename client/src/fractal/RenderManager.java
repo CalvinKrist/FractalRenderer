@@ -71,6 +71,15 @@ public class RenderManager {
 		renderImage(filePath, title, img);
 	}
 	
+	public BufferedImage getImage() {
+		int[][] pixels = new int[screenResolution.width][screenResolution.height];
+		BufferedImage img = new BufferedImage(screenResolution.width, screenResolution.height, BufferedImage.TYPE_INT_ARGB);
+		for(Renderer r: layers)
+			r.render(pixels);
+		setPixels(img, pixels);
+		return img;
+	}
+	
 	public void renderMovie(String filePath, double zoomSpeed, String title) {
 		int frame = 1;
 		while(true) {
