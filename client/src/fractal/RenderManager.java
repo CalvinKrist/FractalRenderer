@@ -141,11 +141,11 @@ public class RenderManager {
 	public String toString() {
 		String s = "";
 		s += "Location: " + location.toString();
-		s += "\nZoom: " + zoom;
-		s += "\nScreen Resolution: " + screenResolution.toString();
-		s += "\nReal Resolution: " + realResolution.toString();
+		s += "    Zoom: " + zoom;
+		s += "    Screen Resolution: " + screenResolution.toString();
+		s += "    Real Resolution: " + realResolution.toString();
 		for(int i = 0; i < layers.length; i++)
-			s += "\nLayer " + (i + 1) + ": " + layers[i].getClass().getName();
+			s += "    Layer " + (i + 1) + ": " + layers[i].getClass().getName();
 		return s;
 	}
 

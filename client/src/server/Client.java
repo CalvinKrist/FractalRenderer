@@ -41,45 +41,51 @@ public class Client {
 	private RenderManager fractal;
 	
 	private String ipAdress;
+	
+	private Log log;
+	
+	public boolean running = true;
 		
-	public Client() {
-		Log.log.blankLine();
-		Log.log.newLine("Creating new client.");
+	public Client(Log log) {
+		this.log = log;
+		log.blankLine();
+		log.newLine("Creating new client.");
 		fractal = null;
 		jobs = new LinkedList<Job>();
 		try {
 			database = new DatabaseCommunicator("eoggPPnSY7QAAAAAAAAASuUXGkHwlV-0cO-lQYLiB0oZF8znalh0XXdg7sCipTuT");
 		} catch (DbxException e2) {
 			e2.printStackTrace();
-			Log.log.newLine("Unable to connect to database.");
-			Log.log.addError(e2);
+			log.newLine("Unable to connect to database.");
+			log.addError(e2);
 		}
 		ipAdress = Utils.getServerIpAdress(database);
-		Log.log.newLine("Connecting to server...");
+		log.newLine("Connecting to server...");
 		
 		initializeServer();
-		Log.log.newLine("Succesfully connected to server at " + ipAdress + ".");
-		NetworkManager.network.clientConnection(ipAdress);
+		log.newLine("Succesfully connected to server at " + ipAdress + ".");
+		//NetworkManager.network.clientConnection(ipAdress);
 		doJob();
 	}
 	
-	public Client(boolean connectToServer) {
+	public Client(boolean connectToServer, Log log) {
+		this.log = log;
 		fractal = null;
 		jobs = new LinkedList<Job>();
 		try {
 			database = new DatabaseCommunicator("eoggPPnSY7QAAAAAAAAASuUXGkHwlV-0cO-lQYLiB0oZF8znalh0XXdg7sCipTuT");
 		} catch (DbxException e2) {
 			e2.printStackTrace();
-			Log.log.newLine("Unable to connect to database.");
-			Log.log.addError(e2);
+			log.newLine("Unable to connect to database.");
+			log.addError(e2);
 		}
 		if(connectToServer) {
 			ipAdress = Utils.getServerIpAdress(database);
-			Log.log.newLine("Connecting to server...");
+			log.newLine("Connecting to server...");
 			
 			initializeServer();
-			Log.log.newLine("Succesfully connected to server at " + ipAdress + ".");
-			NetworkManager.network.clientConnection(ipAdress);
+			log.newLine("Succesfully connected to server at " + ipAdress + ".");
+			//NetworkManager.network.clientConnection(ipAdress);
 		}
 		Thread t = new Thread(new Runnable() {
 			public void run() {
@@ -95,11 +101,11 @@ public class Client {
 	
 	private void initializeServer() {
 		try {
-			server = new SocketWrapper(new Socket(ipAdress, Constants.PORT));
+			server = new SocketWrapper(new Socket(ipAdress, Constants.PORT), log);
 			server.addNoConnectionListener(new NoConnectionListener() {
 				public void response(Exception e) {
-					Log.log.newLine("Disconnected from server.");
-					Log.log.addError(e);
+					log.newLine("Disconnected from server.");
+					log.addError(e);
 					serverNotAvailable();
 				}
 			});
@@ -111,28 +117,28 @@ public class Client {
 						handleString((String)j);
 					} else if(j instanceof Parameters) {
 						fractal = new RenderManager((Parameters)j);
-						Log.log.newLine("RenderManager recieved: " + fractal.toString());
+						log.newLine("RenderManager recieved: " + fractal.toString());
 					}
 				}
 			});
-			Log.log.newLine("Connected to server " + ipAdress);
+			log.newLine("Connected to server " + ipAdress);
 			while(fractal == null) {
 				try {
 					Thread.currentThread().wait(100);
 				} catch(Exception e) {}
 			}
 		} catch (Exception e) {
-			Log.log.addError(e);
+			log.addError(e);
 			serverNotAvailable();
 		}
 	}
 	
 	public void serverNotAvailable() {
-		Log.log.newLine("Server not available. Checking for another server.");
+		log.newLine("Server not available. Checking for another server.");
 		String ipAdress = Utils.getServerIpAdress(database);
 		if(ipAdress.equals(this.ipAdress)) {
-			Log.log.newLine("No new server available");
-			NetworkManager.network.clientToServer();
+			log.newLine("No new server available");
+			//NetworkManager.network.clientToServer();
 		} else {
 			this.ipAdress = ipAdress;
 			initializeServer();
@@ -146,7 +152,7 @@ public class Client {
 	}
 	
 	private void doJob() {
-		while(true) {
+		while(running) {
 			synchronized(jobs) {
 				Job j = jobs.poll();
 				if(j != null) {
@@ -167,6 +173,7 @@ public class Client {
 	 * @param j The job that describes what needs to be rendered
 	 */
 	private void renderJob(Job j) {
+		log.newLine("Starting job " + j );
 		Parameters params = j.getParameters();
 		fractal.setZoom(params.getParameter("zoom", Double.class));
 		fractal.render("fractals", "img_" + (1 / j.getZoom()));
@@ -183,10 +190,10 @@ public class Client {
 	public void setServer(SocketWrapper server) {
 		if(this.server != null) 
 			try {
-				this.server.dispose();
+				//TODO: close server correctly
 				this.server.join();
 			} catch(InterruptedException e) {
-				Log.log.addError(e);
+				log.addError(e);
 			}
 		this.server = server;
 	}
@@ -200,7 +207,7 @@ public class Client {
 	}
 	
 	public void killClient() {
-		server.dispose();
+		//TODO: kill client correctly
 	}
 
 }

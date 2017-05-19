@@ -14,7 +14,7 @@ import java.util.Date;
 public class Log {
 	
 	private String logFile;
-	public static final Log log = new Log();
+
 	private PrintStream stream = null;
 	
 	/**
@@ -39,7 +39,7 @@ public class Log {
 	 * singleton design to that even when a user switched from client to server, it has the same
 	 * log. In other words, each JVM instance shares a log
 	 */
-	private Log() {
+	public Log() {
 		logFile = "";
 	}
 	

@@ -45,8 +45,10 @@ public class NetworkManager {
 		} catch (InterruptedException e) {
 			Log.log.addError(e);
 		}
-		client = new Client();
+		System.out.println("HERE SENPAI");
 
+		client = new Client();
+		System.out.println("HERE");
 	}
 	
 	/**
@@ -54,19 +56,19 @@ public class NetworkManager {
 	 * from another computer and the local client is running
 	 * @param ipAdress the ipAdress of the new connection
 	 */
-	public void newClientConnection(String ipAdress) {
-		Log.log.blankLine();
-		Log.log.newLine("NEW CLIENT CONNECTION");
-		Log.log.blankLine();
-		try {
-			if(!(ipAdress.equals(InetAddress.getLocalHost().getHostAddress()) || ipAdress.equals(Utils.getExternalIP())) && client != null || client != null) {
-				Log.log.newLine("Closing local client due to new connection.");
-				client.killClient();
-				client = null;
-			}
-		} catch (IOException e) {
-			Log.log.addError(e);
+	public void newClientConnection() {
+		System.out.println("new client connection started");
+		System.out.println("client: " + client);
+
+		if(client != null) {
+			Log.log.blankLine();
+			Log.log.newLine("Closing local client due to new connection.");
+			Log.log.blankLine();
+			client.killClient();
+			client = null;
 		}
+		System.out.println("new client connection ended");
+		System.out.println("client: " + client);
 	}
 	
 	public void initalizeClient() {
