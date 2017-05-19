@@ -1,5 +1,6 @@
 package application;
 
+import java.awt.Color;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Robot;
@@ -17,22 +18,16 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 		try {
 			// Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
-		        primaryStage.setTitle("Hello World");
+		        primaryStage.setTitle("Fractal Editor");
 		        FractalEditor scene = new FractalEditor(Toolkit.getDefaultToolkit().getScreenSize().width-100,Toolkit.getDefaultToolkit().getScreenSize().height-100);
 		        primaryStage.setScene(scene);
 		        primaryStage.centerOnScreen();
 		        primaryStage.setMaximized(true);
 		        scene.initialize();
 		        primaryStage.show();
-		        Robot robo = new Robot();
-		        Point temp = MouseInfo.getPointerInfo().getLocation();
-		        robo.mouseMove((int)scene.getX()+200,(int)scene.getY()+(int)scene.getHeight()-100);
-		        robo.delay(1000);
-		        robo.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-		        robo.delay(100);
-		        robo.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-		        robo.delay(100);
-		        robo.mouseMove((int)temp.getX(),(int)temp.getY());
+		        scene.gradient.repaint();
+		        primaryStage.minWidthProperty().bind(scene.heightProperty().multiply(2));
+		        primaryStage.minHeightProperty().bind(scene.widthProperty().divide(2));
 		/*	BorderPane root = new BorderPane();
 			Scene scene = new Scene(root,400,400);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
