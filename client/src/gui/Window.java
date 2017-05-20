@@ -20,6 +20,7 @@ import util.Utils;
 public class Window extends JPanel implements MouseListener, MouseMotionListener {
 	
 	private Dimension dimension;
+	private int additionalWidth;
 	private Rectangle opacityRect, gradientRect, colorRect;
 	
 	private List<ArrowButton<Color>> colorList;
@@ -31,6 +32,7 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	
 	public Window(Dimension dimension, int additionalWidth) {
 		this.dimension = dimension;
+		this.additionalWidth = additionalWidth;
 		this.setPreferredSize(new Dimension(dimension.width + additionalWidth, dimension.height));
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
@@ -180,6 +182,13 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 				sortButtonList(opacityList);
 			repaint();
 		}
+	}
+	
+	public void setGradientDimension(Dimension newDimension) {
+		this.dimension = newDimension;
+		this.setPreferredSize(new Dimension(dimension.width + additionalWidth, dimension.height));
+		this.revalidate();
+		this.repaint();
 	}
 	
 	public void mousePressed(MouseEvent e) {
