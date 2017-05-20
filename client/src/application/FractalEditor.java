@@ -37,12 +37,13 @@ public class FractalEditor extends Scene {
 	 * @throws FileNotFoundException
 	 */
 	public FractalEditor(int x, int y) throws FileNotFoundException {
-		super(new BorderPane(),x,y);
+		super(new BorderPane(), x, y);
 		bp = (BorderPane) this.getRoot();
 		width = x;
 		height = y;
-		//initialize();
+		// initialize();
 	}
+
 	/**
 	 *
 	 * @throws FileNotFoundException
@@ -50,8 +51,8 @@ public class FractalEditor extends Scene {
 	 */
 	public void initialize() throws FileNotFoundException, AWTException {
 		SwingNode fractalEditor = new SwingNode();
-		TreeView parameters = new TreeView();
-		TreeView layers = new TreeView();
+		TreeView tree = new TreeView();
+		//TreeView layers = new TreeView();
 		VBox trees = new VBox();
 		trees.minHeightProperty().bind(bp.minHeightProperty());
 		trees.minWidthProperty().bind(bp.minWidthProperty().divide(6));
@@ -82,22 +83,27 @@ public class FractalEditor extends Scene {
 
 		gradient = new Window(p, 50);
 
-		parameters.setRoot(new TreeItem("Parameters"));
-		parameters.getRoot().setExpanded(true);
-
-		TreeItem xPos = new TreeItem();
+		tree.setRoot(new TreeItem("root"));
+		tree.getRoot().setExpanded(true);
+		tree.minHeightProperty().bind(bp.heightProperty());
 		
-		parameters.getRoot().getChildren().addAll(xPos);
+ 
+		TreeItem xPos = new TreeItem(0);
+		TreeItem parameters = new TreeItem("parameters");
+		TreeItem layers = new TreeItem("layers");
 		
-		layers.setRoot(new TreeItem("Layers"));
-		layers.getRoot().setExpanded(true);
+		tree.getRoot().getChildren().addAll(parameters,layers);
+		parameters.getChildren().add(xPos);
+		
+		//layers.setRoot(new TreeItem("Layers"));
+		//layers.getRoot().setExpanded(true);
 
 
 
 		fractalEditor.setOnMouseEntered(e -> gradient.repaint());
 		//fractalEditor.setOnMouseClicked(e -> gradient.repaint());
 
-		trees.getChildren().addAll(parameters, layers);
+		trees.getChildren().addAll(tree);
 		//trees.setPadding(new Insets(5));
 
 		VBox center = new VBox();
@@ -115,6 +121,5 @@ public class FractalEditor extends Scene {
 		fractalEditor.setContent(gradient);
 		fractalEditor.minHeight(200);
 	}
-
 
 }
