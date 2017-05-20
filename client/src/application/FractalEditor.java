@@ -85,7 +85,7 @@ public class FractalEditor extends Scene {
 
 		tree.setRoot(new TreeItem("root"));
 		tree.getRoot().setExpanded(true);
-		tree.minHeightProperty().bind(bp.heightProperty());
+		tree.minHeightProperty().bind(bp.heightProperty().subtract(render.minHeightProperty()));
 		
  
 		TreeItem xPos = new TreeItem(0);
