@@ -14,7 +14,6 @@ import javafx.embed.swing.SwingNode;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
@@ -75,10 +74,10 @@ public class FractalEditor extends Scene {
 		fractalView.setImage(image);
 
 		fractalView.fitWidthProperty().bind(bp.minWidthProperty().subtract(trees.minWidthProperty()));
-		fractalView.fitHeightProperty().bind(bp.minHeightProperty().subtract(render.minHeightProperty().add(render.minHeightProperty().subtract(gradient.HEIGHT*65))));
-		//fractalView.setVisible(false);
+		//fractalView.fitHeightProperty().bind(bp.minHeightProperty().subtract(render.minHeightProperty().add(render.minHeightProperty().subtract(gradient.HEIGHT*65))));
+		fractalView.fitHeightProperty().bind(bp.heightProperty().subtract(200));
 
-		Dimension p = new Dimension((int)(Toolkit.getDefaultToolkit().getScreenSize().width*0.75),Toolkit.getDefaultToolkit().getScreenSize().height/6);
+		Dimension p = new Dimension((int)(Toolkit.getDefaultToolkit().getScreenSize().width*0.75),200);
 		System.out.println(p);
 
 		gradient = new Window(p, 50);
@@ -114,6 +113,7 @@ public class FractalEditor extends Scene {
 		bp.minWidthProperty().bind(this.widthProperty());
 		bp.minHeightProperty().bind(this.heightProperty());
 		fractalEditor.setContent(gradient);
+		fractalEditor.minHeight(200);
 	}
 
 
