@@ -37,7 +37,7 @@ public class FractalEditor extends Scene {
 	 * @throws FileNotFoundException
 	 */
 	public FractalEditor(int x, int y) throws FileNotFoundException {
-		super(new BorderPane(), x, y);
+		super(new BorderPane(),x, y);
 		bp = (BorderPane) this.getRoot();
 		width = x;
 		height = y;
@@ -51,8 +51,8 @@ public class FractalEditor extends Scene {
 	 */
 	public void initialize() throws FileNotFoundException, AWTException {
 		SwingNode fractalEditor = new SwingNode();
-		TreeView tree = new TreeView();
-		//TreeView layers = new TreeView();
+		TreeView parameters = new TreeView();
+		TreeView layers = new TreeView();
 		VBox trees = new VBox();
 		trees.minHeightProperty().bind(bp.minHeightProperty());
 		trees.minWidthProperty().bind(bp.minWidthProperty().divide(6));
@@ -62,9 +62,7 @@ public class FractalEditor extends Scene {
 		Button render = new Button("Render");
 		render.minWidthProperty().bind(trees.minWidthProperty());
 		render.minHeightProperty().bind(trees.minHeightProperty().divide(6));
-		render.setOnAction(e -> {
-
-		});
+		
 
 		ImageView fractalView = new ImageView();
 
@@ -83,27 +81,22 @@ public class FractalEditor extends Scene {
 
 		gradient = new Window(p, 50);
 
-		tree.setRoot(new TreeItem("root"));
-		tree.getRoot().setExpanded(true);
-		tree.minHeightProperty().bind(bp.heightProperty().subtract(render.minHeightProperty()));
+		parameters.setRoot(new TreeItem("params"));
+		parameters.getRoot().setExpanded(true);
 		
- 
+
 		TreeItem xPos = new TreeItem(0);
-		TreeItem parameters = new TreeItem("parameters");
-		TreeItem layers = new TreeItem("layers");
 		
-		tree.getRoot().getChildren().addAll(parameters,layers);
-		parameters.getChildren().add(xPos);
+		parameters.getRoot().getChildren().addAll(xPos);
 		
-		//layers.setRoot(new TreeItem("Layers"));
-		//layers.getRoot().setExpanded(true);
+		layers.setRoot(new TreeItem("Layers"));
+		layers.getRoot().setExpanded(true);
 
 
 
 		fractalEditor.setOnMouseEntered(e -> gradient.repaint());
 		//fractalEditor.setOnMouseClicked(e -> gradient.repaint());
 
-		trees.getChildren().addAll(tree);
 		//trees.setPadding(new Insets(5));
 
 		VBox center = new VBox();
@@ -111,7 +104,7 @@ public class FractalEditor extends Scene {
 		//center.setPadding(new Insets(5));
 
 
-		trees.getChildren().add(render);
+		trees.getChildren().addAll(parameters,layers,render);
 
 		bp.setCenter(center);
 		bp.setRight(trees);
@@ -120,6 +113,13 @@ public class FractalEditor extends Scene {
 		bp.minHeightProperty().bind(this.heightProperty());
 		fractalEditor.setContent(gradient);
 		fractalEditor.minHeight(200);
+		
+		render.setOnAction(e -> {
+			BufferedImage newImage = robo.createScreenCapture(new Rectangle(0,0,Toolkit.getDefaultToolkit().getScreenSize().width,Toolkit.getDefaultToolkit().getScreenSize().height));
+			fractalView.setImage(SwingFXUtils.toFXImage(newImage, null));
+			bp.layout();
+			System.out.println("trig");
+		});
 	}
 
 }
