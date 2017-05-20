@@ -19,6 +19,9 @@ import util.SocketWrapper;
 import util.Utils;
 
 public class Client extends NetworkNode {
+	
+	//TODO: fix glitch where jobs revieved get printed twice
+	//TODO: fix issue where client prints zoom levels in jobs to too many decimal places
 
 	/**
 	 * the job the client is assigned
@@ -89,7 +92,7 @@ public class Client extends NetworkNode {
 		} catch (Exception e) {
 			log.addError(e);
 			serverNotAvailable();
-		}
+		}	
 	}
 	
 	public void serverNotAvailable() {
