@@ -33,11 +33,6 @@ public class Client extends NetworkNode {
 	/**
 	 * 
 	 */
-	private DatabaseCommunicator database;
-	
-	/**
-	 * 
-	 */
 	private RenderManager fractal;
 	
 	private String ipAdress;
@@ -51,7 +46,7 @@ public class Client extends NetworkNode {
 		fractal = null;
 		jobs = new LinkedList<Job>();
 		ipAdress = Utils.getServerIpAdress(database);
-		log.newLine("Connecting to server...");
+		log.newLine("Connecting to server at " + ipAdress + ".");
 		
 		initializeServer();
 		log.newLine("Succesfully connected to server at " + ipAdress + ".");
