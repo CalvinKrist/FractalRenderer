@@ -19,6 +19,9 @@ import util.SocketWrapper;
 import util.Utils;
 
 public class Client extends NetworkNode {
+	
+	//TODO: fix glitch where jobs revieved get printed twice
+	//TODO: fix issue where client prints zoom levels in jobs to too many decimal places
 
 	/**
 	 * the job the client is assigned
@@ -29,11 +32,6 @@ public class Client extends NetworkNode {
 	 * a wrapper for communicating with the server
 	 */
 	private SocketWrapper server;
-	
-	/**
-	 * 
-	 */
-	private DatabaseCommunicator database;
 	
 	/**
 	 * 
@@ -51,7 +49,7 @@ public class Client extends NetworkNode {
 		fractal = null;
 		jobs = new LinkedList<Job>();
 		ipAdress = Utils.getServerIpAdress(database);
-		log.newLine("Connecting to server...");
+		log.newLine("Connecting to server at " + ipAdress + ".");
 		
 		initializeServer();
 		log.newLine("Succesfully connected to server at " + ipAdress + ".");
@@ -94,7 +92,7 @@ public class Client extends NetworkNode {
 		} catch (Exception e) {
 			log.addError(e);
 			serverNotAvailable();
-		}
+		}	
 	}
 	
 	public void serverNotAvailable() {

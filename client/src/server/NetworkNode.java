@@ -15,6 +15,7 @@ public abstract class NetworkNode {
 		this.log = log;
 		try {
 			database = new DatabaseCommunicator(Constants.DATABASE_KEY);
+			System.out.println("database: " + database);
 		} catch (DbxException e) {
 			log.addError(e);
 		}
