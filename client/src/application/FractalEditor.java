@@ -47,7 +47,7 @@ public class FractalEditor extends Scene {
 	/**
 	 *
 	 * @throws FileNotFoundException
-	 * @throws AWTException 
+	 * @throws AWTException
 	 */
 	public void initialize() throws FileNotFoundException, AWTException {
 		SwingNode fractalEditor = new SwingNode();
@@ -87,9 +87,9 @@ public class FractalEditor extends Scene {
 		parameters.getRoot().setExpanded(true);
 
 		TreeItem xPos = new TreeItem();
-		
+
 		parameters.getRoot().getChildren().addAll(xPos);
-		
+
 		layers.setRoot(new TreeItem("Layers"));
 		layers.getRoot().setExpanded(true);
 
