@@ -3,46 +3,43 @@ package fractal;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import util.Constants;
 import util.Parameters;
 import util.Point;
 import util.Vector2;
 
 public class RenderManager {
 	
-	private Renderer[] layers;
+	private ArrayList<Layer> layers;
 	private Point location;
 	private double zoom;
 	protected Dimension screenResolution;
 	protected Point realResolution;
-	
-	public RenderManager(Renderer[] layers) {
-		this.layers = layers;
-		for(int i = 0; i < layers.length; i++)
-			layers[i].setLayerNumber(i);
-	}
+	protected String name;
 	
 	public RenderManager(Parameters params) {
 		location = params.removeParameter("location", Point.class);
-		zoom = 1 / params.getParameter("radius", Double.class);
-		screenResolution = params.getParameter("screenResolution", Dimension.class);
-		int count = 0;
+		zoom = 1 / params.removeParameter("radius", Double.class);
+		screenResolution = params.removeParameter("resolution", Dimension.class);
+		name = params.removeParameter("name", String.class);
 		Iterator<String> names = params.keyIterator();
-		while(names.hasNext())
-			if(names.next().indexOf("layer") != -1)
-				count++;
-		layers = new Renderer[count];
-		names = params.keyIterator();
+		this.layers = new ArrayList<Layer>(params.getSize());
 		while(names.hasNext()) {
 			String name = names.next();
 			if(name.indexOf("layer") != -1) {
-				int layerNum = Integer.valueOf(name.substring("layer".length())) - 1;
-				layers[layerNum] = params.getParameter(name, Renderer.class);
-				layers[layerNum].setLayerNumber(layerNum);
+				Layer layer = params.getParameter(name, Layer.class);
+				
+				this.layers.add(Integer.valueOf(name.substring("layer".length())) - 1, params.getParameter(name, Layer.class));
 			}
 		}
 		this.setScreenResolution(screenResolution);
@@ -51,13 +48,13 @@ public class RenderManager {
 	}
 	
 	public void render(int[][] pixels) {
-		for(Renderer r: layers)
+		for(Layer r: layers)
 			r.render(pixels);
 	}
 	
 	public int[][] render() {
 		int[][] pixels = new int[screenResolution.width][screenResolution.height];
-		for(Renderer r: layers)
+		for(Layer r: layers)
 			r.render(pixels);
 		return pixels;
 	}
@@ -65,7 +62,7 @@ public class RenderManager {
 	public void render(String filePath, String title) {
 		int[][] pixels = new int[screenResolution.width][screenResolution.height];
 		BufferedImage img = new BufferedImage(screenResolution.width, screenResolution.height, BufferedImage.TYPE_INT_ARGB);
-		for(Renderer r: layers)
+		for(Layer r: layers)
 			r.render(pixels);
 		setPixels(img, pixels);
 		renderImage(filePath, title, img);
@@ -74,7 +71,7 @@ public class RenderManager {
 	public BufferedImage getImage() {
 		int[][] pixels = new int[screenResolution.width][screenResolution.height];
 		BufferedImage img = new BufferedImage(screenResolution.width, screenResolution.height, BufferedImage.TYPE_INT_ARGB);
-		for(Renderer r: layers)
+		for(Layer r: layers)
 			r.render(pixels);
 		setPixels(img, pixels);
 		return img;
@@ -86,7 +83,7 @@ public class RenderManager {
 			
 			BufferedImage img = new BufferedImage(screenResolution.width, screenResolution.height, BufferedImage.TYPE_INT_ARGB);
 			int[][] pixels = new int[screenResolution.width][screenResolution.height];
-			for(Renderer r: layers)
+			for(Layer r: layers)
 				r.render(pixels);
 			setPixels(img, pixels);
 			renderImage(filePath, title + frame++, img);
@@ -116,13 +113,13 @@ public class RenderManager {
 	
 	public void setLocation(Point location) {
 		this.location = location;
-		for(Renderer r: layers)
+		for(Layer r: layers)
 			r.setLocation(location);
 	}
 	
 	public void setZoom(double zoom) {
 		this.zoom = zoom;
-		for(Renderer r: layers)
+		for(Layer r: layers)
 			r.setZoom(zoom);
 		double ratio = screenResolution.height > screenResolution.width ? (double)screenResolution.width / screenResolution.height : (double)screenResolution.height / screenResolution.width;
 		double radius = 1/zoom;
@@ -143,7 +140,7 @@ public class RenderManager {
 	
 	public void setScreenResolution(Dimension screenResolution) {
 		this.screenResolution = screenResolution;
-		for(Renderer r: layers)
+		for(Layer r: layers)
 			r.setScreenResolution(screenResolution);
 	}
 	
@@ -153,9 +150,57 @@ public class RenderManager {
 		s += "    Zoom: " + zoom;
 		s += "    Screen Resolution: " + screenResolution.toString();
 		s += "    Real Resolution: " + realResolution.toString();
-		for(int i = 0; i < layers.length; i++)
-			s += "    Layer " + (i + 1) + ": " + layers[i].getClass().getName();
+		for(int i = 0; i < layers.size(); i++)
+			s += "    Layer " + (i + 1) + ": " + layers.get(i).getClass().getName();
 		return s;
+	}
+	
+	public void saveFractal() {
+		Map<String, Serializable> params = new HashMap<String, Serializable>();
+		params.put("name", name);
+		params.put("location", getLocation().toString());
+		params.put("radius", getRadius());
+		params.put("resolution", getScreenResolution().width + "," + getScreenResolution().height);
+		for(int i = 0; i < getNumLayers(); i++) {
+			params.put("layer" + (i + 1), getLayers().get(i).getName() + ".fract");
+			try {
+				getLayers().get(i).save(name);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		try {
+			FileWriter writer = new FileWriter(new File(Constants.FRACTAL_FILEPATH + "/" + name + "/" + name + ".prop"));
+			writer.write(new Parameters(params).toString());
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void saveFractal(String name) {
+		setName(name);
+		saveFractal();
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public Point getLocation() {
+		return location;
+	}
+	
+	public int getNumLayers() {
+		return layers.size();
+	}
+	
+	public double getRadius() {
+		return 1 / zoom;
+	}
+	
+	public ArrayList<Layer> getLayers() {
+		return layers;
 	}
 
 }

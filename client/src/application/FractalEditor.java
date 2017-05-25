@@ -14,6 +14,7 @@ import javafx.embed.swing.SwingNode;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
@@ -50,11 +51,12 @@ public class FractalEditor extends Scene {
 	 * @throws AWTException 
 	 */
 	public void initialize() throws FileNotFoundException, AWTException {
+		MenuBar menu = new MenuBar();
 		SwingNode fractalEditor = new SwingNode();
 		TreeView parameters = new TreeView();
 		TreeView layers = new TreeView();
 		VBox trees = new VBox();
-		trees.minHeightProperty().bind(bp.minHeightProperty());
+		trees.minHeightProperty().bind(bp.minHeightProperty().subtract(menu.minHeightProperty()));
 		trees.minWidthProperty().bind(bp.minWidthProperty().divide(6));
 		bp.setPadding(new Insets(5));
 
@@ -74,7 +76,7 @@ public class FractalEditor extends Scene {
 
 		fractalView.fitWidthProperty().bind(bp.minWidthProperty().subtract(trees.minWidthProperty()));
 		//fractalView.fitHeightProperty().bind(bp.minHeightProperty().subtract(render.minHeightProperty().add(render.minHeightProperty().subtract(gradient.HEIGHT*65))));
-		fractalView.fitHeightProperty().bind(bp.heightProperty().subtract(200));
+		fractalView.fitHeightProperty().bind(bp.heightProperty().subtract(menu.minHeightProperty()).subtract(200));
 
 		Dimension p = new Dimension((int)(Toolkit.getDefaultToolkit().getScreenSize().width*0.75),200);
 		System.out.println(p);
@@ -108,6 +110,7 @@ public class FractalEditor extends Scene {
 
 		bp.setCenter(center);
 		bp.setRight(trees);
+		bp.setTop(menu);
 
 		bp.minWidthProperty().bind(this.widthProperty());
 		bp.minHeightProperty().bind(this.heightProperty());

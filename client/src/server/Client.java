@@ -2,14 +2,15 @@ package server;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
 
-import com.dropbox.core.DbxException;
-
-import dropbox.DatabaseCommunicator;
 import fractal.RenderManager;
 import util.Constants;
 import util.DataTag;
@@ -48,7 +49,6 @@ public class Client extends NetworkNode {
 		log.newLine("Creating new client.");
 		fractal = null;
 		jobs = new LinkedList<Job>();
-		ipAdress = Utils.getServerIpAdress(database);
 		log.newLine("Connecting to server at " + ipAdress + ".");
 		
 		initializeServer();
@@ -63,12 +63,23 @@ public class Client extends NetworkNode {
 	
 	private void initializeServer() {
 		try {
-			server = new SocketWrapper(new Socket(ipAdress, Constants.PORT), log);
+			
+			DatagramSocket socket = new DatagramSocket();
+			socket.setBroadcast(true);
+			byte[] message = "JOIN_REQUEST".getBytes();
+			
+			DatagramPacket packet = new DatagramPacket(message, message.length, Utils.getBroadcastAddress(), Constants.BROADCAST_PORT);
+			socket.send(packet);
+			log.newLine("IPAddress broadcast.");
+			ServerSocket temp = new ServerSocket(Constants.PORT);
+			server = new SocketWrapper(temp.accept(), log);
+			log.newLine("Connected to server at " + server.getInetAdress());
+			
 			server.addNoConnectionListener(new NoConnectionListener() {
 				public void response(Exception e) {
-					log.newLine("Disconnected from server.");
+					log.newLine("Disconnected from server. Shutting down.");
 					log.addError(e);
-					serverNotAvailable();
+					kill();
 				}
 			});
 			server.addMessageListener(new MessageListener() {
@@ -91,20 +102,9 @@ public class Client extends NetworkNode {
 			}
 		} catch (Exception e) {
 			log.addError(e);
-			serverNotAvailable();
+			log.newLine("Server not available. Shutting down.");
+			kill();
 		}	
-	}
-	
-	public void serverNotAvailable() {
-		log.newLine("Server not available. Checking for another server.");
-		String ipAdress = Utils.getServerIpAdress(database);
-		if(ipAdress.equals(this.ipAdress)) {
-			log.newLine("No new server available");
-			//NetworkManager.network.clientToServer();
-		} else {
-			this.ipAdress = ipAdress;
-			initializeServer();
-		}
 	}
 
 	public void handleJob(Job j) {
@@ -138,10 +138,9 @@ public class Client extends NetworkNode {
 		log.newLine("Starting job " + j );
 		Parameters params = j.getParameters();
 		fractal.setZoom(params.getParameter("zoom", Double.class));
-		fractal.render("fractals", "img_" + (1 / j.getZoom()));
-		database.uploadByFilePath("fractals/img_" + (1 / j.getZoom()) + ".png", "images/img_" + (1 / j.getZoom()) + ".png");
-		File f = new File("fractals/img_" + (1 / j.getZoom()) + ".png");
-		f.delete();
+		int[][] pixels = new int[fractal.getScreenResolution().width][fractal.getScreenResolution().height];
+		fractal.render(pixels);
+		j.setImage(pixels);
 		server.sendMessage(j);
 	}
 	
@@ -155,6 +154,21 @@ public class Client extends NetworkNode {
 	
 	public void setFractal(RenderManager fractal) {
 		this.fractal = fractal;
+	}
+	
+	public void getServer() throws IOException {
+		DatagramSocket socket = new DatagramSocket();
+		socket.setBroadcast(true);
+		
+		byte[] message = "JOIN_REQUEST".getBytes();
+		
+		DatagramPacket packet = new DatagramPacket(message, message.length, Utils.getBroadcastAddress(), 8888);
+		socket.send(packet);
+		
+		ServerSocket temp = new ServerSocket(Constants.PORT);
+		Socket server = temp.accept();
+		this.server = new SocketWrapper(server, log);
+		temp.close();
 	}
 
 	@Override

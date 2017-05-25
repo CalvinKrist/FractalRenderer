@@ -1,18 +1,49 @@
 package fractal;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.LinkedList;
-
+import java.util.HashMap;
+import util.Parameters;
 import util.Utils;
 
-public class HistogramRenderer extends Renderer {
+public class HistogramRenderer extends Layer {
 	
-	public HistogramRenderer() {
+	public HistogramRenderer(Palette palette, int layer) {
+		super(palette, layer);
 		bailout = 1000;
 		maxIterations = 400;
+	}
+	
+	public Parameters getParameters() {
+		Parameters props = new Parameters(new HashMap<String, Serializable>());
+		if(autoBailout = true)
+			props.put("bailout", "auto");
+		else
+			props.put("bailout", bailout);
+		if(autoMaxIterations == true)
+			props.put("maxIterations", "auto");
+		else
+			props.put("maxIterations", maxIterations);
+		return props;
+	}
+	
+	public void setParameters(Parameters params) {
+		String bailout = params.getParameter("bailout", String.class);
+		try {
+			this.bailout = Integer.valueOf(bailout);
+			autoBailout = false;
+		} catch(Exception e) {
+			autoBailout = true;
+		}
+		String maxIterations = params.getParameter("maxIterations", String.class);
+		try {
+			this.maxIterations = Integer.valueOf(maxIterations);
+			autoMaxIterations = false;
+		} catch(Exception e) {
+			autoMaxIterations = true;
+		}
 	}
 
 	public void render(int[][] pixels, int width, int height, double rWidth, double rHeight, double xPos, double yPos) {
@@ -86,7 +117,12 @@ public class HistogramRenderer extends Renderer {
 	}
 
 	protected void calculateIterationsAndBailout(double rWidth, double rHeight) {
-
+		double zoom = rWidth > rHeight ? rWidth : rHeight;
+		zoom = 1 / zoom;
+		if(autoBailout)
+			bailout = (int)Math.pow(zoom, .25);
+		if(autoMaxIterations)
+			maxIterations = (int)(Math.log(Math.pow(zoom, 3.8)) * 10);
 	}
 	
 	private double layerAverage(double d1, double d2, double weight) {

@@ -11,13 +11,19 @@ public class Point implements Serializable {
 		this.y = y;
 	}
 	
+	public Point(String s) {
+		String[] params = s.split(",");
+		x = Double.valueOf(params[0]);
+		y = Double.valueOf(params[1]);
+	}
+ 	
 	public Point() {
 		x = 0; 
 		y = 0;
 	}
 	
 	public String toString() {
-		return x + ", " + y;
+		return x + "," + y;
 	}
 	
 	public Point(java.awt.Point p) {
@@ -43,7 +49,7 @@ public class Point implements Serializable {
 	
 	@Override
 	public int hashCode() {
-		return new String(x + ", " + y).hashCode();
+		return toString().hashCode();
 	}
 
 }

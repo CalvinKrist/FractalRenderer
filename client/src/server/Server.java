@@ -1,34 +1,24 @@
 package server;
 
-import java.awt.Dimension;
-import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Scanner;
-import java.util.TreeSet;
 
-import com.dropbox.core.DbxException;
+import javax.imageio.ImageIO;
 
-import dropbox.DatabaseCommunicator;
-import fractal.Palette;
-import fractal.RenderManager;
-import fractal.Renderer;
+import admin.Display;
 import util.Constants;
 import util.DataTag;
 import util.JobComparator;
 import util.Log;
 import util.Parameters;
-import util.Point;
 import util.SocketWrapper;
-import util.Utils;
 
 /**
  * This class represents the server that manages all the clients
@@ -61,59 +51,15 @@ public class Server extends NetworkNode {
 	private Parameters parameters;
 
 	private SocketAdder adder;
+	
+	private Display display;
 
 	public Server(Log log) {
 		super(log);
 		log.blankLine();
 		log.newLine("Creating new server.");
 
-		try {
-
-			String externalIP;
-			externalIP = Utils.getExternalIP();
-			InetAddress i = InetAddress.getLocalHost();
-			String internalIP = i.getHostAddress();
-
-			database.uploadByString("<external:" + externalIP + ">\n<internal:" + internalIP + ">", "ipAdress.txt");
-			log.newLine("IPAdress added to database.");
-		} catch (IOException e) {
-			e.printStackTrace();
-			log.addError(e);
-		}
-
-		HashMap<String, Serializable> parameters = new HashMap<String, Serializable>();
-		Scanner s = new Scanner(database.downloadFileAsString("parameters.txt"));
-		Dimension screenResolution = new Dimension(Integer.valueOf(new DataTag(s.nextLine()).getValue()),
-				Integer.valueOf(new DataTag(s.nextLine()).getValue()));
-		log.newLine("Screen resolution: " + screenResolution.toString());
-		Double zoomPercent = Double.valueOf(new DataTag(s.nextLine()).getValue());
-		log.newLine("Zoom percent: " + zoomPercent);
-		Point position = new Point(Double.valueOf(new DataTag(s.nextLine()).getValue()),
-				Double.valueOf(new DataTag(s.nextLine()).getValue()));
-		log.newLine("Position: " + position.toString());
-		while (s.hasNextLine()) {
-			try {
-				DataTag tag = new DataTag(s.nextLine());
-				Class<?> c = Class.forName("fractal." + tag.getValue());
-				Renderer r = (Renderer) c.newInstance();
-				database.downloadFile(tag.getId() + ".palette", tag.getId() + ".palette");
-				r.setColorPalette(new Palette(tag.getId() + ".palette", true));
-				log.newLine("New render layer: " + tag.getId() + " " + c.getName());
-				parameters.put(tag.getId(), r);
-			} catch(ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-				log.addError(e);
-			}
-		}
-
-		try {
-			parameters.put("radius", database.getViewWidth("images", "videos") * zoomPercent);
-		} catch(DbxException e) {
-			log.addError(e);
-		}
-		parameters.put("dZoom", zoomPercent);
-		parameters.put("screenResolution", screenResolution);
-		parameters.put("location", position);
-		this.parameters = new Parameters(parameters);
+		//TODO: initialise parameters and fractal
 
 		children = new ArrayList<SocketWrapper>();
 		unnasignedJobs = new LinkedList<Job>();
@@ -130,26 +76,20 @@ public class Server extends NetworkNode {
 	public void handleMessage(Object o, SocketWrapper sender) {
 		if (o instanceof Job) {
 			uncompletedJobs.get(sender).remove((Job) o);
-			assignJob(sender);
-		} else if (o instanceof String) {
-			String s = (String) o;
-			switch (s) {
-			case "admin":
-				log.newLine("User " + sender.getInetAdress() + " promoted to ADMIN.");
-				admins.add(sender);
-				updateAdmin(sender);
-				break;
-			case "update":
-				updateAdmin(sender);
-				break;
-			case "logRequest":
-				sender.sendMessage(new DataTag("log", log.getLog()));
-				break;
+			int[][] pixels = ((Job)(o)).getImage();
+			BufferedImage img = new BufferedImage(pixels.length, pixels[0].length, BufferedImage.TYPE_INT_RGB);
+			File dir = new File(Constants.FRACTAL_FILEPATH + parameters.getParameter("name", String.class) + "/images/" + (1 / parameters.getParameter("radius", Double.class)) + ".png");
+			dir.mkdirs();
+			try {
+				ImageIO.write(img, "png", dir);
+			} catch (IOException e) {
+				log.addError(e);
 			}
-		}
+			assignJob(sender);
+		} 
 	}
 
-	private void updateAdmin(SocketWrapper admin) {
+	public Parameters getAdminParameters() {
 		Map<String, Serializable> params = new HashMap<String, Serializable>();
 		double zoomLevel;
 		double zoom = parameters.getParameter("radius", Double.class);
@@ -168,7 +108,7 @@ public class Server extends NetworkNode {
 			log.addError(e);
 		}
 		Parameters param = new Parameters(params);
-		admin.sendMessage(param);
+		return param;
 	}
 
 	public void createNextRenderJobSet() {
@@ -219,6 +159,18 @@ public class Server extends NetworkNode {
 
 	public ArrayList<SocketWrapper> getAdmins() {
 		return admins;
+	}
+	
+	public void setDisplay(Display newDisplay) {
+		display = newDisplay;
+	}
+	
+	public Display getDisplay() {
+		return display;
+	}
+	
+	public Map<SocketWrapper, Queue<Job>> getUncompletedJobs() {
+		return uncompletedJobs;
 	}
 
 	public void kill() {

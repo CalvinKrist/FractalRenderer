@@ -3,12 +3,18 @@ package fractal;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.Properties;
 
+import util.Constants;
+import util.Parameters;
 import util.Point;
 import util.Vector2;
 
-public abstract class Renderer implements Serializable {
+public abstract class Layer implements Serializable {
 	
 	protected Palette palette;
 	protected Point location;
@@ -18,6 +24,15 @@ public abstract class Renderer implements Serializable {
 	protected long bailout;
 	protected int maxIterations;
 	protected int layer;
+	protected boolean autoBailout = true;
+	protected boolean autoMaxIterations = true;
+	
+	protected String name;
+	
+	public Layer(Palette palette, int layer) {
+		this.palette = palette;
+		this.layer = layer - 1;
+	}
 	
 	public void render(int[][] pixels) {
 		render(pixels, screenResolution.width, screenResolution.height, realResolution.x, realResolution.y, location.x, location.y);
@@ -54,8 +69,35 @@ public abstract class Renderer implements Serializable {
 		this.screenResolution = screenResolution;
 	}
 	
-	public void setLayerNumber(int layer) {
+	public void setLayer(int layer) {
 		this.layer = layer;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public abstract Parameters getParameters();
+	
+	public abstract void setParameters(Parameters newProperties);
+	
+	public void save(String fractalName) throws IOException {
+		File f = new File(Constants.FRACTAL_FILEPATH + "/" + fractalName);
+		if(!f.exists()) {
+			f.mkdirs();
+			f.createNewFile();
+		}
+		FileWriter writer = new FileWriter(new File(Constants.FRACTAL_FILEPATH + "/" + fractalName + "/" + name + ".fractal"));
+		writer.write("<name:" + name + ">");
+		writer.write("<bailout:" + bailout + ">");
+		writer.write("<maxIterations:" + maxIterations + ">");
+		writer.write("<palette:" + Constants.FRACTAL_FILEPATH + "/" + fractalName + "/" + name + ".palette>");
+		palette.writeTo(Constants.FRACTAL_FILEPATH + "/" + fractalName + "/" + name + ".palette");
+		writer.close();
 	}
 	
 }

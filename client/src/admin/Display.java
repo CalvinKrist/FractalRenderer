@@ -6,13 +6,15 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Serializable;
-import java.net.Socket;
 import java.text.DecimalFormat;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
 import java.util.Scanner;
 
 import javax.swing.JButton;
@@ -22,7 +24,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -30,20 +31,12 @@ import javax.swing.JTextField;
 import javax.swing.ToolTipManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import com.dropbox.core.DbxException;
-
-import dropbox.DatabaseCommunicator;
-import fractal.RenderManager;
-import server.Client;
 import server.Job;
-import server.MessageListener;
-import server.NoConnectionListener;
+import server.Server;
 import util.Constants;
-import util.DataTag;
 import util.Log;
 import util.Parameters;
 import util.SocketWrapper;
-import util.Utils;
 
 public class Display extends JPanel implements Runnable {
 	
@@ -55,55 +48,21 @@ public class Display extends JPanel implements Runnable {
 	
 	public static final int DISPLAY_WIDTH = 320;
 	public static final int DISPLAY_HEIGHT = 320;
-	
-	private SocketWrapper server;
-	
-	//private AdminClient client;
-	
-	private DatabaseCommunicator database;
-	
+			
 	private DecimalFormat df;
 	
 	private Thread t;
 	
 	private Log log;
 	
-	public Display() {
-		log = new Log();
-		log.setLogLevel(Log.LEVEL_LOG);
-		log.setPrintLevel(Log.LEVEL_LOG);
-		log.setPrintStream(System.out);
-		//client = new AdminClient(log);
+	private Server server;
+	
+	public volatile boolean running = true;
+	
+	public Display(Server server) {
+		this.server = server;
+		//log = server.getLog();
 		df = new DecimalFormat("0.###E0");
-		try {
-			database = new DatabaseCommunicator("eoggPPnSY7QAAAAAAAAASuUXGkHwlV-0cO-lQYLiB0oZF8znalh0XXdg7sCipTuT");
-			log.newLine("Database connection established.");
-		} catch (DbxException e2) {
-			e2.printStackTrace();
-			log.newLine("Unable to connect to database.");
-			log.addError(e2);
-		}
-		String serverIP = Utils.getServerIpAdress(database);
-		try {
-			log.newLine("Connecting to server at " + serverIP + ".");
-			server = new SocketWrapper(new Socket(serverIP, Constants.PORT), log);
-			log.newLine("Connected to server.");
-			server.addMessageListener(new MessageListener() {
-				public void messageRecieved(Object m) {
-					handleMessage(m);
-				}
-			});
-			server.addNoConnectionListener(new NoConnectionListener() {
-				public void response(Exception e) {
-					log.newLine("Server diconnected.");
-					log.addError(e);
-					//TODO: if there's no connection...
-				}
-			});
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, "Server not available.");
-			System.exit(0);
-		}
 		this.setLayout(new BorderLayout());
 		this.setBackground(bgColor);
 		
@@ -128,7 +87,46 @@ public class Display extends JPanel implements Runnable {
 		JMenuItem serverLog = new JMenuItem("Server Log");
 		serverLog.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				server.sendMessage("logRequest");
+				JFrame f = new JFrame("Server Log");
+				JTextArea textArea = new JTextArea(35, 55);
+				JScrollPane scroll = new JScrollPane(textArea);
+				
+				textArea.setText(log.getLog());
+				scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+				scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+				f.setLayout(new BorderLayout());
+				f.add(scroll, BorderLayout.CENTER);
+				JButton b = new JButton("Save");
+				b.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						JFileChooser fileChooser = new JFileChooser();
+						FileNameExtensionFilter filter = new FileNameExtensionFilter("TEXT FILES", "txt", "text");
+						fileChooser.setFileFilter(filter);
+						fileChooser.setCurrentDirectory(new File("fractals/logs"));
+						fileChooser.showSaveDialog(null);
+						String dir = fileChooser.getSelectedFile().getPath();
+						if(!dir.substring(dir.lastIndexOf(".") + 1).equals("txt")) 
+							dir = dir.substring(0, dir.lastIndexOf(".")) + ".txt";
+						System.out.println("\n\n" + dir + "\n\n");
+						try {
+							PrintWriter out = new PrintWriter(dir);
+							Scanner s = new Scanner(textArea.getText());
+							while(s.hasNextLine())
+								out.println(s.nextLine());
+							out.flush();
+							out.close();
+						} catch (FileNotFoundException e1) {
+							log.addError(e1);
+						}
+					}
+				});
+				JPanel tempPanel = new JPanel();
+				tempPanel.add(b);
+				f.add(tempPanel, BorderLayout.SOUTH);
+				f.pack();
+				f.setLocationRelativeTo(null);
+				f.setResizable(true);
+				f.setVisible(true);
 			}
 		});
 		serverLog.setToolTipText("Displays the log of the current server.");
@@ -287,101 +285,54 @@ public class Display extends JPanel implements Runnable {
 	
 	@Override
 	public void run() {
-		server.sendMessage("admin");
-		while(true) {
+		JFrame f = new JFrame("Network");
+		f.setContentPane(this);
+		f.pack();
+		f.setResizable(false);
+		f.setLocationRelativeTo(null);
+		f.setVisible(true);
+		f.addWindowListener(new WindowListener() {
+
+			public void windowOpened(WindowEvent e) {}
+			public void windowClosed(WindowEvent e) {}
+			public void windowIconified(WindowEvent e) {}
+			public void windowDeiconified(WindowEvent e) {}
+			public void windowActivated(WindowEvent e) {}
+			public void windowDeactivated(WindowEvent e) {}
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				System.out.println("closing");
+				running = false;
+			}
+			
+		});
+		updateParameters(server.getAdminParameters());
+		while(running) {
 			try {
 				t.sleep(5000);
 			} catch (InterruptedException e) {
 				log.addError(e);
 			}
-			sendMessage("update");
+			updateParameters(server.getAdminParameters());
 		}
 	}
 	
-	public void sendMessage(Serializable j) {
-		synchronized(server) {
-			server.sendMessage(j);
-		}
-	}
-	
-	private boolean allTextFieldsEmpty() {
-		return zoom.getText().equals("") && xPos.getText().equals("") && yPos.getText().equals("") && zoomSpeed.getText().equals("");
-	}
-	
-	public void handleMessage(Object o) {
-		if(o instanceof Parameters) {
-			Parameters params = (Parameters)o;
-			if(params.contains("screenResolution")) {
-				//client.setFractal(new RenderManager(params));
-				return;
-			}
-			else if(!params.contains("zoom"))
-				return;
-			if(allTextFieldsEmpty()) {
-				zoom.setText(df.format(1 / params.getParameter("zoom", Double.class)) + "");
-				xPos.setText(params.getParameter("location", util.Point.class).x + "");
-				yPos.setText(params.getParameter("location", util.Point.class).y + "");
-				zoomSpeed.setText(1 / params.getParameter("zSpeed", Double.class) + "");
-			} else {
-				if(!zoom.isFocusOwner())
-					zoom.setText(df.format(1 / params.getParameter("zoom", Double.class)) + "");
-				if(!xPos.isFocusOwner())
-					xPos.setText(params.getParameter("location", util.Point.class).x + "");
-				if(!yPos.isFocusOwner())
-					yPos.setText(params.getParameter("location", util.Point.class).y + "");
-				if(!zoomSpeed.isFocusOwner())
-					zoomSpeed.setText(1 / params.getParameter("zSpeed", Double.class) + "");
-			}
-			numUsersLabel.setText("  User Count: " + params.getParameter("userCount"));
-			frameCountLabel.setText("  Frame Count: " + params.getParameter("frameCount"));
-		} else if(o instanceof DataTag) {
-			DataTag tag = (DataTag)o;
-			if(tag.getId().equals("log")) {
-				JFrame f = new JFrame("Server Log");
-				JTextArea textArea = new JTextArea(35, 55);
-				JScrollPane scroll = new JScrollPane(textArea);
-				
-				textArea.setText(tag.getValue());
-				scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-				scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-				f.setLayout(new BorderLayout());
-				f.add(scroll, BorderLayout.CENTER);
-				JButton b = new JButton("Save");
-				b.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						JFileChooser fileChooser = new JFileChooser();
-						FileNameExtensionFilter filter = new FileNameExtensionFilter("TEXT FILES", "txt", "text");
-						fileChooser.setFileFilter(filter);
-						fileChooser.setCurrentDirectory(new File("fractals/logs"));
-						fileChooser.showSaveDialog(null);
-						String dir = fileChooser.getSelectedFile().getPath();
-						if(!dir.substring(dir.lastIndexOf(".") + 1).equals("txt")) 
-							dir = dir.substring(0, dir.lastIndexOf(".")) + ".txt";
-						System.out.println("\n\n" + dir + "\n\n");
-						try {
-							PrintWriter out = new PrintWriter(dir);
-							Scanner s = new Scanner(textArea.getText());
-							while(s.hasNextLine())
-								out.println(s.nextLine());
-							out.flush();
-							out.close();
-						} catch (FileNotFoundException e1) {
-							log.addError(e1);
-						}
-					}
-				});
-				JPanel tempPanel = new JPanel();
-				tempPanel.add(b);
-				f.add(tempPanel, BorderLayout.SOUTH);
-				f.pack();
-				f.setLocationRelativeTo(null);
-				f.setResizable(true);
-				f.setVisible(true);
-			}
-		} else if(o instanceof Job) {
-			//client.doJob((Job)o);
-		}
+	public void updateNetworkView(List<SocketWrapper> networkElements, Map<SocketWrapper, Queue<Job>> map) {
 		
+	}
+	
+	private void updateParameters(Parameters params) {
+		if(!zoom.isFocusOwner())
+			zoom.setText(df.format(1 / params.getParameter("zoom", Double.class)) + "");
+		if(!xPos.isFocusOwner())
+			xPos.setText(params.getParameter("location", util.Point.class).x + "");
+		if(!yPos.isFocusOwner())
+			yPos.setText(params.getParameter("location", util.Point.class).y + "");
+		if(!zoomSpeed.isFocusOwner())
+			zoomSpeed.setText(1 / params.getParameter("zSpeed", Double.class) + "");
+		numUsersLabel.setText("  User Count: " + params.getParameter("userCount"));
+		frameCountLabel.setText("  Frame Count: " + params.getParameter("frameCount"));
 	}
 	
 }

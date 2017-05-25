@@ -1,15 +1,16 @@
 package fractal;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Queue;
 
 import util.MinMax;
+import util.Parameters;
 import util.Utils;
 import util.Vector2;
 
-public class TriangleAverageRenderer extends Renderer {
+public class TriangleAverageRenderer extends Layer {
 
 	private long bailoutSquared;
 	private double magnitude, r1, r2, g1, g2, b1, b2, tweenval;
@@ -28,13 +29,45 @@ public class TriangleAverageRenderer extends Renderer {
 	//video
 	int su = 0;
 	
-	public TriangleAverageRenderer() {
+	public TriangleAverageRenderer(Palette palette, int layer) {
+		super(palette, layer);
 		maxIterations = 1000;
 		bailout = (int)(Math.pow(10, 4));
 		bailoutSquared = bailout * bailout;
 		c = new Vector2();
 		z = new Vector2();
 		bounds = new LinkedList<MinMax>();
+	}
+	
+	public Parameters getParameters() {
+		Parameters props = new Parameters(new HashMap<String, Serializable>());
+		if(autoBailout = true)
+			props.put("bailout", "auto");
+		else
+			props.put("bailout", bailout);
+		if(autoMaxIterations == true)
+			props.put("maxIterations", "auto");
+		else
+			props.put("maxIterations", maxIterations);
+		return props;
+	}
+	
+	public void setParameters(Parameters params) {
+		String bailout = params.getParameter("bailout", String.class);
+		try {
+			this.bailout = Integer.valueOf(bailout);
+			bailoutSquared = this.bailout * this.bailout;
+			autoBailout = false;
+		} catch(Exception e) {
+			autoBailout = true;
+		}
+		String maxIterations = params.getParameter("maxIterations", String.class);
+		try {
+			this.maxIterations = Integer.valueOf(maxIterations);
+			autoMaxIterations = false;
+		} catch(Exception e) {
+			autoMaxIterations = true;
+		}
 	}
 	
 	private void findColor(int[][] pixels, int id, int k) {
@@ -92,7 +125,14 @@ public class TriangleAverageRenderer extends Renderer {
 	}
 	
 	protected void calculateIterationsAndBailout(double rWidth, double rHeight) {
-		
+		double zoom = rWidth > rHeight ? rWidth : rHeight;
+		zoom = 1 / zoom;
+		if(autoBailout) {
+			bailout = (int)Math.pow(zoom, .25);
+			bailoutSquared = bailout * bailout;
+		}
+		if(autoMaxIterations)
+			maxIterations = (int)(Math.log(Math.pow(zoom, 3.8)) * 10);
 	}
 
 	public void render(int[][] pixels, int width, int height, double rWidth, double rHeight, double xPos, double yPos) {

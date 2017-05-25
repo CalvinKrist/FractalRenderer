@@ -1,6 +1,9 @@
 package server;
 
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -14,16 +17,10 @@ import util.SocketWrapper;
 public class SocketAdder extends Thread {
 	
 	private ArrayList<SocketWrapper> children;
-	private ServerSocket socket;
 	private Server server;
 	
 	public SocketAdder(ArrayList<SocketWrapper> children, Server server) {
 		this.children = children;
-		try {
-			socket = new ServerSocket(Constants.PORT);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		this.server = server;
 	}
 	
@@ -31,7 +28,18 @@ public class SocketAdder extends Thread {
 	public void run() {
 		while(true) {
 			try {
-				Socket s = socket.accept();
+				DatagramSocket sock = new DatagramSocket(Constants.BROADCAST_PORT, InetAddress.getByName("0.0.0.0"));
+				sock.setBroadcast(true);
+				byte[] buffer = new byte[15000];
+				DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+				sock.receive(packet);
+				
+				//TODO: only create socket if the data matches a certain string
+				System.out.println(new String(packet.getData()));
+				
+				Socket s = new Socket(packet.getAddress().getHostAddress(), Constants.PORT);
+				
+				
 				server.getLog().blankLine();
 				server.getLog().newLine("New connection from " + s.getInetAddress().getHostAddress());
 				server.getLog().blankLine();
@@ -70,7 +78,7 @@ public class SocketAdder extends Thread {
 					server.assignJob(w);
 					server.assignJob(w);
 					server.getLog().newLine("User from " + w.getInetAdress() + " added to list.");
-					//NetworkManager.network.newClientConnection();
+					server.getDisplay().updateNetworkView(children, server.getUncompletedJobs());
 				}
 			} catch (IOException e) {
 				server.getLog().addError(e);
