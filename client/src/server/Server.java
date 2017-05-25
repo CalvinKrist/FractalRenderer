@@ -12,7 +12,7 @@ import java.util.Queue;
 
 import javax.imageio.ImageIO;
 
-import admin.Display;
+import menus.Display;
 import util.Constants;
 import util.DataTag;
 import util.JobComparator;

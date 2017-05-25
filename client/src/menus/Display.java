@@ -1,4 +1,4 @@
-package admin;
+package menus;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

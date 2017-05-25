@@ -1,4 +1,4 @@
-package admin;
+package menus;
 
 import javax.swing.*;
 

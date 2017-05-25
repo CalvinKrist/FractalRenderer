@@ -1,4 +1,4 @@
-package admin;
+package menus;
 
 import java.awt.Dimension;
 import java.util.ArrayList;

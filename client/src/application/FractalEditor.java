@@ -8,7 +8,6 @@ import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 
-import gui.Window;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.embed.swing.SwingNode;
 import javafx.geometry.Insets;
