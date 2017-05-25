@@ -47,7 +47,7 @@ public class FractalEditor extends Scene {
 	/**
 	 *
 	 * @throws FileNotFoundException
-	 * @throws AWTException 
+	 * @throws AWTException
 	 */
 	public void initialize() throws FileNotFoundException, AWTException {
 		MenuBar menu = new MenuBar();
@@ -63,7 +63,7 @@ public class FractalEditor extends Scene {
 		Button render = new Button("Render");
 		render.minWidthProperty().bind(trees.minWidthProperty());
 		render.minHeightProperty().bind(trees.minHeightProperty().divide(6));
-		
+
 
 		ImageView fractalView = new ImageView();
 
@@ -84,12 +84,10 @@ public class FractalEditor extends Scene {
 
 		parameters.setRoot(new TreeItem("params"));
 		parameters.getRoot().setExpanded(true);
-		
 
-		TreeItem xPos = new TreeItem(0);
-		
+		TreeItem xPos = new TreeItem();
 		parameters.getRoot().getChildren().addAll(xPos);
-		
+
 		layers.setRoot(new TreeItem("Layers"));
 		layers.getRoot().setExpanded(true);
 
@@ -115,7 +113,7 @@ public class FractalEditor extends Scene {
 		bp.minHeightProperty().bind(this.heightProperty());
 		fractalEditor.setContent(gradient);
 		fractalEditor.minHeight(200);
-		
+
 		render.setOnAction(e -> {
 			BufferedImage newImage = robo.createScreenCapture(new Rectangle(0,0,Toolkit.getDefaultToolkit().getScreenSize().width,Toolkit.getDefaultToolkit().getScreenSize().height));
 			fractalView.setImage(SwingFXUtils.toFXImage(newImage, null));
