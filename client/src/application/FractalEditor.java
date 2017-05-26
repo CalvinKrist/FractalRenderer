@@ -13,21 +13,25 @@ import javafx.embed.swing.SwingNode;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-
+/**
+ * @author David
+ */
 public class FractalEditor extends Scene {
 
 	private BorderPane bp;
 	protected int width, height;
 	public Window gradient;
 
-	/**
+	/**@author David
 	 * This instantiates the Fractal Editor scene
 	 *
 	 * @param x
@@ -44,12 +48,13 @@ public class FractalEditor extends Scene {
 		// initialize();
 	}
 
-	/**
+	/**@author David
 	 *
 	 * @throws FileNotFoundException
 	 * @throws AWTException
 	 */
 	public void initialize() throws FileNotFoundException, AWTException {
+		//initializing stuff
 		MenuBar menu = new MenuBar();
 		SwingNode fractalEditor = new SwingNode();
 		TreeView parameters = new TreeView();
@@ -66,22 +71,29 @@ public class FractalEditor extends Scene {
 
 
 		ImageView fractalView = new ImageView();
-
-		//fractalView.setImage(new Image(new FileInputStream("C:\\Users\\David\\Pictures\\butterfly.jpg")));
+		{//Robot stuff/DO NOT INCLUDE IN FINAL VERSION
 		Robot robo = new Robot();
 		BufferedImage capture = robo.createScreenCapture(new Rectangle(0,0,Toolkit.getDefaultToolkit().getScreenSize().width,Toolkit.getDefaultToolkit().getScreenSize().height));
 		Image image = SwingFXUtils.toFXImage(capture, null);
 		fractalView.setImage(image);
-
+		render.setOnAction(e -> {
+			BufferedImage newImage = robo.createScreenCapture(new Rectangle(0,0,Toolkit.getDefaultToolkit().getScreenSize().width,Toolkit.getDefaultToolkit().getScreenSize().height));
+			fractalView.setImage(SwingFXUtils.toFXImage(newImage, null));
+			bp.layout();
+			System.err.println("BUTTON TRIGGER EVENT");
+		});
+		}
+		//Fitting the image to the screen
 		fractalView.fitWidthProperty().bind(bp.minWidthProperty().subtract(trees.minWidthProperty()));
-		//fractalView.fitHeightProperty().bind(bp.minHeightProperty().subtract(render.minHeightProperty().add(render.minHeightProperty().subtract(gradient.HEIGHT*65))));
 		fractalView.fitHeightProperty().bind(bp.heightProperty().subtract(menu.minHeightProperty()).subtract(200));
-
+		
+		{//Fitting gradientEditor to full screen
 		Dimension p = new Dimension((int)(Toolkit.getDefaultToolkit().getScreenSize().width*0.75),200);
-		System.out.println(p);
+		System.out.println("Gradient Dimensions: "+p);
 
 		gradient = new Window(p, 50);
-
+		}
+		{//Tree Stuff
 		parameters.setRoot(new TreeItem("params"));
 		parameters.getRoot().setExpanded(true);
 
@@ -90,23 +102,34 @@ public class FractalEditor extends Scene {
 
 		layers.setRoot(new TreeItem("Layers"));
 		layers.getRoot().setExpanded(true);
+		}
 
-
-
+		//Trying to get this to work
 		fractalEditor.setOnMouseEntered(e -> gradient.repaint());
-		//fractalEditor.setOnMouseClicked(e -> gradient.repaint());
 
-		//trees.setPadding(new Insets(5));
+
+		{//This is the menu stuff
+		Menu file = new Menu("DUMMY CODE");
+		
+		MenuItem save = new MenuItem("SAVE");
+		MenuItem exit = new MenuItem("Exit");
+		exit.setOnAction(e -> {
+			System.exit(0);
+		});
+		
+		
+		file.getItems().addAll(save,exit);
+		
+		menu.getMenus().addAll(file);
+		}
 
 		VBox center = new VBox();
 		center.getChildren().addAll(fractalView,fractalEditor);
-		//center.setPadding(new Insets(5));
-
-
 		trees.getChildren().addAll(parameters,layers,render);
 
 		bp.setCenter(center);
 		bp.setRight(trees);
+		//This is where the menu is located on the border pane
 		bp.setTop(menu);
 
 		bp.minWidthProperty().bind(this.widthProperty());
@@ -114,12 +137,6 @@ public class FractalEditor extends Scene {
 		fractalEditor.setContent(gradient);
 		fractalEditor.minHeight(200);
 
-		render.setOnAction(e -> {
-			BufferedImage newImage = robo.createScreenCapture(new Rectangle(0,0,Toolkit.getDefaultToolkit().getScreenSize().width,Toolkit.getDefaultToolkit().getScreenSize().height));
-			fractalView.setImage(SwingFXUtils.toFXImage(newImage, null));
-			bp.layout();
-			System.out.println("trig");
-		});
 	}
 
 }
