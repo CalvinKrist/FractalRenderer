@@ -27,6 +27,8 @@ public class RenderManager {
 	protected Point realResolution;
 	protected String name;
 	
+	public static ArrayList<Class<?>> fractalRegistry = new ArrayList<Class<?>>();
+	
 	public RenderManager(Parameters params) {
 		location = params.removeParameter("location", Point.class);
 		zoom = 1 / params.removeParameter("radius", Double.class);
@@ -201,6 +203,46 @@ public class RenderManager {
 	
 	public ArrayList<Layer> getLayers() {
 		return layers;
+	}
+	
+	public static void initializeFractalRegistry() {
+		File fractalFolder = new File(Constants.CUSTOM_FRACTAL_FILEPATH);
+		File[] fractals = fractalFolder.listFiles();
+		for(File f: fractals) {
+			try {
+				Class<?> c = Class.forName(Constants.CUSTOM_FRACTAL_FILEPATH + f.getName());
+				if(c.isInstance(Layer.class))
+					fractalRegistry.add(c);
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public static boolean registerFractal(File file) {
+		Class<?> c;
+		try {
+			c = Class.forName(Constants.CUSTOM_FRACTAL_FILEPATH + file.getName());
+			if(c.isInstance(Layer.class)) {
+				fractalRegistry.add(c);
+				return true;
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public void addLayer(String layerType) {
+		try {
+			Class<?> clazz = Class.forName(Constants.CUSTOM_FRACTAL_FILEPATH + name);
+			Layer l = (Layer)(clazz.newInstance());
+			layers.add(l);
+			l.setLayer(layers.size());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		//layers.add(((Layer.class)(Class.forName(Constants.CUSTOM_FRACTAL_FILEPATH + name))getClass().in));
 	}
 
 }

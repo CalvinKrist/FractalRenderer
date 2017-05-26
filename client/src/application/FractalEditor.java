@@ -109,19 +109,20 @@ public class FractalEditor extends Scene {
 
 
 		{//This is the menu stuff
-		Menu file = new Menu("Network");
+			Menu file = new Menu("Network");
 		
-		MenuItem newNet = new MenuItem("Create New Network");
-		MenuItem viewNet = new MenuItem("View Network");
-		MenuItem exit = new MenuItem("Exit");
-		exit.setOnAction(e -> {
-			System.exit(0);
-		});
+			MenuItem newNet = new MenuItem("Create New Network");
+			MenuItem viewNet = new MenuItem("View Network");
+		
+			/*MenuItem exit = new MenuItem("Exit");
+			exit.setOnAction(e -> {
+				System.exit(0);
+			});*/
 		
 		
-		file.getItems().addAll(newNet,viewNet,exit);
+			file.getItems().addAll(newNet,viewNet);
 		
-		menu.getMenus().addAll(file);
+			menu.getMenus().addAll(file);
 		}
 
 		VBox center = new VBox();
