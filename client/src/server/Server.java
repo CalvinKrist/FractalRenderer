@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -18,7 +19,6 @@ import util.DataTag;
 import util.JobComparator;
 import util.Log;
 import util.Parameters;
-import util.SocketWrapper;
 
 /**
  * This class represents the server that manages all the clients
@@ -159,6 +159,19 @@ public class Server extends NetworkNode {
 
 	public ArrayList<SocketWrapper> getAdmins() {
 		return admins;
+	}
+	
+	public void removeByInetAddress(InetAddress addr) {
+		for(int i = 0; i < children.size(); i++) {
+			if(children.get(i).getInet().equals(addr)) {
+				children.get(i).close();
+				children.remove(i);
+				log.blankLine();
+				log.newLine("User at " + addr.getHostAddress() + " removed.");
+				log.blankLine();
+				break;
+			}
+		}
 	}
 	
 	public void setDisplay(Display newDisplay) {

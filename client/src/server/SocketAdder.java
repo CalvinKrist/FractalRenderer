@@ -12,7 +12,6 @@ import java.util.List;
 
 import util.Constants;
 import util.Log;
-import util.SocketWrapper;
 
 public class SocketAdder extends Thread {
 	
@@ -78,7 +77,8 @@ public class SocketAdder extends Thread {
 					server.assignJob(w);
 					server.assignJob(w);
 					server.getLog().newLine("User from " + w.getInetAdress() + " added to list.");
-					server.getDisplay().updateNetworkView(children, server.getUncompletedJobs());
+					if(server.getDisplay() != null)
+						server.getDisplay().updateNetworkView(children, server.getUncompletedJobs());
 				}
 			} catch (IOException e) {
 				server.getLog().addError(e);

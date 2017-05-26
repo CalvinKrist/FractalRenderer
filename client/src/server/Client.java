@@ -16,7 +16,6 @@ import util.Constants;
 import util.DataTag;
 import util.Log;
 import util.Parameters;
-import util.SocketWrapper;
 import util.Utils;
 
 public class Client extends NetworkNode {

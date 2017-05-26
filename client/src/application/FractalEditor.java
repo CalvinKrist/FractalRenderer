@@ -109,16 +109,17 @@ public class FractalEditor extends Scene {
 
 
 		{//This is the menu stuff
-		Menu file = new Menu("DUMMY CODE");
+		Menu file = new Menu("Network");
 		
-		MenuItem save = new MenuItem("SAVE");
+		MenuItem newNet = new MenuItem("Create New Network");
+		MenuItem viewNet = new MenuItem("View Network");
 		MenuItem exit = new MenuItem("Exit");
 		exit.setOnAction(e -> {
 			System.exit(0);
 		});
 		
 		
-		file.getItems().addAll(save,exit);
+		file.getItems().addAll(newNet,viewNet,exit);
 		
 		menu.getMenus().addAll(file);
 		}

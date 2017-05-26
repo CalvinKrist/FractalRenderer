@@ -33,10 +33,10 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import server.Job;
 import server.Server;
+import server.SocketWrapper;
 import util.Constants;
 import util.Log;
 import util.Parameters;
-import util.SocketWrapper;
 
 public class Display extends JPanel implements Runnable {
 	
@@ -57,11 +57,13 @@ public class Display extends JPanel implements Runnable {
 	
 	private Server server;
 	
+	private NetworkView view;
+	
 	public volatile boolean running = true;
 	
 	public Display(Server server) {
 		this.server = server;
-		//log = server.getLog();
+		log = server.getLog();
 		df = new DecimalFormat("0.###E0");
 		this.setLayout(new BorderLayout());
 		this.setBackground(bgColor);
@@ -73,7 +75,8 @@ public class Display extends JPanel implements Runnable {
 		left.add(createStatistics(), BorderLayout.SOUTH);
 		this.add(left, BorderLayout.WEST);
 		
-		this.add(new NetworkView(), BorderLayout.CENTER);
+		view = new NetworkView(server);
+		this.add(view, BorderLayout.CENTER);
 		
 		this.add(menus(), BorderLayout.NORTH);
 		t = new Thread(this);
@@ -304,6 +307,7 @@ public class Display extends JPanel implements Runnable {
 			public void windowClosing(WindowEvent e) {
 				System.out.println("closing");
 				running = false;
+				server.setDisplay(null);
 			}
 			
 		});
