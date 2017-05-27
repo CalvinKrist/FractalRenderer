@@ -3,6 +3,7 @@ package util;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Scanner;
@@ -16,7 +17,12 @@ public class Parameters implements Serializable {
 		parameters = map;
 	}
 	
+	public Parameters() {
+		parameters = new HashMap<String, Serializable>();
+	}
+	
 	public Parameters(String filePath) {
+		parameters = new HashMap<String, Serializable>();
 		try {
 			Scanner s = new Scanner(new File(filePath));
 			while(s.hasNextLine()) {

@@ -6,14 +6,15 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import util.Parameters;
-import util.Utils;
 
-public class HistogramRenderer extends Layer {
+@SuppressWarnings("serial")
+public class HistogramLayer extends Layer {
 	
-	public HistogramRenderer(Palette palette, int layer) {
-		super(palette, layer);
+	public HistogramLayer() {
+		super();
 		bailout = 1000;
 		maxIterations = 400;
+		discription = "Uses a histogram to distribute all the aproximated distances across the palete.";
 	}
 	
 	public Parameters getParameters() {
@@ -49,7 +50,6 @@ public class HistogramRenderer extends Layer {
 	public void render(int[][] pixels, int width, int height, double rWidth, double rHeight, double xPos, double yPos) {
 		calculateIterationsAndBailout(rWidth, rHeight);
 		ArrayList<double[]> info = new ArrayList<double[]>(width * height);
-
 		for (int i = 0; i < width; i++)
 			for (int k = 0; k < height; k++) {
 				double x = (i / (double)width) * rWidth * 2 - rWidth + xPos;
@@ -60,14 +60,12 @@ public class HistogramRenderer extends Layer {
 				int iterations = 0;
 
 				double newz;
-
 				for (iterations = 0; iterations < maxIterations
-						&& (z * z) + (zi * zi) < bailout; iterations++) {
+						&& (z * z) + (zi * zi) < bailout * bailout; iterations++) {
 					newz = (z * z) - (zi * zi) + x;
 					zi = 2 * z * zi + y;
 					z = newz;
 				}
-
 				double zSquared = zi * zi + z * z;
 
 				double logZ = Math.log(zSquared) / 2;
@@ -100,7 +98,6 @@ public class HistogramRenderer extends Layer {
 				}
 				info.remove(i--);
 			}
-		
 		for(int i = 0; i < info.size(); i++) {
 
 			double hue = (double)i / info.size();
@@ -119,10 +116,12 @@ public class HistogramRenderer extends Layer {
 	protected void calculateIterationsAndBailout(double rWidth, double rHeight) {
 		double zoom = rWidth > rHeight ? rWidth : rHeight;
 		zoom = 1 / zoom;
-		if(autoBailout)
-			bailout = (int)Math.pow(zoom, .25);
-		if(autoMaxIterations)
-			maxIterations = (int)(Math.log(Math.pow(zoom, 3.8)) * 10);
+		if(autoBailout) {
+			bailout = 40;
+		}
+		if(autoMaxIterations) 
+			maxIterations = (int)(Math.log(Math.pow(1 / zoom, 3.8)) * 10);
+		
 	}
 	
 	private double layerAverage(double d1, double d2, double weight) {

@@ -6,8 +6,15 @@ import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
+import com.sun.prism.paint.Color;
+
+import fractal.Layer;
+import fractal.RenderManager;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.embed.swing.SwingNode;
 import javafx.geometry.Insets;
@@ -22,6 +29,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import util.Point;
+import util.Utils;
 /**
  * @author David
  */
@@ -30,6 +40,8 @@ public class FractalEditor extends Scene {
 	private BorderPane bp;
 	protected int width, height;
 	public Window gradient;
+	
+	private RenderManager fractal;
 
 	/**@author David
 	 * This instantiates the Fractal Editor scene
@@ -48,13 +60,21 @@ public class FractalEditor extends Scene {
 		// initialize();
 	}
 
-	/**@author David
+	/**@author David, Calvin
 	 *
 	 * @throws FileNotFoundException
 	 * @throws AWTException
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void initialize() throws FileNotFoundException, AWTException {
 		//initializing stuff
+		try {
+			Layer.initializeFractalRegistry();
+		} catch (IOException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e1) {
+			e1.printStackTrace();
+		}
+		fractal = new RenderManager();
+		
 		MenuBar menu = new MenuBar();
 		SwingNode fractalEditor = new SwingNode();
 		TreeView parameters = new TreeView();
@@ -65,24 +85,22 @@ public class FractalEditor extends Scene {
 		bp.setPadding(new Insets(5));
 
 
-		Button render = new Button("Render");
+		Button render = new Button("Update");
 		render.minWidthProperty().bind(trees.minWidthProperty());
 		render.minHeightProperty().bind(trees.minHeightProperty().divide(6));
 
 
 		ImageView fractalView = new ImageView();
-		{//Robot stuff/DO NOT INCLUDE IN FINAL VERSION
-		Robot robo = new Robot();
-		BufferedImage capture = robo.createScreenCapture(new Rectangle(0,0,Toolkit.getDefaultToolkit().getScreenSize().width,Toolkit.getDefaultToolkit().getScreenSize().height));
-		Image image = SwingFXUtils.toFXImage(capture, null);
-		fractalView.setImage(image);
-		render.setOnAction(e -> {
-			BufferedImage newImage = robo.createScreenCapture(new Rectangle(0,0,Toolkit.getDefaultToolkit().getScreenSize().width,Toolkit.getDefaultToolkit().getScreenSize().height));
-			fractalView.setImage(SwingFXUtils.toFXImage(newImage, null));
-			bp.layout();
-			System.err.println("BUTTON TRIGGER EVENT");
+		fractalView.setOnMouseClicked(e -> {
+			Point p = new Point(e.getScreenX(), e.getScreenY());
+			System.out.println(p);
 		});
-		}
+		this.fractal = new RenderManager();
+		fractalView.setImage(SwingFXUtils.toFXImage(this.fractal.getImage(), null));
+		render.setOnAction(e -> {
+			fractalView.setImage(SwingFXUtils.toFXImage(this.fractal.getImage(), null));
+			bp.layout();
+		});
 		//Fitting the image to the screen
 		fractalView.fitWidthProperty().bind(bp.minWidthProperty().subtract(trees.minWidthProperty()));
 		fractalView.fitHeightProperty().bind(bp.heightProperty().subtract(menu.minHeightProperty()).subtract(200));
@@ -109,20 +127,46 @@ public class FractalEditor extends Scene {
 
 
 		{//This is the menu stuff
-			Menu file = new Menu("Network");
+			Menu network = new Menu("Network");
+			Menu fractal = new Menu("Fractal");
 		
 			MenuItem newNet = new MenuItem("Create New Network");
 			MenuItem viewNet = new MenuItem("View Network");
+			
+			network.getItems().addAll(newNet,viewNet);
+			
+			MenuItem newFract = new MenuItem("New Fractal");
+			newFract.setOnAction(e -> {
+				this.fractal = new RenderManager();
+				fractalView.setImage(SwingFXUtils.toFXImage(this.fractal.getImage(), null));
+			});
+			MenuItem openFract = new MenuItem("Open Fractal");
+			openFract.setOnAction(e -> {
+				FileChooser chooser = new FileChooser();
+				chooser.setTitle("Open Fractal");
+				chooser.setInitialDirectory(new File("fractals"));
+				FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Fractals (*.fractal)", "*.fractal");
+				chooser.getExtensionFilters().add(filter);
+				chooser.showOpenDialog(null);
+			});
+			MenuItem saveFract = new MenuItem("Save Fractal");
+			saveFract.setOnAction(e -> {
+				this.fractal.saveFractal();
+			});
+			MenuItem saveFractAs = new MenuItem("Save Fractal As");
+			saveFractAs.setOnAction(e -> {
+				this.fractal.saveFractalAs();
+			});
+			
+			fractal.getItems().addAll(newFract, openFract, saveFract, saveFractAs);
 		
 			/*MenuItem exit = new MenuItem("Exit");
 			exit.setOnAction(e -> {
 				System.exit(0);
 			});*/
-		
-		
-			file.getItems().addAll(newNet,viewNet);
-		
-			menu.getMenus().addAll(file);
+				
+			menu.getMenus().addAll(fractal);
+			menu.getMenus().addAll(network);
 		}
 
 		VBox center = new VBox();

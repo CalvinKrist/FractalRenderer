@@ -10,10 +10,11 @@ import util.Parameters;
 import util.Utils;
 import util.Vector2;
 
-public class TriangleAverageRenderer extends Layer {
+@SuppressWarnings("serial")
+public class TriangleAverageLayer extends Layer {
 
 	private long bailoutSquared;
-	private double magnitude, r1, r2, g1, g2, b1, b2, tweenval;
+	private double magnitude, tweenval;
 	private double realIterations;
 	private int colval1, colval2;
 	
@@ -29,8 +30,9 @@ public class TriangleAverageRenderer extends Layer {
 	//video
 	int su = 0;
 	
-	public TriangleAverageRenderer(Palette palette, int layer) {
-		super(palette, layer);
+	public TriangleAverageLayer() {
+		super();
+		discription = "Uses the Triangle Average Inequality rendering method.";
 		maxIterations = 1000;
 		bailout = (int)(Math.pow(10, 4));
 		bailoutSquared = bailout * bailout;

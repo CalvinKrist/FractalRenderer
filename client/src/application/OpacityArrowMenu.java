@@ -3,8 +3,6 @@ package application;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
-import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -19,6 +17,7 @@ import javax.swing.event.ChangeListener;
 
 import util.Constants;
 
+@SuppressWarnings("serial")
 public class OpacityArrowMenu extends JPanel {
 	
 	public OpacityArrowMenu(ArrowButton<Double> button, List<ArrowButton<Double>> opacityList, JPanel p) {

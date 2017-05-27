@@ -1,5 +1,6 @@
 package fractal;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -10,13 +11,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
+import javafx.scene.control.TextInputDialog;
 import util.Constants;
 import util.Parameters;
 import util.Point;
-import util.Vector2;
+import util.Utils;
 
 public class RenderManager {
 	
@@ -27,9 +32,26 @@ public class RenderManager {
 	protected Point realResolution;
 	protected String name;
 	
-	public static ArrayList<Class<?>> fractalRegistry = new ArrayList<Class<?>>();
+	public RenderManager() {
+		location = new Point(0, 0);
+		zoom = .25;
+		screenResolution = new Dimension(1600, 1600);
+		name = "";
+		layers = new ArrayList<Layer>();
+		Layer l = Layer.getLayerByType("HistogramLayer");
+		l.init(new Palette(Utils.getDefaultColorPalate(), Color.BLACK), 1);
+		l.setName("Layer 1");
+		layers.add(l);
+		this.setScreenResolution(screenResolution);
+		this.setLocation(location);
+		this.setZoom(zoom);
+	}
 	
 	public RenderManager(Parameters params) {
+		init(params);
+	}
+	
+	private void init(Parameters params) {
 		location = params.removeParameter("location", Point.class);
 		zoom = 1 / params.removeParameter("radius", Double.class);
 		screenResolution = params.removeParameter("resolution", Dimension.class);
@@ -38,15 +60,17 @@ public class RenderManager {
 		this.layers = new ArrayList<Layer>(params.getSize());
 		while(names.hasNext()) {
 			String name = names.next();
-			if(name.indexOf("layer") != -1) {
-				Layer layer = params.getParameter(name, Layer.class);
-				
+			if(name.indexOf("layer") != -1) {				
 				this.layers.add(Integer.valueOf(name.substring("layer".length())) - 1, params.getParameter(name, Layer.class));
 			}
 		}
 		this.setScreenResolution(screenResolution);
 		this.setLocation(location);
 		this.setZoom(zoom);
+	}
+	
+	public RenderManager(File file) {
+		//TODO: implement constructor
 	}
 	
 	public void render(int[][] pixels) {
@@ -64,7 +88,7 @@ public class RenderManager {
 	public void render(String filePath, String title) {
 		int[][] pixels = new int[screenResolution.width][screenResolution.height];
 		BufferedImage img = new BufferedImage(screenResolution.width, screenResolution.height, BufferedImage.TYPE_INT_ARGB);
-		for(Layer r: layers)
+		for(Layer r: layers) 
 			r.render(pixels);
 		setPixels(img, pixels);
 		renderImage(filePath, title, img);
@@ -158,13 +182,19 @@ public class RenderManager {
 	}
 	
 	public void saveFractal() {
+		if(name.equals("")) {
+			TextInputDialog dialog = new TextInputDialog("");
+			dialog.setContentText("Fractal name:");
+			dialog.setHeaderText(null);
+			setName(dialog.showAndWait().get());
+		}
 		Map<String, Serializable> params = new HashMap<String, Serializable>();
 		params.put("name", name);
 		params.put("location", getLocation().toString());
 		params.put("radius", getRadius());
 		params.put("resolution", getScreenResolution().width + "," + getScreenResolution().height);
 		for(int i = 0; i < getNumLayers(); i++) {
-			params.put("layer" + (i + 1), getLayers().get(i).getName() + ".fract");
+			params.put("layer" + (i + 1), getLayers().get(i).getName() + ".layer");
 			try {
 				getLayers().get(i).save(name);
 			} catch (IOException e) {
@@ -172,7 +202,7 @@ public class RenderManager {
 			}
 		}
 		try {
-			FileWriter writer = new FileWriter(new File(Constants.FRACTAL_FILEPATH + "/" + name + "/" + name + ".prop"));
+			FileWriter writer = new FileWriter(new File(Constants.FRACTAL_FILEPATH + "/" + name + "/" + name + ".fractal"));
 			writer.write(new Parameters(params).toString());
 			writer.close();
 		} catch (IOException e) {
@@ -180,9 +210,18 @@ public class RenderManager {
 		}
 	}
 	
-	public void saveFractal(String name) {
+	public void saveFractalAs() {
+		TextInputDialog dialog = new TextInputDialog("");
+		dialog.setContentText("Fractal name:");
+		dialog.setHeaderText(null);
+
+		Optional<String> result = dialog.showAndWait();
+		String name = result.get();
+		
+		String currName = name;
 		setName(name);
 		saveFractal();
+		setName(currName);
 	}
 	
 	public void setName(String name) {
@@ -205,34 +244,6 @@ public class RenderManager {
 		return layers;
 	}
 	
-	public static void initializeFractalRegistry() {
-		File fractalFolder = new File(Constants.CUSTOM_FRACTAL_FILEPATH);
-		File[] fractals = fractalFolder.listFiles();
-		for(File f: fractals) {
-			try {
-				Class<?> c = Class.forName(Constants.CUSTOM_FRACTAL_FILEPATH + f.getName());
-				if(c.isInstance(Layer.class))
-					fractalRegistry.add(c);
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	public static boolean registerFractal(File file) {
-		Class<?> c;
-		try {
-			c = Class.forName(Constants.CUSTOM_FRACTAL_FILEPATH + file.getName());
-			if(c.isInstance(Layer.class)) {
-				fractalRegistry.add(c);
-				return true;
-			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
-	
 	public void addLayer(String layerType) {
 		try {
 			Class<?> clazz = Class.forName(Constants.CUSTOM_FRACTAL_FILEPATH + name);
@@ -242,7 +253,6 @@ public class RenderManager {
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
-		//layers.add(((Layer.class)(Class.forName(Constants.CUSTOM_FRACTAL_FILEPATH + name))getClass().in));
 	}
 
 }

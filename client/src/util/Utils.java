@@ -34,20 +34,11 @@ public class Utils {
 		return (d2 - d1) * stepCount / totalSteps + d1;
 	}
 
-	public static Color[] getColorPalate() {
+	public static Color[] getDefaultColorPalate() {
 		int numColors = 1000;
 		Color[] palate = new Color[numColors];
 		for (int i = 0; i < numColors; i++)
-			palate[i] = Utils.interpolateColors(new Color(255, 0, 255), new Color(255, 255, 0), (double) i / numColors);
-		return palate;
-	}
-
-	public static Color[] getColorPalateAlt() {
-		int numColors = 1000;
-		Color[] palate = new Color[numColors];
-		for (int i = 0; i < numColors; i++)
-			palate[i] = Utils.interpolateColors(new Color(100, 0, 200, 0), new Color(255, 80, 100, 255),
-					(double) i / numColors);
+			palate[i] = Utils.interpolateColors(new Color(0, 0, 0), new Color(255, 255, 255), (double) i / numColors);
 		return palate;
 	}
 

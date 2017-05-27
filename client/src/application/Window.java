@@ -16,7 +16,7 @@ import javax.swing.JPanel;
 
 import util.Utils;
 
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({ "rawtypes", "serial", "unused", "unchecked"})
 public class Window extends JPanel implements MouseListener, MouseMotionListener {
 	
 	private Dimension dimension;
@@ -133,7 +133,6 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	}
 	
 	//takes a list of arrow buttons and sorts them based on x location
-	@SuppressWarnings("unchecked")
 	private void sortButtonList(List list) {
         for (int i = 1; i < list.size(); i++) 
             for(int j = i ; j > 0 ; j--)

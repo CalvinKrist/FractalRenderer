@@ -18,6 +18,7 @@ import javax.swing.event.ChangeListener;
 
 import util.Constants;
 
+@SuppressWarnings("serial")
 public class ColorArrowMenu extends JPanel {
 	
 	public ColorArrowMenu(SquareButton button, List<ArrowButton<Color>> colorList, JPanel p) {
