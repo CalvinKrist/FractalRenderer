@@ -1,1 +1,6 @@
-<name:Layer 1><bailout:40><maxIterations:1000><palette:fractals/palettes/Layer 1.palette>
+<name:Layer 1>
+<type:HistogramLayer>
+<bailout:auto>
+<maxIterations:auto>
+<layer:0>
+<palette:fractals/palettes/Layer 1.palette>

@@ -49,20 +49,9 @@ public class SocketAdder extends Thread {
 							children.remove(w);
 							server.moveFromUncompletedToUnassigned(w);
 							w.close();
-							if(server.getAdmins().contains(w)) {
-								server.getLog().blankLine();
-								server.getLog().newLine("Admin at " + w.getInetAdress() + " disconnected.");
-								server.getLog().blankLine();
-							}
-							else {
-								server.getLog().blankLine();
-								server.getLog().newLine("Client at " + w.getInetAdress() + " disconnected.");
-								server.getLog().blankLine();
-							}
-							//if(children.size() == 0)
-								//NetworkManager.network.initalizeClient();
-							if(server.getAdmins().contains(w))
-								server.getAdmins().remove(w);
+							server.getLog().blankLine();
+							server.getLog().newLine("Client at " + w.getInetAdress() + " disconnected.");
+							server.getLog().blankLine();
 						}
 					});
 					w.addMessageListener(new MessageListener() {
@@ -72,7 +61,7 @@ public class SocketAdder extends Thread {
 							}
 						}
 					});
-					w.sendMessage(server.getParameters());
+					w.sendMessage(server.getFractal());
 					children.add(w);
 					server.assignJob(w);
 					server.assignJob(w);

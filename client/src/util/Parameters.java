@@ -74,7 +74,7 @@ public class Parameters implements Serializable {
 	public String toString() {
 		String s = "";
 		for(String key : keySet()) {
-			s += "<" + key + ":" + parameters.get(key) + ">";
+			s += "<" + key + ":" + parameters.get(key) + ">\r\n";
 		}
 		return s;
 	}

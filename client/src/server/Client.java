@@ -11,6 +11,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
 
+import com.sun.javafx.scene.paint.GradientUtils.Point;
+
 import fractal.RenderManager;
 import util.Constants;
 import util.DataTag;
@@ -42,7 +44,9 @@ public class Client extends NetworkNode {
 		
 	public boolean running = true;
 		
-	public Client(Log log) {
+	public Client() {}
+	
+	public void init(Log log) {
 		this.log = log;
 		log.blankLine();
 		log.newLine("Creating new client.");
@@ -52,7 +56,6 @@ public class Client extends NetworkNode {
 		
 		initializeServer();
 		log.newLine("Succesfully connected to server at " + ipAdress + ".");
-		//NetworkManager.network.clientConnection(ipAdress);
 		doJob();
 	}
 	
@@ -87,8 +90,8 @@ public class Client extends NetworkNode {
 						handleJob((Job)j);
 					else if (j instanceof String){
 						handleString((String)j);
-					} else if(j instanceof Parameters) {
-						fractal = new RenderManager((Parameters)j);
+					} else if(j instanceof RenderManager) {
+						fractal = (RenderManager)j;
 						log.newLine("RenderManager recieved: " + fractal.toString());
 					}
 				}
@@ -137,6 +140,7 @@ public class Client extends NetworkNode {
 		log.newLine("Starting job " + j );
 		Parameters params = j.getParameters();
 		fractal.setZoom(params.getParameter("zoom", Double.class));
+		fractal.setLocation(params.getParameter("location", util.Point.class));
 		int[][] pixels = new int[fractal.getScreenResolution().width][fractal.getScreenResolution().height];
 		fractal.render(pixels);
 		j.setImage(pixels);

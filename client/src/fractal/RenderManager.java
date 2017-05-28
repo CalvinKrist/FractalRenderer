@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,7 +30,8 @@ import util.Utils;
  * @author Calvin
  *
  */
-public class RenderManager {
+@SuppressWarnings("serial")
+public class RenderManager implements Serializable {
 	
 	/**
 	 * A list of all the layers making up a fractal
@@ -89,16 +92,18 @@ public class RenderManager {
 	 * @param params the parameters of the fractal to be initialized
 	 */
 	private void init(Parameters params) {
-		location = params.removeParameter("location", Point.class);
-		zoom = 1 / params.removeParameter("radius", Double.class);
-		screenResolution = params.removeParameter("resolution", Dimension.class);
+		location = new Point(params.removeParameter("location", String.class));
+		zoom = 1 / Double.valueOf(params.removeParameter("radius", String.class));
+		String[] dims = params.removeParameter("resolution", String.class).split(",");
+		screenResolution = new Dimension(Integer.valueOf(dims[0]), Integer.valueOf(dims[1]));
+		
 		name = params.removeParameter("name", String.class);
 		Iterator<String> names = params.keyIterator();
 		this.layers = new ArrayList<Layer>(params.getSize());
 		while(names.hasNext()) {
 			String name = names.next();
 			if(name.indexOf("layer") != -1) {				
-				this.layers.add(Integer.valueOf(name.substring("layer".length())) - 1, params.getParameter(name, Layer.class));
+				this.layers.add(Integer.valueOf(name.substring("layer".length())) - 1, Layer.getLayerByAddress(Constants.FRACTAL_FILEPATH + this.name + "/" + params.getParameter(name, String.class)));
 			}
 		}
 		this.setScreenResolution(screenResolution);
@@ -111,8 +116,19 @@ public class RenderManager {
 	 * @param name of a saved fractal
 	 */
 	public RenderManager(String name) {
-		//TODO: implement constructor
+		Parameters params = new Parameters(Constants.FRACTAL_FILEPATH + name + "/" + name + ".fractal");
+		init(params);
 	}
+	
+	/**
+	 * Initializes a fractal from a .fractal file
+	 * @param f a .fractal file
+	 */
+	public RenderManager(File f) {
+		Parameters params = new Parameters(f.getPath());
+		init(params);
+	}
+	
 	
 	/**
 	 * Renders the fractal using the given 2D array of pixels.
@@ -337,6 +353,10 @@ public class RenderManager {
 	
 	public double getRadius() {
 		return 1 / zoom;
+	}
+	
+	public String getName() {
+		return name;
 	}
 	
 	public double getZoom() {

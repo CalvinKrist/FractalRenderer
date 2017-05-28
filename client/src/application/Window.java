@@ -247,10 +247,11 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	 * @param newLayer the new layer the window displays
 	 */
 	public void updateLayer(Layer newLayer) {
+		
 		this.layer = newLayer;
 		this.palette = layer.getPalette();
 		for (ArrowButton b : palette.getColorList()) {
-			b.setLocation(new Point(b.getX() / palette.size * gradientRect.width + gradientRect.x, colorButtonHeight));
+			b.setLocation(new Point((int)((double)b.getX() / palette.size * gradientRect.width) + gradientRect.x, colorButtonHeight));
 			b.setDown(false);
 			b.setSquareColor((Color) b.getData());
 		}
@@ -261,6 +262,8 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 			b.setLocation(
 					new Point(b.getX() / palette.size * gradientRect.width + gradientRect.x, opacityButtonHeight));
 		}
+		this.revalidate();
+		this.repaint();
 	}
 
 	/**

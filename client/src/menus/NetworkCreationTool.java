@@ -1,5 +1,6 @@
 package menus;
 
+import java.awt.Dimension;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +57,7 @@ public class NetworkCreationTool {
 		Pair<Integer, Integer> dimension = displayDialog2();
 		if (dimension == null)
 			return false;
+		fractal.setScreenResolution(new Dimension(dimension.getKey(), dimension.getValue()));
 
 		Double zoomSpeed = getZoomSpeed();
 		if (zoomSpeed == null)

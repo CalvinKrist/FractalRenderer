@@ -220,6 +220,9 @@ public class FractalEditor extends Scene {
 				FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Fractals (*.fractal)", "*.fractal");
 				chooser.getExtensionFilters().add(filter);
 				File f = chooser.showOpenDialog(null);
+				this.fractal = new RenderManager(f);
+				gradient.updateLayer(this.fractal.getLayers().get(0));
+				this.updateFractalImage();
 			});
 			MenuItem saveFract = new MenuItem("Save Fractal");
 			saveFract.setOnAction(e -> {
@@ -265,6 +268,7 @@ public class FractalEditor extends Scene {
 	 * Updates the fractal display if it has been changed
 	 */
 	public void updateFractalImage() {
+		gradient.repaint();
 		fractal.setScreenResolution(new Dimension((int)fractalView.getFitWidth(), (int)fractalView.getFitHeight()));
 		fractalView.setImage(SwingFXUtils.toFXImage(this.fractal.getImage(), null));
 		bp.layout();
