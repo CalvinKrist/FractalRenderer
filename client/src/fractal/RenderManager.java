@@ -23,15 +23,43 @@ import util.Parameters;
 import util.Point;
 import util.Utils;
 
+/**
+ * Manages all the layers that make up a fractal. It could, in many ways, be thought of as a fractal itself.
+ * @author Calvin
+ *
+ */
 public class RenderManager {
 	
+	/**
+	 * A list of all the layers making up a fractal
+	 */
 	private ArrayList<Layer> layers;
+	/**
+	 * The location in real coordinates the fractal is centred on
+	 */
 	private Point location;
+	/**
+	 * This is the zoom level of the fractal, except sometimes its the radius of the fractal. The radius and zoom re inverses of eachother.
+	 */
 	private double zoom;
+	/**
+	 * The resolution at which any images of the fractal will be generated
+	 */
 	protected Dimension screenResolution;
+	/**
+	 * The resolution of the fractal in real world coordinates. This variable exists in order to resolve any stretching that
+	 * can occur when the screenResolution isn't square.
+	 */
 	protected Point realResolution;
+	/**
+	 * The name of the fractal.
+	 */
 	protected String name;
 	
+	/**
+	 * Initializes a fractal with a black to white palette centered at tbe point 0,0. It has a zoom level of .25 and a 
+	 * single HistogramLayer
+	 */
 	public RenderManager() {
 		location = new Point(0, 0);
 		zoom = .25;
@@ -39,6 +67,7 @@ public class RenderManager {
 		name = "";
 		layers = new ArrayList<Layer>();
 		Layer l = Layer.getLayerByType("HistogramLayer");
+		
 		l.init(new Palette(Utils.getDefaultColorPalate(), Color.BLACK), 1);
 		l.setName("Layer 1");
 		layers.add(l);
@@ -47,10 +76,18 @@ public class RenderManager {
 		this.setZoom(zoom);
 	}
 	
+	/**
+	 * Initialized a fractal with the given parameters
+	 * @param params the parameters of the fractal to be initialized
+	 */
 	public RenderManager(Parameters params) {
 		init(params);
 	}
 	
+	/**
+	 * initialized the fractal will the specifie dparameters
+	 * @param params the parameters of the fractal to be initialized
+	 */
 	private void init(Parameters params) {
 		location = params.removeParameter("location", Point.class);
 		zoom = 1 / params.removeParameter("radius", Double.class);
@@ -69,15 +106,26 @@ public class RenderManager {
 		this.setZoom(zoom);
 	}
 	
+	/**
+	 * Initializes a fractal from a file. This file points to a .fractal.
+	 * @param file a file of .fractal which is a saved fractal
+	 */
 	public RenderManager(File file) {
 		//TODO: implement constructor
 	}
 	
+	/**
+	 * Renders the fractal using the given 2D array of pixels.
+	 * @param pixels the pixels the fractal will be drawn to.
+	 */
 	public void render(int[][] pixels) {
 		for(Layer r: layers)
 			r.render(pixels);
 	}
 	
+	/**
+	 * @return a 2D array representing the rendered image of the fractal
+	 */
 	public int[][] render() {
 		int[][] pixels = new int[screenResolution.width][screenResolution.height];
 		for(Layer r: layers)
@@ -85,6 +133,11 @@ public class RenderManager {
 		return pixels;
 	}
 	
+	/**
+	 * Renders the fractal and saves it as an png at the designated filepath and with the designated title
+	 * @param filePath the filePath pointing to the directory of the png
+	 * @param title the title of the png
+	 */
 	public void render(String filePath, String title) {
 		int[][] pixels = new int[screenResolution.width][screenResolution.height];
 		BufferedImage img = new BufferedImage(screenResolution.width, screenResolution.height, BufferedImage.TYPE_INT_ARGB);
@@ -94,6 +147,9 @@ public class RenderManager {
 		renderImage(filePath, title, img);
 	}
 	
+	/**
+	 * @return the rendered fractal as a BufferedImage
+	 */
 	public BufferedImage getImage() {
 		int[][] pixels = new int[screenResolution.width][screenResolution.height];
 		BufferedImage img = new BufferedImage(screenResolution.width, screenResolution.height, BufferedImage.TYPE_INT_ARGB);
@@ -103,6 +159,12 @@ public class RenderManager {
 		return img;
 	}
 	
+	/**
+	 * Makes a deep zoom of the fractal until the program is stopped
+	 * @param filePath the directory where the rendered images will be saved
+	 * @param zoomSpeed the speed at which the fractal zooms in
+	 * @param title the title of the rendered fractal
+	 */
 	public void renderMovie(String filePath, double zoomSpeed, String title) {
 		int frame = 1;
 		while(true) {
@@ -118,6 +180,12 @@ public class RenderManager {
 		}
 	}
 	
+	/**
+	 * A static method created to save a BufferedImage as a png to a specified location
+	 * @param filePath the directory where the image will be saved
+	 * @param title the title of the saved png
+	 * @param img the image to be saved as a png
+	 */
 	public static void renderImage(String filePath, String title, BufferedImage img) {
 		try {
 			File f1 = new File(filePath);
@@ -130,6 +198,11 @@ public class RenderManager {
 		}
 	}
 
+	/**
+	 * Sets the pixels of the BufferedImage to those of the 2D array of color data. Assumes they are the same size.
+	 * @param img the image whose color data will be set
+	 * @param pixels the color data used to set the BufferedImage
+	 */
 	public static void setPixels(BufferedImage img, int[][] pixels) {
 		for(int i = 0; i < pixels.length; i++)
 			for(int k = 0; k < pixels[i].length; k++) {
@@ -143,6 +216,12 @@ public class RenderManager {
 			r.setLocation(location);
 	}
 	
+	/**
+	 * Sets the zoom value of the fractal and takes care of any stretching issues of the
+	 * layer so that the fractal is never streched, regardless of the dimension of the 
+	 * image being drawn. It does based on the value of the longest edge.
+	 * @param zoom
+	 */
 	public void setZoom(double zoom) {
 		this.zoom = zoom;
 		for(Layer r: layers)
@@ -164,6 +243,10 @@ public class RenderManager {
 		return screenResolution;
 	}
 	
+	public Point getRealResolution() {
+		return realResolution;
+	}
+	
 	public void setScreenResolution(Dimension screenResolution) {
 		this.screenResolution = screenResolution;
 		for(Layer r: layers)
@@ -182,6 +265,9 @@ public class RenderManager {
 		return s;
 	}
 	
+	/**
+	 * Saves the fractal, its layers, and their palettes to the specified directory based on the fractal's name
+	 */
 	public void saveFractal() {
 		if(name.equals("")) {
 			TextInputDialog dialog = new TextInputDialog("");
@@ -211,6 +297,10 @@ public class RenderManager {
 		}
 	}
 	
+	/**
+	 * used when the user wants to save the fractal with a different name, but not change the name of the 
+	 * current instance.
+	 */
 	public void saveFractalAs() {
 		TextInputDialog dialog = new TextInputDialog("");
 		dialog.setContentText("Fractal name:");
@@ -249,6 +339,10 @@ public class RenderManager {
 		return layers;
 	}
 	
+	/**
+	 * Adds a new layer to the fractal at the top of the list
+	 * @param layerType the type of layer to be added to the fractal
+	 */
 	public void addLayer(String layerType) {
 		try {
 			Class<?> clazz = Class.forName(Constants.CUSTOM_FRACTAL_FILEPATH + name);

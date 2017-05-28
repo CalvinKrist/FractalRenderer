@@ -17,4 +17,4 @@ Cleaning up of code
 Generate JavaDocs
 Create user manual
 Do project writeup
-Fix glitch where the program continues to run in the background after the gui is closed
+add anti-alliasing and super sampling to rendering
