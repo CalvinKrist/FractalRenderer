@@ -323,6 +323,10 @@ public class RenderManager {
 		this.name = name;
 	}
 	
+	public String getName() {
+		return name;
+	}
+	
 	public Point getLocation() {
 		return location;
 	}

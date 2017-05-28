@@ -29,6 +29,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
+import menus.Display;
 import menus.NetworkCreationTool;
 import server.Server;
 import util.Log;
@@ -183,6 +184,8 @@ public class FractalEditor extends Scene {
 			Menu fractal = new Menu("Fractal");
 
 			MenuItem newNet = new MenuItem("Create New Network");
+			MenuItem viewNet = new MenuItem("View Network");
+
 			newNet.setOnAction(e-> {
 				NetworkCreationTool createNet = new NetworkCreationTool();
 				if(createNet.createNetwork()) {
@@ -192,11 +195,16 @@ public class FractalEditor extends Scene {
 					alert.setTitle("Network Message");
 					alert.setHeaderText(null);
 					alert.setContentText("Network succesfully created.");
+					viewNet.setDisable(false);
 					alert.showAndWait();
 				}
 			});
-			MenuItem viewNet = new MenuItem("View Network");
-
+			viewNet.setDisable(true);
+			viewNet.setOnAction(e->{
+				Display display = new Display(this.network);
+				
+			});
+			
 			network.getItems().addAll(newNet,viewNet);
 
 			MenuItem newFract = new MenuItem("New Fractal");
