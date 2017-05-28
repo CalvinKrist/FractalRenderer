@@ -3,10 +3,13 @@ package application;
 import java.awt.AWTException;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+
+import javax.imageio.ImageIO;
 
 import fractal.Layer;
 import fractal.RenderManager;
@@ -23,6 +26,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.CheckBoxTreeCell;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
@@ -160,17 +164,25 @@ public class FractalEditor extends Scene {
                 return new CheckCell();
             }
         });
-
 		
 		CheckBoxTreeItem add = new CheckBoxTreeItem("ADD");
+		/**
+		try{
+		BufferedImage image = ImageIO.read(new File("client\\textures\\plusButton.jpg"));
+		Image plusImage = SwingFXUtils.toFXImage(image, null);
+		add.setGraphic(new ImageView(plusImage));
+		}catch(Exception e){
+			e.printStackTrace();
+		}*/
 		layerIndex = 1;
 		add.addEventHandler(CheckBoxTreeItem.checkBoxSelectionChangedEvent(), e -> {
 			if(((CheckBoxTreeItem)(e.getSource())).isSelected()){
 				((CheckBoxTreeItem)(e.getSource())).getParent().getChildren().add(0, new CheckBoxTreeItem("Layer"+incrementLayers()));
 			((CheckBoxTreeItem)(e.getSource())).setSelected(false);
 			}
-				
-		});
+		layers.getRoot().addEventHandler(layers.getRoot().childrenModificationEvent(), e -> {
+			e.getSource();
+		});});
 		layers.getRoot().getChildren().addAll(add);
 		
 		}
