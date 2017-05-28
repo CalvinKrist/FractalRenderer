@@ -224,10 +224,18 @@ public abstract class Layer implements Serializable {
 		}
 		FileWriter writer = new FileWriter(
 				new File(Constants.FRACTAL_FILEPATH + "/" + fractalName + "/" + name + ".layer"));
-		writer.write("<name:" + name + ">");
-		writer.write("<bailout:" + bailout + ">");
-		writer.write("<maxIterations:" + maxIterations + ">");
-		writer.write("<palette:" + Constants.FRACTAL_FILEPATH + "palettes/" + name + ".palette>");
+		writer.write("<name:" + name + ">\r\n");
+		writer.write("<type:" + this.getClass().getSimpleName() + ">\r\n");
+		if(autoBailout)
+			writer.write("<bailout:auto>\r\n");
+		else
+			writer.write("<bailout:" + bailout + ">\r\n");
+		if(autoMaxIterations)
+			writer.write("<maxIterations:auto>\r\n");
+		else
+			writer.write("<maxIterations:" + maxIterations + ">\r\n");
+		writer.write("<layer:" + layer + ">\r\n");
+		writer.write("<palette:" + Constants.FRACTAL_FILEPATH + "palettes/" + name + ".palette>\r\n");
 		palette.writeTo(name);
 		writer.close();
 	}
@@ -323,6 +331,22 @@ public abstract class Layer implements Serializable {
 				}
 		}
 		return null;
+	}
+	
+	public static Layer getLayerByAddress(String address) {
+		Parameters params = new Parameters(address);
+		Layer l = getLayerByType(params.getParameter("type", String.class));
+		l.init(new Palette(params.getParameter("palette", String.class), false), Integer.valueOf(params.getParameter("layer", String.class)) + 1);
+		if(params.getParameter("bailout", String.class).equals("auto"))
+			l.autoBailout = true;
+		else
+			l.bailout = Long.valueOf(params.getParameter("bailout", String.class));
+		if(params.getParameter("maxIterations", String.class).equals("auto"))
+			l.autoMaxIterations= true;
+		else
+			l.maxIterations = Integer.valueOf(params.getParameter("maxIterations", String.class));
+		l.name = params.getParameter("name", String.class);
+		return l;
 	}
 
 	/**

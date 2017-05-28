@@ -33,6 +33,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
+import menus.Display;
 import menus.NetworkCreationTool;
 import server.Server;
 import util.Log;
@@ -195,6 +196,8 @@ public class FractalEditor extends Scene {
 			Menu fractal = new Menu("Fractal");
 
 			MenuItem newNet = new MenuItem("Create New Network");
+			MenuItem viewNet = new MenuItem("View Network");
+
 			newNet.setOnAction(e-> {
 				NetworkCreationTool createNet = new NetworkCreationTool();
 				if(createNet.createNetwork()) {
@@ -204,11 +207,16 @@ public class FractalEditor extends Scene {
 					alert.setTitle("Network Message");
 					alert.setHeaderText(null);
 					alert.setContentText("Network succesfully created.");
+					viewNet.setDisable(false);
 					alert.showAndWait();
 				}
 			});
-			MenuItem viewNet = new MenuItem("View Network");
-
+			viewNet.setDisable(true);
+			viewNet.setOnAction(e->{
+				Display display = new Display(this.network);
+				
+			});
+			
 			network.getItems().addAll(newNet,viewNet);
 
 			MenuItem newFract = new MenuItem("New Fractal");
@@ -224,6 +232,9 @@ public class FractalEditor extends Scene {
 				FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Fractals (*.fractal)", "*.fractal");
 				chooser.getExtensionFilters().add(filter);
 				File f = chooser.showOpenDialog(null);
+				this.fractal = new RenderManager(f);
+				gradient.updateLayer(this.fractal.getLayers().get(0));
+				this.updateFractalImage();
 			});
 			MenuItem saveFract = new MenuItem("Save Fractal");
 			saveFract.setOnAction(e -> {
@@ -269,6 +280,7 @@ public class FractalEditor extends Scene {
 	 * Updates the fractal display if it has been changed
 	 */
 	public void updateFractalImage() {
+		gradient.repaint();
 		fractal.setScreenResolution(new Dimension((int)fractalView.getFitWidth(), (int)fractalView.getFitHeight()));
 		fractalView.setImage(SwingFXUtils.toFXImage(this.fractal.getImage(), null));
 		bp.layout();

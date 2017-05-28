@@ -44,33 +44,42 @@ public class Server extends NetworkNode {
 	 */
 	private ArrayList<SocketWrapper> children;
 
-	/**
-	 * A list of all admins connected to the server
-	 */
-	private ArrayList<SocketWrapper> admins;
-
 	private Parameters parameters;
 
 	private SocketAdder adder;
-	
+
 	private Display display;
-	
+
 	private String directory;
+	
+	private RenderManager fractal;
+	
+	private double zoomSpeed;
 
 	public Server(RenderManager fractal, double zoomSpeed, String directory) {
-		//TODO: initialise parameters and fractal
+		this.fractal = fractal;
+		this.zoomSpeed = zoomSpeed;
+		this.directory = directory;
+		
+		parameters = new Parameters();
+		parameters.put("location", fractal.getLocation());
+		parameters.put("radius", fractal.getRadius());
+		parameters.put("resolution", fractal.getScreenResolution());
+		parameters.put("name", fractal.getName());
+
+		this.zoomSpeed = zoomSpeed;
+		this.directory = directory;
 	}
-	
+
 	public void init(Log log) {
 		this.log = log;
-		
+
 		log.blankLine();
 		log.newLine("Creating new server.");
 
 		children = new ArrayList<SocketWrapper>();
 		unnasignedJobs = new LinkedList<Job>();
 		uncompletedJobs = new HashMap<SocketWrapper, Queue<Job>>();
-		admins = new ArrayList<SocketWrapper>();
 
 		adder = new SocketAdder(children, this);
 		adder.start();
@@ -82,9 +91,9 @@ public class Server extends NetworkNode {
 	public void handleMessage(Object o, SocketWrapper sender) {
 		if (o instanceof Job) {
 			uncompletedJobs.get(sender).remove((Job) o);
-			int[][] pixels = ((Job)(o)).getImage();
+			int[][] pixels = ((Job) (o)).getImage();
 			BufferedImage img = new BufferedImage(pixels.length, pixels[0].length, BufferedImage.TYPE_INT_RGB);
-			File dir = new File(Constants.FRACTAL_FILEPATH + parameters.getParameter("name", String.class) + "/images/" + (1 / parameters.getParameter("radius", Double.class)) + ".png");
+			File dir = new File(directory + (1 / parameters.getParameter("radius", Double.class)) + ".png");
 			dir.mkdirs();
 			try {
 				ImageIO.write(img, "png", dir);
@@ -92,7 +101,7 @@ public class Server extends NetworkNode {
 				log.addError(e);
 			}
 			assignJob(sender);
-		} 
+		}
 	}
 
 	public Parameters getAdminParameters() {
@@ -121,11 +130,11 @@ public class Server extends NetworkNode {
 		log.newLine("New render job created at " + 1 / parameters.getParameter("radius", Double.class));
 		Map<String, Serializable> params = new HashMap<String, Serializable>(4);
 		params.put("zoom", 1 / parameters.getParameter("radius", Double.class));
+		params.put("location", parameters.getParameter("location"));
 		Parameters p = new Parameters(params);
 		Job b = new Job("render_" + parameters.getParameter("radius") + "_", p);
 		unnasignedJobs.add(b);
-		parameters.put("radius",
-				parameters.getParameter("radius", Double.class) * parameters.getParameter("dZoom", Double.class));
+		parameters.put("radius", parameters.getParameter("radius", Double.class) * 1 / zoomSpeed);
 	}
 
 	public void assignJob(SocketWrapper w) {
@@ -158,18 +167,13 @@ public class Server extends NetworkNode {
 		}
 	}
 
-	public Parameters getParameters() {
-		System.out.println("returning parametrs " + parameters);
-		return parameters;
+	public RenderManager getFractal() {
+		return fractal;
 	}
 
-	public ArrayList<SocketWrapper> getAdmins() {
-		return admins;
-	}
-	
 	public void removeByInetAddress(InetAddress addr) {
-		for(int i = 0; i < children.size(); i++) {
-			if(children.get(i).getInet().equals(addr)) {
+		for (int i = 0; i < children.size(); i++) {
+			if (children.get(i).getInet().equals(addr)) {
 				children.get(i).close();
 				children.remove(i);
 				log.blankLine();
@@ -179,15 +183,15 @@ public class Server extends NetworkNode {
 			}
 		}
 	}
-	
+
 	public void setDisplay(Display newDisplay) {
 		display = newDisplay;
 	}
-	
+
 	public Display getDisplay() {
 		return display;
 	}
-	
+
 	public Map<SocketWrapper, Queue<Job>> getUncompletedJobs() {
 		return uncompletedJobs;
 	}
