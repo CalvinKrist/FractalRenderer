@@ -1,6 +1,7 @@
 package application;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Robot;
@@ -10,6 +11,7 @@ import java.awt.event.InputEvent;
 import com.sun.glass.events.KeyEvent;
 
 import javafx.application.Application;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.stage.Stage;
 
 
@@ -28,6 +30,9 @@ public class Main extends Application {
 		        scene.gradient.repaint();
 		        primaryStage.minWidthProperty().bind(scene.heightProperty().multiply(2));
 		        primaryStage.minHeightProperty().bind(scene.widthProperty().divide(2));
+		        
+		        scene.updateFractalImage();
+		        
 		/*	BorderPane root = new BorderPane();
 			Scene scene = new Scene(root,400,400);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());

@@ -42,6 +42,7 @@ public class FractalEditor extends Scene {
 	public Window gradient;
 	
 	private RenderManager fractal;
+	private ImageView fractalView;
 
 	/**@author David
 	 * This instantiates the Fractal Editor scene
@@ -90,16 +91,14 @@ public class FractalEditor extends Scene {
 		render.minHeightProperty().bind(trees.minHeightProperty().divide(6));
 
 
-		ImageView fractalView = new ImageView();
+		fractalView = new ImageView();
 		fractalView.setOnMouseClicked(e -> {
 			Point p = new Point(e.getScreenX(), e.getScreenY());
-			System.out.println(p);
+			//TODO: handle point
 		});
 		this.fractal = new RenderManager();
-		fractalView.setImage(SwingFXUtils.toFXImage(this.fractal.getImage(), null));
 		render.setOnAction(e -> {
-			fractalView.setImage(SwingFXUtils.toFXImage(this.fractal.getImage(), null));
-			bp.layout();
+			updateFractalImage();
 		});
 		//Fitting the image to the screen
 		fractalView.fitWidthProperty().bind(bp.minWidthProperty().subtract(trees.minWidthProperty()));
@@ -183,6 +182,12 @@ public class FractalEditor extends Scene {
 		fractalEditor.setContent(gradient);
 		fractalEditor.minHeight(200);
 
+	}
+	
+	public void updateFractalImage() {
+		fractal.setScreenResolution(new Dimension((int)fractalView.getFitWidth(), (int)fractalView.getFitHeight()));
+		fractalView.setImage(SwingFXUtils.toFXImage(this.fractal.getImage(), null));
+		bp.layout();
 	}
 
 }

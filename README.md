@@ -20,3 +20,5 @@ Methods of changing log options from GUI
 Methods of adding to removing new render layers from the RenderingManager
 Add mode to let users explore a fractal and discover zoom points
 Add log requests to the NetworkView 
+Make it create the necesarry folders upon first install
+Add error dialogs for, well, everything...

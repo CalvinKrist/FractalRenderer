@@ -168,6 +168,7 @@ public class RenderManager {
 		this.screenResolution = screenResolution;
 		for(Layer r: layers)
 			r.setScreenResolution(screenResolution);
+		setZoom(getZoom());
 	}
 	
 	public String toString() {
@@ -238,6 +239,10 @@ public class RenderManager {
 	
 	public double getRadius() {
 		return 1 / zoom;
+	}
+	
+	public double getZoom() {
+		return zoom;
 	}
 	
 	public ArrayList<Layer> getLayers() {
