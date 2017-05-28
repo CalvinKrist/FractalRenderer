@@ -84,9 +84,22 @@ public class FractalEditor extends Scene {
 
 		fractalView = new ImageView();
 		fractalView.setOnMouseClicked(e -> {
-			Point p = new Point(e.getScreenX(), e.getScreenY());
-			System.out.println(p);
-			//TODO: handle point
+			Point p = new Point(e.getScreenX(), e.getScreenY() - 52);
+			double screenDistX = fractalView.getFitWidth() / 2 - p.x;
+			System.out.println(screenDistX);
+			double screenDistY = fractalView.getFitHeight() / 2 - p.y;
+			double realDistX = -screenDistX * fractal.getRealResolution().x / fractal.getScreenResolution().width;
+			double realDistY = screenDistY * fractal.getRealResolution().y / fractal.getScreenResolution().height;
+			fractal.setLocation(new Point(fractal.getLocation().x + realDistX * 2, fractal.getLocation().y + realDistY * 2));
+			this.updateFractalImage();
+		});
+		fractalView.setOnScroll(e-> {
+			System.out.println(e.getDeltaY());
+			double zoom = e.getDeltaY() > 0 ? 1/.9 : .9;
+			this.fractal.setZoom(this.fractal.getZoom() * zoom);
+			this.updateFractalImage();
+			
+			System.out.println(this.fractal.getZoom());
 		});
 		this.fractal = new RenderManager();
 		render.setOnAction(e -> {
