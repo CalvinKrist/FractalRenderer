@@ -13,6 +13,8 @@ import fractal.RenderManager;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.embed.swing.SwingNode;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.Menu;
@@ -45,6 +47,7 @@ public class FractalEditor extends Scene {
 	private int layerIndex;
 	private boolean zoom = false;
 	private Server network;
+	private Log log;
 
 	/**@author David
 	 * This instantiates the Fractal Editor scene
@@ -57,6 +60,7 @@ public class FractalEditor extends Scene {
 	 */
 	public FractalEditor(Log log) throws FileNotFoundException {
 		super(new BorderPane(),(int)(Toolkit.getDefaultToolkit().getScreenSize().width*0.75), Toolkit.getDefaultToolkit().getScreenSize().height/6);
+		this.log = log;
 		bp = (BorderPane) this.getRoot();
 		// initialize();
 		//TODO remove size parameters from constructor
@@ -183,6 +187,12 @@ public class FractalEditor extends Scene {
 				NetworkCreationTool createNet = new NetworkCreationTool();
 				if(createNet.createNetwork()) {
 					this.network = createNet.getServer();
+					this.network.init(log);
+					Alert alert = new Alert(AlertType.INFORMATION);
+					alert.setTitle("Network Message");
+					alert.setHeaderText(null);
+					alert.setContentText("Network succesfully created.");
+					alert.showAndWait();
 				}
 			});
 			MenuItem viewNet = new MenuItem("View Network");

@@ -54,8 +54,10 @@ public class Server extends NetworkNode {
 	private SocketAdder adder;
 	
 	private Display display;
+	
+	private String directory;
 
-	public Server(RenderManager fractal, double zoomSpeed) {
+	public Server(RenderManager fractal, double zoomSpeed, String directory) {
 		//TODO: initialise parameters and fractal
 	}
 	
