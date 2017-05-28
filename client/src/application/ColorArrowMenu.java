@@ -18,9 +18,21 @@ import javax.swing.event.ChangeListener;
 
 import util.Constants;
 
+/**
+ * A menu for selecting the color of a color arrow
+ * @author Calvin
+ *
+ */
 @SuppressWarnings("serial")
 public class ColorArrowMenu extends JPanel {
 	
+	/**
+	 * Creates the color chooser menu for the square button of a palate that
+	 * represents the inside of a fractal
+	 * @param button the square button whose parameters will be modifed by the menu
+	 * @param colorList a list of all color arrows
+	 * @param p the panel calling this method. This is passed to the menu so it can be updated if the buttons data is modified
+	 */
 	public ColorArrowMenu(SquareButton button, List<ArrowButton<Color>> colorList, JPanel p) {
 		this.setLayout(new BorderLayout());
 		JColorChooser colorChooser = new JColorChooser();
@@ -70,6 +82,12 @@ public class ColorArrowMenu extends JPanel {
 		f.requestFocus();
 	}
 	
+	/**
+	 * Creates the color chooser menu for the arrow button that represents a point on the palette
+	 * @param button the arrow button whose parameters will be modifed by the menu
+	 * @param colorList a list of all color arrows
+	 * @param p the panel calling this method. This is passed to the menu so it can be updated if the buttons data is modified
+	 */
 	public ColorArrowMenu(ArrowButton<Color> button, List<ArrowButton<Color>> colorList, JPanel p) {
 		this.setLayout(new BorderLayout());
 		JColorChooser colorChooser = new JColorChooser();

@@ -6,22 +6,55 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 
+/**
+ * 
+ * @author Calvin
+ *
+ *A button resembling a triangle with a square at one end. It can be oriented
+ *either up or down and the color of the square can be changed. It can
+ *store and return a data type. It waS built specifically for use in the
+ *gradient editor and is not fit for other use.
+ *
+ * @param <E> 
+ */
 public class ArrowButton<E> {
 	
+	/**
+	 * Describes the orientation of the button.
+	 */
 	private boolean down; //if true, points down. else, points up
 	
+	/**
+	 * Describes whether or not the button is selected
+	 */
 	private boolean selected; //if true, diamond is white. Else is black.
 	
+	/**
+	 * The color of the square
+	 */
 	private Color squareColor;
 	
+	/**
+	 * The buttons position on the screen
+	 */
 	private Point location;
 	
+	/** 
+	 * the data the button contains
+	 */
 	private E data; //stores some data type
 	
+	/**
+	 * This constructor does nothing
+	 */
 	public ArrowButton() {
 		
 	}
 	
+	/**
+	 * Draws the arrow in the screen
+	 * @param g a graphics object used to draw the arrow
+	 */
 	public void draw(Graphics2D g) {
 		Color c = selected ? Color.white : Color.BLACK;
 
@@ -52,6 +85,10 @@ public class ArrowButton<E> {
 		}
 	}
 	
+	/**
+	 * @param p a point on the screen that was clicked
+	 * @return whether or not the arrow contains the point
+	 */
 	public boolean isClicked(Point p) {
 		if(down) {
 			int[] xPoints = {location.x, location.x - 6, location.x + 6};
@@ -68,6 +105,11 @@ public class ArrowButton<E> {
 		return poly.contains(p) || r.contains(p);
 	}
 	
+	/**
+	 * 
+	 * @param p a point on the screen that was clicked
+	 * @return whether or not the square was clicked
+	 */
 	public boolean isSquareClicked(Point p) {
 		Rectangle r = null;
 		if(down)

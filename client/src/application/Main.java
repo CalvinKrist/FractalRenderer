@@ -1,17 +1,8 @@
 package application;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.Robot;
 import java.awt.Toolkit;
-import java.awt.event.InputEvent;
-
-import com.sun.glass.events.KeyEvent;
 
 import javafx.application.Application;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.stage.Stage;
 
 

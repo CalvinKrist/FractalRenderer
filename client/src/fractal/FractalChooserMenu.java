@@ -17,6 +17,14 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import menus.RoundedButton;
 import util.Constants;
 
+/**
+ * Provides a static method allowing a user to choose a saved fractal and set some if its parameters.
+ * This method is intended for use when creating a new Network, when a fractal needs to be chosen and basic
+ * parameters decided.
+ * 
+ * @author Calvin
+ *
+ */
 public class FractalChooserMenu {
 	
 	private static RenderManager manager;

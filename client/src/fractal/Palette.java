@@ -8,11 +8,22 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-
+/**
+ * Represents a palette that layers will use to color themselves. It stores a color gradient and a color value for the inside of fractals.
+ * @author Calvin
+ *
+ */
 public class Palette implements Serializable {
 	
 	private static final long serialVersionUID = -816922891626500737L;
+	/**
+	 * an array of colors representing the color gradient of the palette
+	 */
 	private Color[] gradient;
+	
+	/**
+	 * The color of inside parts of fractals
+	 */
 	private Color background;
 	
 	public Palette(Color[] gradient, Color color) {
@@ -49,10 +60,19 @@ public class Palette implements Serializable {
 		return gradient.length;
 	}
 	
+	/**
+	 * @param i an index in the gradient
+	 * @return
+	 */
+	@Deprecated
 	public Color colorAt(int i) {
 		return gradient[i];
 	}
 	
+	/**
+	 * @param d a proportion representing a percent of the gradient
+	 * @return the color at the specified proportion of the gradient
+	 */
 	public Color colorAt(double d) {
 		return gradient[(int)(d * numColors())];
 	}
@@ -61,6 +81,10 @@ public class Palette implements Serializable {
 		return background;
 	}
 	
+	/**
+	 * Saves the palette as a .palette file
+	 * @param filePath the file path where the palette should save itself to
+	 */
 	public void writeTo(String filePath) {
 		try {
 			ObjectOutputStream s = new ObjectOutputStream(new FileOutputStream(filePath));

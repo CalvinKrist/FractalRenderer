@@ -17,9 +17,20 @@ import javax.swing.event.ChangeListener;
 
 import util.Constants;
 
+/**
+ * Describes a menu for choosing an opacity of an opacity arrow
+ * @author Calvin
+ *
+ */
 @SuppressWarnings("serial")
 public class OpacityArrowMenu extends JPanel {
 	
+	/**
+	 * Updates the value of the button passed to it to the desired value
+	 * @param button the button that represents a point on the palette whose opacity will be modified
+	 * @param opacityList a list of all opacity buttons
+	 * @param p the panel that will be updated if any changed are made
+	 */
 	public OpacityArrowMenu(ArrowButton<Double> button, List<ArrowButton<Double>> opacityList, JPanel p) {
 		this.setLayout(new BorderLayout());
 		JSlider slider = new JSlider(JSlider.HORIZONTAL, 0, 100, (int)(button.getData() * 100));

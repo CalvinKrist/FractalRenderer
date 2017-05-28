@@ -2,16 +2,11 @@ package application;
 
 import java.awt.AWTException;
 import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.Robot;
 import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-
-import com.sun.prism.paint.Color;
 
 import fractal.Layer;
 import fractal.RenderManager;
@@ -25,13 +20,12 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import util.Point;
-import util.Utils;
+
 /**
  * @author David
  */
@@ -94,6 +88,7 @@ public class FractalEditor extends Scene {
 		fractalView = new ImageView();
 		fractalView.setOnMouseClicked(e -> {
 			Point p = new Point(e.getScreenX(), e.getScreenY());
+			System.out.println(p);
 			//TODO: handle point
 		});
 		this.fractal = new RenderManager();
@@ -137,7 +132,7 @@ public class FractalEditor extends Scene {
 			MenuItem newFract = new MenuItem("New Fractal");
 			newFract.setOnAction(e -> {
 				this.fractal = new RenderManager();
-				fractalView.setImage(SwingFXUtils.toFXImage(this.fractal.getImage(), null));
+				this.updateFractalImage();
 			});
 			MenuItem openFract = new MenuItem("Open Fractal");
 			openFract.setOnAction(e -> {
@@ -156,8 +151,9 @@ public class FractalEditor extends Scene {
 			saveFractAs.setOnAction(e -> {
 				this.fractal.saveFractalAs();
 			});
+			MenuItem newLayer = new MenuItem("New Layer Type");
 			
-			fractal.getItems().addAll(newFract, openFract, saveFract, saveFractAs);
+			fractal.getItems().addAll(newFract, openFract, saveFract, saveFractAs, newLayer);
 		
 			/*MenuItem exit = new MenuItem("Exit");
 			exit.setOnAction(e -> {
@@ -184,6 +180,10 @@ public class FractalEditor extends Scene {
 
 	}
 	
+	/**
+	 * @author Calvin
+	 * Updates the fractal display if it has been changed
+	 */
 	public void updateFractalImage() {
 		fractal.setScreenResolution(new Dimension((int)fractalView.getFitWidth(), (int)fractalView.getFitHeight()));
 		fractalView.setImage(SwingFXUtils.toFXImage(this.fractal.getImage(), null));
