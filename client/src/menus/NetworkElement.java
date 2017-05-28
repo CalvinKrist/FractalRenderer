@@ -16,6 +16,7 @@ import javax.swing.JSeparator;
 
 import server.Job;
 import server.Server;
+import server.SocketWrapper;
 import util.Constants;
 
 public class NetworkElement extends JPanel {
@@ -30,9 +31,18 @@ public class NetworkElement extends JPanel {
 	
 	public static final int HEIGHT = 50;
 	
-	public NetworkElement(Server server, NetworkView view) {
-		this.server = server;
-		this.setBackground(Color.white);		
+	public NetworkElement(Server server, SocketWrapper wrapper) {
+		address = wrapper.getInet();
+		displayName = new JLabel();
+		displayName.setFont(Constants.mediumFont);	
+		try {
+			displayName.setText(address.getHostName());
+		} catch(Exception e) {
+			displayName.setText(address.getHostAddress());
+		}
+		
+		this.server= server;
+		this.setBackground(Color.WHITE);
 		this.setPreferredSize(new Dimension(Display.DISPLAY_WIDTH, 15));
 		this.setLayout(new GridBagLayout());
 		
@@ -40,11 +50,8 @@ public class NetworkElement extends JPanel {
 		xButton = new XButton(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				server.removeByInetAddress(address);
-				
 			}
 		});
-		displayName = new JLabel();
-		displayName.setFont(Constants.mediumFont);	
 		
 		placeNameAndXButton();
 	}

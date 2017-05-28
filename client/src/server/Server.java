@@ -59,16 +59,13 @@ public class Server extends NetworkNode {
 	public Server(RenderManager fractal, double zoomSpeed, String directory) {
 		this.fractal = fractal;
 		this.zoomSpeed = zoomSpeed;
-		this.directory = directory;
+		this.directory = directory + "\\";
 		
 		parameters = new Parameters();
 		parameters.put("location", fractal.getLocation());
 		parameters.put("radius", fractal.getRadius());
 		parameters.put("resolution", fractal.getScreenResolution());
 		parameters.put("name", fractal.getName());
-
-		this.zoomSpeed = zoomSpeed;
-		this.directory = directory;
 	}
 
 	public void init(Log log) {
@@ -109,16 +106,16 @@ public class Server extends NetworkNode {
 		double zoomLevel;
 		double zoom = parameters.getParameter("radius", Double.class);
 		for (Job b : unnasignedJobs)
-			zoom /= parameters.getParameter("dZoom", Double.class);
+			zoom /= zoomSpeed;
 		params.put("zoom", zoom);
 		zoomLevel = zoom;
 
+		params.put("zSpeed", zoomSpeed);
 		params.put("location", parameters.getParameter("location"));
-		params.put("zSpeed", parameters.getParameter("dZoom"));
 		params.put("userCount", children.size());
 		try {
 			params.put("frameCount",
-					(int) (Math.log(zoomLevel / 4) / Math.log(parameters.getParameter("dZoom", Double.class))));
+					(int) (Math.log(zoomLevel / 4) / Math.log(zoomSpeed)));
 		} catch (Exception e) {
 			log.addError(e);
 		}
@@ -190,6 +187,10 @@ public class Server extends NetworkNode {
 
 	public Display getDisplay() {
 		return display;
+	}
+	
+	public ArrayList<SocketWrapper> getChildren() {
+		return children;
 	}
 
 	public Map<SocketWrapper, Queue<Job>> getUncompletedJobs() {
