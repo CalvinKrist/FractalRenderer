@@ -35,8 +35,10 @@ public class NetworkCreationTool {
 
 		File[] fractals = new File(Constants.FRACTAL_FILEPATH).listFiles();
 		List<String> choices = new ArrayList<>();
-		for (File f : fractals)
-			choices.add(f.getName().substring(0, f.getName().indexOf(".")));
+		for (File f : fractals) {
+			if(!f.getName().equals("palettes"))
+			choices.add(f.getName());
+		}
 
 		ChoiceDialog<String> dialog1 = new ChoiceDialog<>(choices.get(0), choices);
 		dialog1.setTitle("Create Network");
@@ -90,7 +92,7 @@ public class NetworkCreationTool {
 	}
 
 	private Double getZoomSpeed() {
-		TextInputDialog dialog3 = new TextInputDialog("walter");
+		TextInputDialog dialog3 = new TextInputDialog("1.1");
 		dialog3.setTitle("Create Network");
 		dialog3.setHeaderText("Step 3");
 		dialog3.setContentText("Zoom speed:");
@@ -133,7 +135,7 @@ public class NetworkCreationTool {
 		grid.setVgap(10);
 		grid.setPadding(new Insets(20, 150, 10, 10));
 
-		TextField widthField = new TextField();
+		TextField widthField = new TextField("1600");
 		widthField.textProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -142,7 +144,7 @@ public class NetworkCreationTool {
 				}
 			}
 		});
-		TextField heightField = new TextField();
+		TextField heightField = new TextField("1600");
 		heightField.textProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -158,6 +160,11 @@ public class NetworkCreationTool {
 		grid.add(heightField, 1, 1);
 
 		dialog2.getDialogPane().setContent(grid);
+		dialog2.setResultConverter(dialogButton->{
+			if(dialogButton == ButtonType.OK)
+				return new Pair<String, String>(widthField.getText(), heightField.getText());
+			return null;
+		});
 
 		Optional<Pair<String, String>> result = dialog2.showAndWait();
 
@@ -174,9 +181,9 @@ public class NetworkCreationTool {
 			alert.showAndWait();
 			return displayDialog2();
 		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
-
 		return new Pair<Integer, Integer>(width, height);
 	}
 
