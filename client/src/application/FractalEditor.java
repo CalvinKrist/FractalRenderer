@@ -12,18 +12,21 @@ import fractal.Layer;
 import fractal.RenderManager;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.embed.swing.SwingNode;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.control.cell.CheckBoxTreeCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.util.Callback;
 import util.Point;
 
 /**
@@ -32,11 +35,11 @@ import util.Point;
 public class FractalEditor extends Scene {
 
 	private BorderPane bp;
-	protected int width, height;
 	public Window gradient;
-	
+
 	private RenderManager fractal;
 	private ImageView fractalView;
+	private int layerIndex;
 
 	/**@author David
 	 * This instantiates the Fractal Editor scene
@@ -50,9 +53,8 @@ public class FractalEditor extends Scene {
 	public FractalEditor(int x, int y) throws FileNotFoundException {
 		super(new BorderPane(),x, y);
 		bp = (BorderPane) this.getRoot();
-		width = x;
-		height = y;
 		// initialize();
+		//TODO remove size parameters from constructor
 	}
 
 	/**@author David, Calvin
@@ -69,7 +71,7 @@ public class FractalEditor extends Scene {
 			e1.printStackTrace();
 		}
 		fractal = new RenderManager();
-		
+
 		MenuBar menu = new MenuBar();
 		SwingNode fractalEditor = new SwingNode();
 		TreeView parameters = new TreeView();
@@ -77,7 +79,7 @@ public class FractalEditor extends Scene {
 		VBox trees = new VBox();
 		trees.minHeightProperty().bind(bp.minHeightProperty().subtract(menu.minHeightProperty()));
 		trees.minWidthProperty().bind(bp.minWidthProperty().divide(6));
-		bp.setPadding(new Insets(5));
+		//bp.setPadding(new Insets(5));
 
 
 		Button render = new Button("Update");
@@ -101,7 +103,7 @@ public class FractalEditor extends Scene {
 			double zoom = e.getDeltaY() > 0 ? 1/.9 : .9;
 			this.fractal.setZoom(this.fractal.getZoom() * zoom);
 			this.updateFractalImage();
-			
+
 			System.out.println(this.fractal.getZoom());
 		});
 		this.fractal = new RenderManager();
@@ -111,7 +113,7 @@ public class FractalEditor extends Scene {
 		//Fitting the image to the screen
 		fractalView.fitWidthProperty().bind(bp.minWidthProperty().subtract(trees.minWidthProperty()));
 		fractalView.fitHeightProperty().bind(bp.heightProperty().subtract(menu.minHeightProperty()).subtract(220));
-		
+
 		{//Fitting gradientEditor to full screen
 		Dimension p = new Dimension((int)(Toolkit.getDefaultToolkit().getScreenSize().width*0.75),200);
 		System.out.println("Gradient Dimensions: "+p);
@@ -125,8 +127,29 @@ public class FractalEditor extends Scene {
 		TreeItem xPos = new TreeItem();
 		parameters.getRoot().getChildren().addAll(xPos);
 
-		layers.setRoot(new TreeItem("Layers"));
+		layers.setRoot(new CheckBoxTreeItem("Layers"));
 		layers.getRoot().setExpanded(true);
+		layers.setShowRoot(false);
+		layers.setEditable(true);
+		layers.setCellFactory(new Callback<TreeView,CheckBoxTreeCell>(){
+            @Override
+            public CheckBoxTreeCell call(TreeView p) {
+                return new CheckCell();
+            }
+        });
+
+		
+		CheckBoxTreeItem add = new CheckBoxTreeItem("ADD");
+		layerIndex = 1;
+		add.addEventHandler(CheckBoxTreeItem.checkBoxSelectionChangedEvent(), e -> {
+			if(((CheckBoxTreeItem)(e.getSource())).isSelected()){
+				((CheckBoxTreeItem)(e.getSource())).getParent().getChildren().add(0, new CheckBoxTreeItem("Layer"+incrementLayers()));
+			((CheckBoxTreeItem)(e.getSource())).setSelected(false);
+			}
+				
+		});
+		layers.getRoot().getChildren().addAll(add);
+		
 		}
 
 		//Trying to get this to work
@@ -136,12 +159,12 @@ public class FractalEditor extends Scene {
 		{//This is the menu stuff
 			Menu network = new Menu("Network");
 			Menu fractal = new Menu("Fractal");
-		
+
 			MenuItem newNet = new MenuItem("Create New Network");
 			MenuItem viewNet = new MenuItem("View Network");
-			
+
 			network.getItems().addAll(newNet,viewNet);
-			
+
 			MenuItem newFract = new MenuItem("New Fractal");
 			newFract.setOnAction(e -> {
 				this.fractal = new RenderManager();
@@ -165,14 +188,14 @@ public class FractalEditor extends Scene {
 				this.fractal.saveFractalAs();
 			});
 			MenuItem newLayer = new MenuItem("New Layer Type");
-			
+
 			fractal.getItems().addAll(newFract, openFract, saveFract, saveFractAs, newLayer);
-		
+
 			/*MenuItem exit = new MenuItem("Exit");
 			exit.setOnAction(e -> {
 				System.exit(0);
 			});*/
-				
+
 			menu.getMenus().addAll(fractal);
 			menu.getMenus().addAll(network);
 		}
@@ -192,7 +215,9 @@ public class FractalEditor extends Scene {
 		fractalEditor.minHeight(200);
 
 	}
-	
+	private int incrementLayers(){
+		return layerIndex++;
+	}
 	/**
 	 * @author Calvin
 	 * Updates the fractal display if it has been changed
