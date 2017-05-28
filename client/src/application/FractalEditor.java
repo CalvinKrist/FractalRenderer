@@ -18,7 +18,6 @@ import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.CheckBoxTreeCell;
@@ -30,6 +29,7 @@ import javafx.stage.FileChooser;
 import javafx.util.Callback;
 import menus.NetworkCreationTool;
 import server.Server;
+import util.Log;
 import util.Point;
 
 /**
@@ -55,8 +55,8 @@ public class FractalEditor extends Scene {
 	 *            height
 	 * @throws FileNotFoundException
 	 */
-	public FractalEditor(int x, int y) throws FileNotFoundException {
-		super(new BorderPane(),x, y);
+	public FractalEditor(Log log) throws FileNotFoundException {
+		super(new BorderPane(),(int)(Toolkit.getDefaultToolkit().getScreenSize().width*0.75), Toolkit.getDefaultToolkit().getScreenSize().height/6);
 		bp = (BorderPane) this.getRoot();
 		// initialize();
 		//TODO remove size parameters from constructor

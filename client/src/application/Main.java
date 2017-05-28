@@ -18,7 +18,7 @@ public class Main extends Application {
 			log.setPrintStream(System.out);
 			// Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
 		        primaryStage.setTitle("Fractal Editor");
-		        FractalEditor scene = new FractalEditor((int)(Toolkit.getDefaultToolkit().getScreenSize().width*0.75),Toolkit.getDefaultToolkit().getScreenSize().height/6);
+		        FractalEditor scene = new FractalEditor(new Log());
 		        primaryStage.setScene(scene);
 		        primaryStage.centerOnScreen();
 		        primaryStage.setMaximized(true);
