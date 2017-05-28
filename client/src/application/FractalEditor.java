@@ -12,18 +12,21 @@ import fractal.Layer;
 import fractal.RenderManager;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.embed.swing.SwingNode;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.control.cell.CheckBoxTreeCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.util.Callback;
 import util.Point;
 
 /**
@@ -36,6 +39,7 @@ public class FractalEditor extends Scene {
 
 	private RenderManager fractal;
 	private ImageView fractalView;
+	private int layerIndex;
 
 	/**@author David
 	 * This instantiates the Fractal Editor scene
@@ -75,7 +79,7 @@ public class FractalEditor extends Scene {
 		VBox trees = new VBox();
 		trees.minHeightProperty().bind(bp.minHeightProperty().subtract(menu.minHeightProperty()));
 		trees.minWidthProperty().bind(bp.minWidthProperty().divide(6));
-		bp.setPadding(new Insets(5));
+		//bp.setPadding(new Insets(5));
 
 
 		Button render = new Button("Update");
@@ -123,8 +127,29 @@ public class FractalEditor extends Scene {
 		TreeItem xPos = new TreeItem();
 		parameters.getRoot().getChildren().addAll(xPos);
 
-		layers.setRoot(new TreeItem("Layers"));
+		layers.setRoot(new CheckBoxTreeItem("Layers"));
 		layers.getRoot().setExpanded(true);
+		layers.setShowRoot(false);
+		layers.setEditable(true);
+		layers.setCellFactory(new Callback<TreeView,CheckBoxTreeCell>(){
+            @Override
+            public CheckBoxTreeCell call(TreeView p) {
+                return new CheckCell();
+            }
+        });
+
+		
+		CheckBoxTreeItem add = new CheckBoxTreeItem("ADD");
+		layerIndex = 1;
+		add.addEventHandler(CheckBoxTreeItem.checkBoxSelectionChangedEvent(), e -> {
+			if(((CheckBoxTreeItem)(e.getSource())).isSelected()){
+				((CheckBoxTreeItem)(e.getSource())).getParent().getChildren().add(0, new CheckBoxTreeItem("Layer"+incrementLayers()));
+			((CheckBoxTreeItem)(e.getSource())).setSelected(false);
+			}
+				
+		});
+		layers.getRoot().getChildren().addAll(add);
+		
 		}
 
 		//Trying to get this to work
@@ -190,7 +215,9 @@ public class FractalEditor extends Scene {
 		fractalEditor.minHeight(200);
 
 	}
-
+	private int incrementLayers(){
+		return layerIndex++;
+	}
 	/**
 	 * @author Calvin
 	 * Updates the fractal display if it has been changed
