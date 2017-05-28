@@ -9,7 +9,8 @@ public class ClientTest {
 		Log log = new Log();
 		log.setLogLevel(Log.LEVEL_ERROR);
 		log.setPrintLevel(Log.LEVEL_ERROR);
-		Client c = new Client(log);
+		Client c = new Client();
+		c.init(log);
 		
 	}
 
