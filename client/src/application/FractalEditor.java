@@ -33,7 +33,7 @@ public class FractalEditor extends Scene {
 
 	private BorderPane bp;
 	public Window gradient;
-	
+
 	private RenderManager fractal;
 	private ImageView fractalView;
 
@@ -50,6 +50,7 @@ public class FractalEditor extends Scene {
 		super(new BorderPane(),x, y);
 		bp = (BorderPane) this.getRoot();
 		// initialize();
+		//TODO remove size parameters from constructor
 	}
 
 	/**@author David, Calvin
@@ -66,7 +67,7 @@ public class FractalEditor extends Scene {
 			e1.printStackTrace();
 		}
 		fractal = new RenderManager();
-		
+
 		MenuBar menu = new MenuBar();
 		SwingNode fractalEditor = new SwingNode();
 		TreeView parameters = new TreeView();
@@ -98,7 +99,7 @@ public class FractalEditor extends Scene {
 			double zoom = e.getDeltaY() > 0 ? 1/.9 : .9;
 			this.fractal.setZoom(this.fractal.getZoom() * zoom);
 			this.updateFractalImage();
-			
+
 			System.out.println(this.fractal.getZoom());
 		});
 		this.fractal = new RenderManager();
@@ -108,7 +109,7 @@ public class FractalEditor extends Scene {
 		//Fitting the image to the screen
 		fractalView.fitWidthProperty().bind(bp.minWidthProperty().subtract(trees.minWidthProperty()));
 		fractalView.fitHeightProperty().bind(bp.heightProperty().subtract(menu.minHeightProperty()).subtract(220));
-		
+
 		{//Fitting gradientEditor to full screen
 		Dimension p = new Dimension((int)(Toolkit.getDefaultToolkit().getScreenSize().width*0.75),200);
 		System.out.println("Gradient Dimensions: "+p);
@@ -133,12 +134,12 @@ public class FractalEditor extends Scene {
 		{//This is the menu stuff
 			Menu network = new Menu("Network");
 			Menu fractal = new Menu("Fractal");
-		
+
 			MenuItem newNet = new MenuItem("Create New Network");
 			MenuItem viewNet = new MenuItem("View Network");
-			
+
 			network.getItems().addAll(newNet,viewNet);
-			
+
 			MenuItem newFract = new MenuItem("New Fractal");
 			newFract.setOnAction(e -> {
 				this.fractal = new RenderManager();
@@ -162,14 +163,14 @@ public class FractalEditor extends Scene {
 				this.fractal.saveFractalAs();
 			});
 			MenuItem newLayer = new MenuItem("New Layer Type");
-			
+
 			fractal.getItems().addAll(newFract, openFract, saveFract, saveFractAs, newLayer);
-		
+
 			/*MenuItem exit = new MenuItem("Exit");
 			exit.setOnAction(e -> {
 				System.exit(0);
 			});*/
-				
+
 			menu.getMenus().addAll(fractal);
 			menu.getMenus().addAll(network);
 		}
@@ -189,7 +190,7 @@ public class FractalEditor extends Scene {
 		fractalEditor.minHeight(200);
 
 	}
-	
+
 	/**
 	 * @author Calvin
 	 * Updates the fractal display if it has been changed
