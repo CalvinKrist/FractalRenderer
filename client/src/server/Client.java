@@ -43,7 +43,7 @@ public class Client extends NetworkNode {
 	public boolean running = true;
 		
 	public Client(Log log) {
-		super(log);
+		this.log = log;
 		log.blankLine();
 		log.newLine("Creating new client.");
 		fractal = null;

@@ -56,9 +56,20 @@ public class Server extends NetworkNode {
 	private Display display;
 	
 	private String directory;
+	
+	private RenderManager fractal;
+	
+	private double zoomSpeed;
 
 	public Server(RenderManager fractal, double zoomSpeed, String directory) {
-		//TODO: initialise parameters and fractal
+		this.fractal = fractal;
+		this.zoomSpeed = zoomSpeed;
+		this.directory = directory;
+		
+		parameters = new Parameters();
+		parameters.put("location", fractal.getLocation());
+		parameters.put("radius", fractal.getRadius());
+		parameters.put("name", fractal.getName());
 	}
 	
 	public void init(Log log) {
