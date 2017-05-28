@@ -119,6 +119,8 @@ public class HistogramLayer extends Layer {
 		if(autoBailout) {
 			bailout = 40;
 		}
+		//TODO: create an algorithm for maxIterations/
+		//Attempt 1: (int)(Math.log(Math.pow(1 / zoom, 6.8)) * 100)
 		if(autoMaxIterations) 
 			maxIterations = 1000;
 		
