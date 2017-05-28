@@ -120,7 +120,7 @@ public class HistogramLayer extends Layer {
 			bailout = 40;
 		}
 		if(autoMaxIterations) 
-			maxIterations = (int)(Math.log(Math.pow(1 / zoom, 3.8)) * 10);
+			maxIterations = 1000;
 		
 	}
 	
