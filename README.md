@@ -18,3 +18,4 @@ Generate JavaDocs
 Create user manual
 Do project writeup
 add anti-alliasing and super sampling to rendering
+Change color picker and opacity chooser menus to javafx menus

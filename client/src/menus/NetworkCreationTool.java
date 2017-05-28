@@ -9,11 +9,14 @@ import fractal.RenderManager;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.GridPane;
 import javafx.util.Pair;
 import server.Server;
@@ -27,10 +30,6 @@ public class NetworkCreationTool {
 	
 	public boolean createNetwork() {
 		
-		RenderManager fractal;
-		double zoomSpeed;
-		Server s;
-		
 		File[] fractals = new File(Constants.FRACTAL_FILEPATH).listFiles();
 		List<String> choices = new ArrayList<>();
 		for(File f: fractals)
@@ -42,10 +41,56 @@ public class NetworkCreationTool {
 		dialog1.setContentText("Choose a fractal:");
 
 		// Traditional way to get the response value.
+		RenderManager fractal = null;
 		try {
 			fractal = new RenderManager(dialog1.showAndWait().get());
 		} catch(Exception e) {return false;}
 		
+		Pair<Integer, Integer> dimension = displayDialog2();
+		if(dimension == null)
+			return false;
+		
+		Double zoomSpeed = getZoomSpeed();
+		if(zoomSpeed == null)
+			return false;
+		
+		this.server = new Server(fractal, zoomSpeed.doubleValue());
+		
+		return true;
+	}
+	
+	private Double getZoomSpeed() {
+		TextInputDialog dialog3 = new TextInputDialog("walter");
+		dialog3.setTitle("Create Network");
+		dialog3.setHeaderText("Step 3");
+		dialog3.setContentText("Zoom speed:");
+
+		// Traditional way to get the response value.
+		Double d = null;
+		try {
+			d = Double.valueOf(dialog3.showAndWait().get());
+		} catch(NumberFormatException e) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("");
+			alert.setHeaderText("INVALID INPUT: Must be a real number.");
+			alert.setContentText("Please try again.");
+			alert.showAndWait();
+			return getZoomSpeed();
+		} catch(Exception e) {
+			return null;
+		}
+		if(d <= 0) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("");
+			alert.setHeaderText("INVALID INPUT: Zoom speed must be greater than 0.");
+			alert.setContentText("Please try again.");
+			alert.showAndWait();
+			return getZoomSpeed();
+		}
+		return d;
+	}
+	
+	private Pair<Integer, Integer> displayDialog2() {
 		Dialog<Pair<String, String>> dialog2 = new Dialog<>();
 		dialog2.setTitle("Create Network");
 		dialog2.setHeaderText("Step 2");
@@ -86,13 +131,23 @@ public class NetworkCreationTool {
 
 		Optional<Pair<String, String>> result = dialog2.showAndWait();
 
+		int width = 0;
+		int height = 0;
 		try {
-			int width = Integer.valueOf(result.get().getKey());
-			int height = Integer.valueOf(result.get().getValue());
-		} catch()
+			width = Integer.valueOf(result.get().getKey());
+			height = Integer.valueOf(result.get().getValue());
+		} catch(NumberFormatException e) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("");
+			alert.setHeaderText("INVALID INPUT: Must be an integer.");
+			alert.setContentText("Please try again.");
+			alert.showAndWait();
+			return displayDialog2();
+		} catch(Exception e) {
+			return null;
+		}
 		
-		
-		return true;
+		return new Pair<Integer, Integer>(width, height);
 	}
 	
 	public Server getServer() {

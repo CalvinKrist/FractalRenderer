@@ -4,12 +4,18 @@ import java.awt.Toolkit;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import util.Log;
 
 
 public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
+			
+			Log log = new Log();
+			log.setLogLevel(Log.LEVEL_LOG);
+			log.setPrintLevel(Log.LEVEL_LOG);
+			log.setPrintStream(System.out);
 			// Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
 		        primaryStage.setTitle("Fractal Editor");
 		        FractalEditor scene = new FractalEditor((int)(Toolkit.getDefaultToolkit().getScreenSize().width*0.75),Toolkit.getDefaultToolkit().getScreenSize().height/6);

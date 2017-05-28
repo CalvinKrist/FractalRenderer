@@ -23,10 +23,13 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.CheckBoxTreeCell;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
+import menus.NetworkCreationTool;
+import server.Server;
 import util.Point;
 
 /**
@@ -40,6 +43,8 @@ public class FractalEditor extends Scene {
 	private RenderManager fractal;
 	private ImageView fractalView;
 	private int layerIndex;
+	private boolean zoom = false;
+	private Server network;
 
 	/**@author David
 	 * This instantiates the Fractal Editor scene
@@ -91,20 +96,33 @@ public class FractalEditor extends Scene {
 		fractalView.setOnMouseClicked(e -> {
 			Point p = new Point(e.getScreenX(), e.getScreenY() - 52);
 			double screenDistX = fractalView.getFitWidth() / 2 - p.x;
-			System.out.println(screenDistX);
 			double screenDistY = fractalView.getFitHeight() / 2 - p.y;
 			double realDistX = -screenDistX * fractal.getRealResolution().x / fractal.getScreenResolution().width;
 			double realDistY = screenDistY * fractal.getRealResolution().y / fractal.getScreenResolution().height;
 			fractal.setLocation(new Point(fractal.getLocation().x + realDistX * 2, fractal.getLocation().y + realDistY * 2));
 			this.updateFractalImage();
 		});
+		fractalView.setOnMouseEntered(e-> {
+			zoom = true;
+		});
+		fractalView.setOnMouseExited(e-> {
+			zoom = false;
+		});
+		this.setOnKeyPressed(e-> {
+			if(zoom)
+				if(e.getCode() == KeyCode.COMMA) {
+					this.fractal.setZoom(this.fractal.getZoom() * 1.5);
+					updateFractalImage();
+				}
+				else if(e.getCode() == KeyCode.PERIOD) {
+					this.fractal.setZoom(this.fractal.getZoom() / 1.5);
+					updateFractalImage();
+				}
+		});
 		fractalView.setOnScroll(e-> {
-			System.out.println(e.getDeltaY());
 			double zoom = e.getDeltaY() > 0 ? 1/.9 : .9;
 			this.fractal.setZoom(this.fractal.getZoom() * zoom);
 			this.updateFractalImage();
-
-			System.out.println(this.fractal.getZoom());
 		});
 		this.fractal = new RenderManager();
 		render.setOnAction(e -> {
@@ -118,7 +136,7 @@ public class FractalEditor extends Scene {
 		Dimension p = new Dimension((int)(Toolkit.getDefaultToolkit().getScreenSize().width*0.75),200);
 		System.out.println("Gradient Dimensions: "+p);
 
-		gradient = new Window(p, 50);
+		gradient = new Window(p, 50, this.fractal.getLayers().get(0));
 		}
 		{//Tree Stuff
 		parameters.setRoot(new TreeItem("params"));
@@ -161,6 +179,12 @@ public class FractalEditor extends Scene {
 			Menu fractal = new Menu("Fractal");
 
 			MenuItem newNet = new MenuItem("Create New Network");
+			newNet.setOnAction(e-> {
+				NetworkCreationTool createNet = new NetworkCreationTool();
+				if(createNet.createNetwork()) {
+					this.network = createNet.getServer();
+				}
+			});
 			MenuItem viewNet = new MenuItem("View Network");
 
 			network.getItems().addAll(newNet,viewNet);
@@ -177,7 +201,7 @@ public class FractalEditor extends Scene {
 				chooser.setInitialDirectory(new File("fractals"));
 				FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Fractals (*.fractal)", "*.fractal");
 				chooser.getExtensionFilters().add(filter);
-				chooser.showOpenDialog(null);
+				File f = chooser.showOpenDialog(null);
 			});
 			MenuItem saveFract = new MenuItem("Save Fractal");
 			saveFract.setOnAction(e -> {

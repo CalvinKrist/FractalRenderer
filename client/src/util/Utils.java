@@ -10,6 +10,8 @@ import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import fractal.Palette;
+
 public class Utils {
 
 	public static Color interpolateColors(Color color1, Color color2, double stepCount, double totalSteps) {
@@ -32,23 +34,6 @@ public class Utils {
 
 	public static Double interpolateDouble(Double d1, Double d2, int stepCount, int totalSteps) {
 		return (d2 - d1) * stepCount / totalSteps + d1;
-	}
-
-	public static Color[] getDefaultColorPalate() {
-		int numColors = 1000;
-		Color[] palate = new Color[numColors];
-		for (int i = 0; i < numColors; i++)
-			palate[i] = Utils.interpolateColors(new Color(0, 0, 0), new Color(255, 255, 255), (double) i / numColors);
-		return palate;
-	}
-
-	public static Color[] getColorPalateLooped(Color[] oldPalate) {
-		Color[] palate = new Color[oldPalate.length * 2];
-		for (int i = 0; i < oldPalate.length; i++)
-			palate[i] = oldPalate[i];
-		for (int i = oldPalate.length; i < palate.length; i++)
-			palate[i] = oldPalate[oldPalate.length - (i - oldPalate.length) - 1];
-		return palate;
 	}
 
 	public static InetAddress getBroadcastAddress() {

@@ -113,12 +113,12 @@ public class TriangleAverageLayer extends Layer {
 			sum2 = sum2 / (i - 1.0);
 			f = il * lp - il * Math.log(Math.log(z.length()));
 			index = sum2 + (sum - sum2) * (f + 1.0);
-			realIterations = palette.numColors() * index;
-			colval1 = (int)(realIterations % palette.numColors());
-			colval2 = (int)((colval1 + 1) % palette.numColors());
+			realIterations = palette.size * index;
+			colval1 = (int)(realIterations % palette.size);
+			colval2 = (int)((colval1 + 1) % palette.size);
 			tweenval = realIterations % 1;
-			if(colval1 < 0) colval1 += palette.numColors();
-			if(colval2 < 0) colval2 += palette.numColors();
+			if(colval1 < 0) colval1 += palette.size;
+			if(colval2 < 0) colval2 += palette.size;
 			double[] data = {colval1, colval2, tweenval, id, k};
 			this.data.add(data);
 			colVal.update(colval1);

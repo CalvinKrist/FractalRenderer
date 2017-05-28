@@ -68,7 +68,7 @@ public class RenderManager {
 		layers = new ArrayList<Layer>();
 		Layer l = Layer.getLayerByType("HistogramLayer");
 		
-		l.init(new Palette(Utils.getDefaultColorPalate(), Color.BLACK), 1);
+		l.init(new Palette(), 1);
 		l.setName("Layer 1");
 		layers.add(l);
 		this.setScreenResolution(screenResolution);
@@ -107,10 +107,10 @@ public class RenderManager {
 	}
 	
 	/**
-	 * Initializes a fractal from a file. This file points to a .fractal.
-	 * @param file a file of .fractal which is a saved fractal
+	 * Initializes a fractal from a file. This name points to a saved fractal.
+	 * @param name of a saved fractal
 	 */
-	public RenderManager(File file) {
+	public RenderManager(String name) {
 		//TODO: implement constructor
 	}
 	
@@ -237,6 +237,10 @@ public class RenderManager {
 			realResolution.x = radius;
 			realResolution.y = radius * ratio;
 		}
+	}
+	
+	public Palette getPalette(int layer) {
+		return layers.get(layer - 1).getPalette();
 	}
 	
 	public Dimension getScreenResolution() {

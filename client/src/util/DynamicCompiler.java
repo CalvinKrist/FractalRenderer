@@ -35,7 +35,12 @@ public class DynamicCompiler {
 
 	public static class MyDiagnosticListener implements DiagnosticListener<JavaFileObject> {
 		public void report(Diagnostic<? extends JavaFileObject> diagnostic) {
-
+			System.out.println("Line Number->" + diagnostic.getLineNumber());
+            System.out.println("code->" + diagnostic.getCode());
+            System.out.println("Message->"
+                               + diagnostic.getMessage(Locale.ENGLISH));
+            System.out.println("Source->" + diagnostic.getSource());
+            System.out.println(" ");
 		}
 	}
 
@@ -88,7 +93,7 @@ public class DynamicCompiler {
 		if (result == true) {
 			System.out.println("Succeeded");
 		} else
-			System.out.println("Failed.");
+			System.out.println("Failed");
 	}
 
 	/** run class from the compiled byte code file by URLClassloader */

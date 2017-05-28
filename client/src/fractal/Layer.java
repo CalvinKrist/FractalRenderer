@@ -206,6 +206,10 @@ public abstract class Layer implements Serializable {
 	 * @param newProperties the new values of the modifiable parameters
 	 */
 	public abstract void setParameters(Parameters newProperties);
+	
+	public Palette getPalette() {
+		return palette;
+	}
 
 	/**
 	 * Saves the fractal at the specified location with the specified fractal name
@@ -223,8 +227,8 @@ public abstract class Layer implements Serializable {
 		writer.write("<name:" + name + ">");
 		writer.write("<bailout:" + bailout + ">");
 		writer.write("<maxIterations:" + maxIterations + ">");
-		writer.write("<palette:" + Constants.FRACTAL_FILEPATH + "/" + fractalName + "/" + name + ".palette>");
-		palette.writeTo(Constants.FRACTAL_FILEPATH + "/" + fractalName + "/" + name + ".palette");
+		writer.write("<palette:" + Constants.FRACTAL_FILEPATH + "palettes/" + name + ".palette>");
+		palette.writeTo(name);
 		writer.close();
 	}
 
@@ -319,7 +323,6 @@ public abstract class Layer implements Serializable {
 				}
 		}
 		return null;
-		// return new HistogramLayer();
 	}
 
 	/**

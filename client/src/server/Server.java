@@ -13,6 +13,7 @@ import java.util.Queue;
 
 import javax.imageio.ImageIO;
 
+import fractal.RenderManager;
 import menus.Display;
 import util.Constants;
 import util.DataTag;
@@ -54,12 +55,15 @@ public class Server extends NetworkNode {
 	
 	private Display display;
 
-	public Server(Log log) {
-		super(log);
+	public Server(RenderManager fractal, double zoomSpeed) {
+		//TODO: initialise parameters and fractal
+	}
+	
+	public void init(Log log) {
+		this.log = log;
+		
 		log.blankLine();
 		log.newLine("Creating new server.");
-
-		//TODO: initialise parameters and fractal
 
 		children = new ArrayList<SocketWrapper>();
 		unnasignedJobs = new LinkedList<Job>();

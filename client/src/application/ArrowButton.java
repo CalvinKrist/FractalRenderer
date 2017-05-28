@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.io.Serializable;
 
 /**
  * 
@@ -17,7 +18,7 @@ import java.awt.Rectangle;
  *
  * @param <E> 
  */
-public class ArrowButton<E> {
+public class ArrowButton<E extends Serializable> implements Serializable {
 	
 	/**
 	 * Describes the orientation of the button.
@@ -39,16 +40,21 @@ public class ArrowButton<E> {
 	 */
 	private Point location;
 	
+	/**
+	 * the x location of the button on the palette
+	 */
+	private int x;
+	
 	/** 
 	 * the data the button contains
 	 */
-	private E data; //stores some data type
+	private E data; 
 	
 	/**
 	 * This constructor does nothing
 	 */
 	public ArrowButton() {
-		
+	
 	}
 	
 	/**
@@ -137,6 +143,12 @@ public class ArrowButton<E> {
 	}
 	public void setSquareColor(Color squareColor) {
 		this.squareColor = squareColor;
+	}
+	public void setX(int x) {
+		this.x = x;
+	}
+	public int getX() {
+		return x;
 	}
 	public Point getLocation() {
 		return location;
