@@ -32,7 +32,6 @@ import util.Point;
 public class FractalEditor extends Scene {
 
 	private BorderPane bp;
-	protected int width, height;
 	public Window gradient;
 	
 	private RenderManager fractal;
@@ -50,8 +49,6 @@ public class FractalEditor extends Scene {
 	public FractalEditor(int x, int y) throws FileNotFoundException {
 		super(new BorderPane(),x, y);
 		bp = (BorderPane) this.getRoot();
-		width = x;
-		height = y;
 		// initialize();
 	}
 
