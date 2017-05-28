@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -134,9 +135,6 @@ public class Display extends JPanel implements Runnable {
 		});
 		serverLog.setToolTipText("Displays the log of the current server.");
 		view.add(serverLog);
-		JMenuItem adminLog = new JMenuItem("Admin Log");
-		adminLog.setToolTipText("Displays the log created by this admin instance.");
-		view.add(adminLog);
 		bar.add(view);
 		return bar;
 	}
@@ -323,7 +321,10 @@ public class Display extends JPanel implements Runnable {
 	}
 	
 	public void updateNetworkView(List<SocketWrapper> networkElements, Map<SocketWrapper, Queue<Job>> map) {
-		
+		ArrayList<NetworkElement> elements = new ArrayList<NetworkElement>();
+		for(SocketWrapper w : networkElements)
+			elements.add(new NetworkElement(server, w));
+		view.setNetworkElements(elements);
 	}
 	
 	private void updateParameters(Parameters params) {

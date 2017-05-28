@@ -185,6 +185,7 @@ public class FractalEditor extends Scene {
 
 			MenuItem newNet = new MenuItem("Create New Network");
 			MenuItem viewNet = new MenuItem("View Network");
+			MenuItem endNet = new MenuItem("Close Network");
 
 			newNet.setOnAction(e-> {
 				NetworkCreationTool createNet = new NetworkCreationTool();
@@ -196,20 +197,31 @@ public class FractalEditor extends Scene {
 					alert.setHeaderText(null);
 					alert.setContentText("Network succesfully created.");
 					viewNet.setDisable(false);
+					endNet.setDisable(false);
+					newNet.setDisable(true);
 					alert.showAndWait();
 				}
 			});
 			viewNet.setDisable(true);
+			endNet.setDisable(true);
 			viewNet.setOnAction(e->{
 				Display display = new Display(this.network);
-				
+				this.network.setDisplay(display);
+				display.updateNetworkView(this.network.getChildren(), this.network.getUncompletedJobs());
+			});
+			endNet.setOnAction(e-> {
+				this.network.kill();
+				viewNet.setDisable(true);
+				endNet.setDisable(true);
+				newNet.setDisable(false);
 			});
 			
-			network.getItems().addAll(newNet,viewNet);
+			network.getItems().addAll(newNet,viewNet,endNet);
 
 			MenuItem newFract = new MenuItem("New Fractal");
 			newFract.setOnAction(e -> {
 				this.fractal = new RenderManager();
+				gradient.updateLayer(this.fractal.getLayers().get(0));
 				this.updateFractalImage();
 			});
 			MenuItem openFract = new MenuItem("Open Fractal");
