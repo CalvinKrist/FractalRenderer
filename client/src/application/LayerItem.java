@@ -15,8 +15,7 @@ public class LayerItem extends CheckBoxTreeItem {
 		System.err.println("Wrong Input:");
 	}
 	public LayerItem(MetaLayer m){
-	super(m.getName());
-	this.m = m;
+	super(m);
 	}
 
 }

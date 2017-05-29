@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 
 public class LayerBox {
 
-    public static MetaLayer display(TreeItem t) {
+    public static MetaLayer display(TreeItem<MetaLayer> t) {
         Stage window = new Stage();
 
         //Block events to other windows
