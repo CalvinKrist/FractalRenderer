@@ -80,7 +80,7 @@ public class FractalEditor extends Scene {
 	}
 
 	/**
-	 * @author David, Calvin
+	 * @author David
 	 *
 	 * @throws FileNotFoundException
 	 * @throws AWTException
