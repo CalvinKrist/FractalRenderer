@@ -23,4 +23,5 @@ Document code properly
 Generate JavaDocs
 Create user manual
 Do project writeup
+Add button to save fractal as an image
 Add anti-alliasing and super sampling to rendering
