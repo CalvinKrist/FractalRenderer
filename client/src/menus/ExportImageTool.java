@@ -93,11 +93,7 @@ public class ExportImageTool {
 			width = Integer.valueOf(result.get().getKey());
 			height = Integer.valueOf(result.get().getValue());
 		} catch (NumberFormatException e) {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("");
-			alert.setHeaderText("INVALID INPUT: Must be an integer.");
-			alert.setContentText("Please try again.");
-			alert.showAndWait();
+			AlertMenu aMenu = new AlertMenu("INVALID INPUT: Must be an integer.", "INVALID INPUT: Must be an integer.");
 			exportImage(fractal);
 		} catch (Exception e) {
 			e.printStackTrace();

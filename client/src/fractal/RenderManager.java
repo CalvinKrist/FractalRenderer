@@ -1,14 +1,11 @@
 package fractal;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -16,14 +13,12 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 import javafx.scene.control.TextInputDialog;
+import menus.AlertMenu;
 import util.Constants;
 import util.Parameters;
 import util.Point;
-import util.Utils;
 
 /**
  * Manages all the layers that make up a fractal. It could, in many ways, be thought of as a fractal itself.
@@ -316,8 +311,19 @@ public class RenderManager implements Serializable {
 		if(name.equals("")) {
 			TextInputDialog dialog = new TextInputDialog("");
 			dialog.setContentText("Fractal name:");
+			dialog.setTitle("Save Fractal");
 			dialog.setHeaderText(null);
-			setName(dialog.showAndWait().get());
+			
+			Optional<String> result = dialog.showAndWait();
+			if(!result.isPresent())
+				return;
+			String name = result.get();
+			if(name.equals("")) {
+				AlertMenu aMenu = new AlertMenu("Invalid input: name invalid.", "Please try again.");
+				saveFractal();
+				return;
+			}
+			setName(name);
 		}
 		Map<String, Serializable> params = new HashMap<String, Serializable>();
 		params.put("name", name);
@@ -348,12 +354,19 @@ public class RenderManager implements Serializable {
 	public void saveFractalAs() {
 		TextInputDialog dialog = new TextInputDialog("");
 		dialog.setContentText("Fractal name:");
+		dialog.setTitle("Save Fractal As");
 		dialog.setHeaderText(null);
 
 		Optional<String> result = dialog.showAndWait();
+		if(!result.isPresent())
+			return;
 		String name = result.get();
-		
-		String currName = name;
+		if(name.equals("")) {
+				AlertMenu aMenu = new AlertMenu("Invalid input: name invalid.", "Please try again.");
+				saveFractalAs();
+				return;
+		}
+		String currName = this.name;
 		setName(name);
 		saveFractal();
 		setName(currName);

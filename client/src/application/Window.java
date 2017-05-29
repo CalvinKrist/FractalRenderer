@@ -94,9 +94,9 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 		opacityButtonHeight = (int) (dimension.height * 0.2);
 		colorButtonHeight = (int) (dimension.height * 0.8);
 
-		opacityRect = new Rectangle(10, 0, dimension.width - 20, opacityButtonHeight);
-		gradientRect = new Rectangle(10, opacityButtonHeight, dimension.width - 20, (int) (dimension.height * 0.6));
-		colorRect = new Rectangle(10, colorButtonHeight, dimension.width - 20, opacityButtonHeight);
+		opacityRect = new Rectangle(10, 0, dimension.width - 10, opacityButtonHeight);
+		gradientRect = new Rectangle(20, opacityButtonHeight, dimension.width - 30, (int) (dimension.height * 0.6));
+		colorRect = new Rectangle(10, colorButtonHeight, dimension.width - 10, opacityButtonHeight);
 
 		Point p = new Point(dimension.width + additionalWidth / 2, dimension.height / 2);
 		bgButton = new SquareButton(additionalWidth, p);
@@ -158,6 +158,7 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	 * @return the opacity at point x
 	 */
 	private Double getOpacityAtPoint(int x) {
+		x-=gradientRect.x;
 		return palette.getOpacityAtPoint(windowToPalette(x));
 	}
 
@@ -169,6 +170,7 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	 * @return the color at point x
 	 */
 	private Color getColorAtPoint(int x) {
+		x-=gradientRect.x;
 		return palette.getColorAtPoint(windowToPalette(x));
 	}
 
@@ -195,6 +197,7 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	public void addColorButton(int x, Color c) {
 		ArrowButton<Color> b = new ArrowButton<Color>();
 		b.setLocation(new Point(x, colorButtonHeight));
+		x -= gradientRect.x;
 		b.setX(windowToPalette(x));
 		b.setData(c);
 		b.setDown(false);
@@ -238,6 +241,7 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	public void addOpacityButton(int x, Double d) {
 		ArrowButton<Double> b = new ArrowButton<Double>();
 		b.setLocation(new Point(x, opacityButtonHeight));
+		x-=gradientRect.x;
 		b.setX(windowToPalette(x));
 		b.setData(d);
 		b.setDown(true);

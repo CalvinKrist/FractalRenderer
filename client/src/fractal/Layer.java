@@ -315,8 +315,8 @@ public abstract class Layer implements Serializable {
 		else
 			writer.write("<maxIterations:" + maxIterations + ">\r\n");
 		writer.write("<layer:" + layer + ">\r\n");
-		writer.write("<palette:" + Constants.FRACTAL_FILEPATH + "palettes/" + name + ".palette>\r\n");
-		palette.writeTo(name);
+		writer.write("<palette:" + Constants.FRACTAL_FILEPATH + "palettes/" + fractalName + "_" + name + ".palette>\r\n");
+		palette.writeTo(fractalName + "_" + name);
 		writer.close();
 	}
 
