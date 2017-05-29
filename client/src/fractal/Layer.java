@@ -182,10 +182,19 @@ public abstract class Layer implements Serializable {
 		this.screenResolution = screenResolution;
 	}
 
+	/**
+	 * This can be used to set the layer index of the layer. This is important because some rendering code will be
+	 * different for layers with an index of 0 than all others.
+	 * @param layer
+	 */
 	public void setLayer(int layer) {
 		this.layer = layer;
 	}
 
+	/**
+	 * This can be used to set the name of the layer.
+	 * @param name the name of the layer
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -241,7 +250,7 @@ public abstract class Layer implements Serializable {
 	}
 
 	/**
-	 * This static method must be called at startup of the application. It looks at the specified 
+	 * This static method must be called at startup of the application if any Layers are to be used. It looks at the specified 
 	 * directory for all custom layer files, compiles them, and loads Class representations of them
 	 * into the registry so they can be created later
 	 */
@@ -312,6 +321,9 @@ public abstract class Layer implements Serializable {
 	}
 
 	/**
+	 * This method is used to get a new instance of a Layer, by type. For example, if "HistogramLayer"
+	 * is passed to this method, it will return a new instance of a HistogramLayer.class, assuming that
+	 * layer was initialized in the registry
 	 * @param type a type of layer
 	 * @return an instance of the layer type requested, if it is a valid layer type. Otherwise, null.
 	 */
@@ -327,6 +339,12 @@ public abstract class Layer implements Serializable {
 		return null;
 	}
 	
+	/**
+	 * This method is used primarily for loading in layers from a file. Given a file path, it will return the 
+	 * layer that file points to.
+	 * @param address the file path of the layer to be created
+	 * @return the layer the address points to
+	 */
 	public static Layer getLayerByAddress(String address) {
 		Parameters params = new Parameters(address);
 		Layer l = getLayerByType(params.getParameter("type", String.class));
