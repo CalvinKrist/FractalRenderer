@@ -23,8 +23,8 @@ import util.Parameters;
 import util.Point;
 
 /**
- * Represents a layer of a fractal. It will be asked to render in a specific way.
- * Users can create their own layers and choose to use them from the GUI.
+ * Represents a layer of a fractal. It will be asked to render in a specific
+ * way. Users can create their own layers and choose to use them from the GUI.
  * 
  * @author Calvin
  *
@@ -36,70 +36,76 @@ public abstract class Layer implements Serializable {
 	 * The palette the layer will use to color itself
 	 */
 	protected Palette palette;
-	
+
 	/**
 	 * The location the rendering will be centered around
 	 */
 	protected Point location;
-	
+
 	/**
 	 * The zoom of the layer. High values zoom in, lower values zoom out.
 	 */
-	protected double zoom; 
-	
+	protected double zoom;
+
 	/**
 	 * The resolution any images created will be drawn as
 	 */
 	protected Dimension screenResolution;
-	
+
 	/**
-	 * The length in real coordinates of the longest edge of the window being drawn.
+	 * The length in real coordinates of the longest edge of the window being
+	 * drawn.
 	 */
 	protected Point realResolution;
-	
+
 	/**
-	 * The bailout value of the layer, eg the value at which the layer's iterative rendering will bail
+	 * The bailout value of the layer, eg the value at which the layer's
+	 * iterative rendering will bail
 	 */
 	protected long bailout;
-	
+
 	/**
 	 * The maximum iterations of the layer.
 	 */
 	protected int maxIterations;
-	
+
 	/**
-	 * The layer level. eg, a value of 1 would mean this is layer 1, which is on the bottom. This
-	 * is included because the coloring methods that avergae over the layers given an opacity level 
-	 * wont work without it.
+	 * The layer level. eg, a value of 1 would mean this is layer 1, which is on
+	 * the bottom. This is included because the coloring methods that avergae
+	 * over the layers given an opacity level wont work without it.
 	 */
 	protected int layer;
-	
+
 	/**
-	 * whether or not the program will automatically calculate a bailout value. This is not
-	 * recommended for high quality renderings. This is intended for use in deep zooms.
+	 * whether or not the program will automatically calculate a bailout value.
+	 * This is not recommended for high quality renderings. This is intended for
+	 * use in deep zooms.
 	 */
 	protected boolean autoBailout = true;
-	
+
 	/**
-	 * whether or not the program will automatically calculate a maxIterations value. This is not
-	 * recommended for high quality renderings. This is intended for use in deep zooms.
+	 * whether or not the program will automatically calculate a maxIterations
+	 * value. This is not recommended for high quality renderings. This is
+	 * intended for use in deep zooms.
 	 */
 	protected boolean autoMaxIterations = true;
-	
+
 	/**
-	 * A description of the layer. It can be displayed as a tooltip in the Fractal modifier GUI
+	 * A description of the layer. It can be displayed as a tooltip in the
+	 * Fractal modifier GUI
 	 */
 	public static String description = "";
-	
+
 	/**
-	 * The name of the layer. This is displayed in the layer view of the fractal GUI and is used
-	 * in the saving of files
+	 * The name of the layer. This is displayed in the layer view of the fractal
+	 * GUI and is used in the saving of files
 	 */
 	protected String name;
 
 	/**
-	 * A list of all valid layer types. There a lots of utility methods built around this to allow users
-	 * to add their own layer types and select different layer types in the layer view of the fractal editor.
+	 * A list of all valid layer types. There a lots of utility methods built
+	 * around this to allow users to add their own layer types and select
+	 * different layer types in the layer view of the fractal editor.
 	 */
 	private static ArrayList<Class<? extends Layer>> fractalRegistry = new ArrayList<Class<? extends Layer>>();
 
@@ -107,9 +113,13 @@ public abstract class Layer implements Serializable {
 	}
 
 	/**
-	 * initializes the layer. This should always be called before the layer is used.
-	 * @param palette the palette the layer will use to color itself.
-	 * @param layer the layer level.
+	 * initializes the layer. This should always be called before the layer is
+	 * used.
+	 * 
+	 * @param palette
+	 *            the palette the layer will use to color itself.
+	 * @param layer
+	 *            the layer level.
 	 */
 	public void init(Palette palette, int layer) {
 		this.palette = palette;
@@ -117,9 +127,11 @@ public abstract class Layer implements Serializable {
 	}
 
 	/**
-	 * A render method that takes in a 2D array of pixels which represent the image. The
-	 * layer will render itself to the array.
-	 * @param pixels the 2D array of pixels representing the image.
+	 * A render method that takes in a 2D array of pixels which represent the
+	 * image. The layer will render itself to the array.
+	 * 
+	 * @param pixels
+	 *            the 2D array of pixels representing the image.
 	 */
 	public void render(int[][] pixels) {
 		render(pixels, screenResolution.width, screenResolution.height, realResolution.x, realResolution.y, location.x,
@@ -127,29 +139,45 @@ public abstract class Layer implements Serializable {
 	}
 
 	/**
-	 * A method containing the actual rendering logic of the layer. 
-	 * @param pixels the array of pixels to be drawn on
-	 * @param width the width in pixels of the image being drawn
-	 * @param height the height in pixels of the image being drawn
-	 * @param rWidth the width in real units of the image being drawn
-	 * @param rHeight the height in real units of the image being drawn
-	 * @param xPos the x position in real units where the layer will center its rendering
-	 * @param yPos the y position in real units where the layer will center its rendering
+	 * A method containing the actual rendering logic of the layer.
+	 * 
+	 * @param pixels
+	 *            the array of pixels to be drawn on
+	 * @param width
+	 *            the width in pixels of the image being drawn
+	 * @param height
+	 *            the height in pixels of the image being drawn
+	 * @param rWidth
+	 *            the width in real units of the image being drawn
+	 * @param rHeight
+	 *            the height in real units of the image being drawn
+	 * @param xPos
+	 *            the x position in real units where the layer will center its
+	 *            rendering
+	 * @param yPos
+	 *            the y position in real units where the layer will center its
+	 *            rendering
 	 */
 	public abstract void render(int[][] pixels, int width, int height, double rWidth, double rHeight, double xPos,
 			double yPos);
 
 	/**
-	 * This method is called at the start of every rendering cycle. This gives the layer an opportunity to 
-	 * automtically calculate bailout and maxIterations values
-	 * @param rWidth the width in real units of the image being drawn
-	 * @param rHeight the height in real units of the image being drawn
+	 * This method is called at the start of every rendering cycle. This gives
+	 * the layer an opportunity to automtically calculate bailout and
+	 * maxIterations values
+	 * 
+	 * @param rWidth
+	 *            the width in real units of the image being drawn
+	 * @param rHeight
+	 *            the height in real units of the image being drawn
 	 */
 	protected abstract void calculateIterationsAndBailout(double rWidth, double rHeight);
 
 	/**
 	 * Used to change this layer's color palette
-	 * @param palette the new color palette for this layer to use
+	 * 
+	 * @param palette
+	 *            the new color palette for this layer to use
 	 */
 	public void setColorPalette(Palette palette) {
 		this.palette = palette;
@@ -157,17 +185,22 @@ public abstract class Layer implements Serializable {
 
 	/**
 	 * Used to set the location of the Mandelbrot set that this layer renders
-	 * @param location the new location of the Mandelbrot set
+	 * 
+	 * @param location
+	 *            the new location of the Mandelbrot set
 	 */
 	public void setLocation(Point location) {
 		this.location = location;
 	}
 
 	/**
-	 * Sets the zoom value of the layer and takes care of any stretching issues of the
-	 * layer so that the fractal is never streched, regardless of the dimension of the 
-	 * image being drawn. It does based on the value of the longest edge.
-	 * @param zoom the new zoom level of the layer
+	 * Sets the zoom value of the layer and takes care of any stretching issues
+	 * of the layer so that the fractal is never streched, regardless of the
+	 * dimension of the image being drawn. It does based on the value of the
+	 * longest edge.
+	 * 
+	 * @param zoom
+	 *            the new zoom level of the layer
 	 */
 	public void setZoom(double zoom) {
 		this.zoom = zoom;
@@ -188,16 +221,21 @@ public abstract class Layer implements Serializable {
 
 	/**
 	 * returns the resolution this layer renders at
-	 * @param screenResolution the resolution this layer renders at
+	 * 
+	 * @param screenResolution
+	 *            the resolution this layer renders at
 	 */
 	public void setScreenResolution(Dimension screenResolution) {
 		this.screenResolution = screenResolution;
 	}
 
 	/**
-	 * This can be used to set the layer index of the layer. This is important because some rendering code will be
-	 * different for layers with an index of 0 than all others.
-	 * @param layer the new layer index for this layer
+	 * This can be used to set the layer index of the layer. This is important
+	 * because some rendering code will be different for layers with an index of
+	 * 0 than all others.
+	 * 
+	 * @param layer
+	 *            the new layer index for this layer
 	 */
 	public void setLayer(int layer) {
 		this.layer = layer;
@@ -205,7 +243,9 @@ public abstract class Layer implements Serializable {
 
 	/**
 	 * This can be used to set the name of the layer.
-	 * @param name the name of the layer
+	 * 
+	 * @param name
+	 *            the name of the layer
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -213,6 +253,7 @@ public abstract class Layer implements Serializable {
 
 	/**
 	 * returns the name of the layer
+	 * 
 	 * @return the name of the layer
 	 */
 	public String getName() {
@@ -220,20 +261,25 @@ public abstract class Layer implements Serializable {
 	}
 
 	/**
-	 * A method returning all editable parameters of the layer. When a layer is selected on the Layer view of the
-	 * fractal gui, these parameters will be displayed to the use for modification
+	 * A method returning all editable parameters of the layer. When a layer is
+	 * selected on the Layer view of the fractal gui, these parameters will be
+	 * displayed to the use for modification
+	 * 
 	 * @return the modifiable parameters
 	 */
 	public abstract Parameters getParameters();
 
 	/**
 	 * Sets new values for the modifiable parameters
-	 * @param newProperties the new values of the modifiable parameters
+	 * 
+	 * @param newProperties
+	 *            the new values of the modifiable parameters
 	 */
 	public abstract void setParameters(Parameters newProperties);
-	
+
 	/**
 	 * returns the palette this layer uses to color the fractal
+	 * 
 	 * @return the palette this layer uses to color the fractal
 	 */
 	public Palette getPalette() {
@@ -241,9 +287,14 @@ public abstract class Layer implements Serializable {
 	}
 
 	/**
-	 * Saves the fractal at the specified location with the specified fractal name
-	 * @param fractalName the name of the fractal this layer is a part of
-	 * @throws IOException thrown if the file isn't found or if the SecurityManager denies write access to the file
+	 * Saves the fractal at the specified location with the specified fractal
+	 * name
+	 * 
+	 * @param fractalName
+	 *            the name of the fractal this layer is a part of
+	 * @throws IOException
+	 *             thrown if the file isn't found or if the SecurityManager
+	 *             denies write access to the file
 	 */
 	public void save(String fractalName) throws IOException {
 		File f = new File(Constants.FRACTAL_FILEPATH + "/" + fractalName);
@@ -255,11 +306,11 @@ public abstract class Layer implements Serializable {
 				new File(Constants.FRACTAL_FILEPATH + "/" + fractalName + "/" + name + ".layer"));
 		writer.write("<name:" + name + ">\r\n");
 		writer.write("<type:" + this.getClass().getSimpleName() + ">\r\n");
-		if(autoBailout)
+		if (autoBailout)
 			writer.write("<bailout:auto>\r\n");
 		else
 			writer.write("<bailout:" + bailout + ">\r\n");
-		if(autoMaxIterations)
+		if (autoMaxIterations)
 			writer.write("<maxIterations:auto>\r\n");
 		else
 			writer.write("<maxIterations:" + maxIterations + ">\r\n");
@@ -270,18 +321,33 @@ public abstract class Layer implements Serializable {
 	}
 
 	/**
-	 * This static method must be called at startup of the application if any Layers are to be used. It looks at the specified 
-	 * directory for all custom layer files, compiles them, and loads Class representations of them
-	 * into the registry so they can be created later. If errors are thrown, it might be because a jdk is not being used. 
-	 * This method will only work if a jdk is installed
-	 * @throws IOException thrown if the .java files aren't found
-	 * @throws IllegalAccessException Caused by errors when calling ClassLoader.getSystemClassLoader() to add the custom layer directory to the class path
-	 * @throws InvocationTargetException Caused by errors when calling ClassLoader.getSystemClassLoader() to add the custom layer directory to the class path
-	 * @throws NoSuchMethodException Caused by errors when calling URLClassloader.class.getDeclaredMethod("addURL", new Class[] {URL.class})
-	 * @throws SecurityException Caused when the security manager denied write access to filed
-	 * and being used: a JRE will not work.
+	 * This static method must be called at startup of the application if any
+	 * Layers are to be used. It looks at the specified directory for all custom
+	 * layer files, compiles them, and loads Class representations of them into
+	 * the registry so they can be created later. If errors are thrown, it might
+	 * be because a jdk is not being used. This method will only work if a jdk
+	 * is installed
+	 * 
+	 * @throws IOException
+	 *             thrown if the .java files aren't found
+	 * @throws IllegalAccessException
+	 *             Caused by errors when calling
+	 *             ClassLoader.getSystemClassLoader() to add the custom layer
+	 *             directory to the class path
+	 * @throws InvocationTargetException
+	 *             Caused by errors when calling
+	 *             ClassLoader.getSystemClassLoader() to add the custom layer
+	 *             directory to the class path
+	 * @throws NoSuchMethodException
+	 *             Caused by errors when calling
+	 *             URLClassloader.class.getDeclaredMethod("addURL", new Class[]
+	 *             {URL.class})
+	 * @throws SecurityException
+	 *             Caused when the security manager denied write access to filed
+	 *             and being used: a JRE will not work.
 	 */
-	public static void initializeFractalRegistry() throws IOException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	public static void initializeFractalRegistry() throws IOException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException, SecurityException {
 		while (fractalRegistry.size() != 0)
 			fractalRegistry.remove(0);
 
@@ -322,11 +388,12 @@ public abstract class Layer implements Serializable {
 					e.printStackTrace();
 				}
 		}
-		
+
 	}
 
 	/**
 	 * Returns a list of all valid layer types a user can choose from
+	 * 
 	 * @return a list of all the valid layer types a user can choose from
 	 */
 	public static List<String> getLayerTypes() {
@@ -338,23 +405,30 @@ public abstract class Layer implements Serializable {
 
 	/**
 	 * Determines if a layer is a valid layer
-	 * @param type a type of layer
-	 * @return whether or not the type passed to this method corresponds to a real layer type
+	 * 
+	 * @param type
+	 *            a type of layer
+	 * @return whether or not the type passed to this method corresponds to a
+	 *         real layer type
 	 */
 	public static boolean isValidLayer(String type) {
 		for (Class c : fractalRegistry)
-			if (c.getSimpleName().equals(type + ".java"))
+			if (c.getSimpleName().equals(type))
 				return true;
 
 		return false;
 	}
 
 	/**
-	 * This method is used to get a new instance of a Layer, by type. For example, if "HistogramLayer"
-	 * is passed to this method, it will return a new instance of a HistogramLayer.class, assuming that
-	 * layer was initialized in the registry
-	 * @param type a type of layer
-	 * @return an instance of the layer type requested, if it is a valid layer type. Otherwise, null.
+	 * This method is used to get a new instance of a Layer, by type. For
+	 * example, if "HistogramLayer" is passed to this method, it will return a
+	 * new instance of a HistogramLayer.class, assuming that layer was
+	 * initialized in the registry
+	 * 
+	 * @param type
+	 *            a type of layer
+	 * @return an instance of the layer type requested, if it is a valid layer
+	 *         type. Otherwise, null.
 	 */
 	public static Layer getLayerByType(String type) {
 		for (Class c : fractalRegistry) {
@@ -367,23 +441,26 @@ public abstract class Layer implements Serializable {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * This method is used primarily for loading in layers from a file. Given a file path, it will return the 
-	 * layer that file points to.
-	 * @param address the file path of the layer to be created
+	 * This method is used primarily for loading in layers from a file. Given a
+	 * file path, it will return the layer that file points to.
+	 * 
+	 * @param address
+	 *            the file path of the layer to be created
 	 * @return the layer the address points to
 	 */
 	public static Layer getLayerByAddress(String address) {
 		Parameters params = new Parameters(address);
 		Layer l = getLayerByType(params.getParameter("type", String.class));
-		l.init(new Palette(params.getParameter("palette", String.class), false), Integer.valueOf(params.getParameter("layer", String.class)) + 1);
-		if(params.getParameter("bailout", String.class).equals("auto"))
+		l.init(new Palette(params.getParameter("palette", String.class), false),
+				Integer.valueOf(params.getParameter("layer", String.class)) + 1);
+		if (params.getParameter("bailout", String.class).equals("auto"))
 			l.autoBailout = true;
 		else
 			l.bailout = Long.valueOf(params.getParameter("bailout", String.class));
-		if(params.getParameter("maxIterations", String.class).equals("auto"))
-			l.autoMaxIterations= true;
+		if (params.getParameter("maxIterations", String.class).equals("auto"))
+			l.autoMaxIterations = true;
 		else
 			l.maxIterations = Integer.valueOf(params.getParameter("maxIterations", String.class));
 		l.name = params.getParameter("name", String.class);
@@ -392,15 +469,30 @@ public abstract class Layer implements Serializable {
 
 	/**
 	 * Used to register a new layer type
-	 * @param file a file pointing to the layer being registered
-	 * @return whether or not the layer was succesfully registered
+	 * 
+	 * @param file
+	 *            a file pointing to the layer being registered
+	 * @return whether or not the layer was succesfully registered. Returns
+	 *         false if the layer was already registered
 	 */
 	public static boolean registerLayer(File file) {
+		String name = file.getName().substring(0, file.getName().indexOf("."));
+		if (Layer.isValidLayer(name))
+			return false;
+		File classFile = new File(Constants.CUSTOM_FRACTAL_FILEPATH + "fractal/" + name + ".class");
+		if (classFile.exists())
+			classFile.delete();
+		DynamicCompiler.name = name;
+		String classContents;
 		try {
-			fractalRegistry
-					.add((Class<? extends Layer>) Class.forName(Constants.CUSTOM_FRACTAL_FILEPATH + file.getName()));
+			classContents = new String(Files.readAllBytes(file.toPath()));
+
+			JavaFileObject fi = DynamicCompiler.getJavaFileObject(classContents);
+			Iterable<? extends JavaFileObject> files = Arrays.asList(fi);
+			DynamicCompiler.compile(files);
+			fractalRegistry.add(DynamicCompiler.instanceOf());
 			return true;
-		} catch (ClassNotFoundException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return false;

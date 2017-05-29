@@ -301,7 +301,7 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 					TextInputDialog dialog = new TextInputDialog("");
 					dialog.setTitle("");
 					dialog.setHeaderText(null);
-					dialog.setContentText("Save As:");
+					dialog.setContentText("Save Palette As:");
 
 					// Traditional way to get the response value.
 					try {
@@ -321,9 +321,11 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 								"*.palette");
 						chooser.getExtensionFilters().add(filter);
 						File f = chooser.showOpenDialog(null);
-						palette = new Palette(f.getPath(), false);
-						repaint();
-						layer.setColorPalette(palette);
+						if(f != null) {
+							palette = new Palette(f.getPath(), false);
+							repaint();
+							layer.setColorPalette(palette);
+						}
 					}
 				});
 

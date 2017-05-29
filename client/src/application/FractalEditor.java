@@ -4,6 +4,7 @@ import java.awt.AWTException;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.beans.EventHandler;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -11,8 +12,12 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.imageio.ImageIO;
 
+import com.sun.glass.events.MouseEvent;
+
 import fractal.Layer;
 import fractal.RenderManager;
+import javafx.application.Platform;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.embed.swing.SwingNode;
 import javafx.scene.Scene;
@@ -36,6 +41,7 @@ import javafx.stage.FileChooser;
 import javafx.util.Callback;
 import menus.Display;
 import menus.NetworkCreationTool;
+import menus.RegisterLayerTool;
 import server.Server;
 import util.Log;
 import util.Point;
@@ -238,6 +244,7 @@ public class FractalEditor extends Scene {
 		{// This is the menu stuff
 			Menu network = new Menu("Network");
 			Menu fractal = new Menu("Fractal");
+			Menu system = new Menu("System");
 
 			MenuItem newNet = new MenuItem("Create New Network");
 			MenuItem viewNet = new MenuItem("View Network");
@@ -302,17 +309,22 @@ public class FractalEditor extends Scene {
 			saveFractAs.setOnAction(e -> {
 				this.fractal.saveFractalAs();
 			});
+
+			fractal.getItems().addAll(newFract, openFract, saveFract, saveFractAs);
+
 			MenuItem newLayer = new MenuItem("New Layer Type");
-
-			fractal.getItems().addAll(newFract, openFract, saveFract, saveFractAs, newLayer);
-
-			/*
-			 * MenuItem exit = new MenuItem("Exit"); exit.setOnAction(e -> {
-			 * System.exit(0); });
-			 */
-
+			newLayer.setOnAction(e -> {
+				RegisterLayerTool register = new RegisterLayerTool();
+				register.registerLayer();
+				Layer.registerLayer(register.getFile());
+			});
+			
+			system.getItems().addAll(newLayer);
+			
 			menu.getMenus().addAll(fractal);
 			menu.getMenus().addAll(network);
+			menu.getMenus().addAll(system);
+
 		}
 
 		VBox center = new VBox();
