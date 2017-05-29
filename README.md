@@ -18,7 +18,6 @@ Change palette naming conventions to also include fractal name
 GUI method of changing log options
 Allow server to request log of each client through the NetworkView
 Make it create the necesarry folders upon first install
-Add button to export fractal as an image
 Add anti-alliasing and super sampling to rendering
 
 

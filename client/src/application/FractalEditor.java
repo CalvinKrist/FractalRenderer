@@ -4,7 +4,6 @@ import java.awt.AWTException;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
-import java.beans.EventHandler;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,12 +11,8 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.imageio.ImageIO;
 
-import com.sun.glass.events.MouseEvent;
-
 import fractal.Layer;
 import fractal.RenderManager;
-import javafx.application.Platform;
-import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.embed.swing.SwingNode;
 import javafx.scene.Scene;
@@ -40,6 +35,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
 import menus.Display;
+import menus.ExportImageTool;
 import menus.NetworkCreationTool;
 import menus.RegisterLayerTool;
 import server.Server;
@@ -309,8 +305,13 @@ public class FractalEditor extends Scene {
 			saveFractAs.setOnAction(e -> {
 				this.fractal.saveFractalAs();
 			});
+			MenuItem exportFract = new MenuItem("Export Fractal");
+			exportFract.setOnAction(e-> {
+				ExportImageTool export = new ExportImageTool();
+				export.exportImage(this.fractal);
+			});
 
-			fractal.getItems().addAll(newFract, openFract, saveFract, saveFractAs);
+			fractal.getItems().addAll(newFract, openFract, saveFract, saveFractAs, exportFract);
 
 			MenuItem newLayer = new MenuItem("New Layer Type");
 			newLayer.setOnAction(e -> {
