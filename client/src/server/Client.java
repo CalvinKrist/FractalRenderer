@@ -142,12 +142,7 @@ public class Client extends NetworkNode {
 		fractal.setZoom(params.getParameter("zoom", Double.class));
 		fractal.setLocation(params.getParameter("location", util.Point.class));
 		int[][] pixels = new int[fractal.getScreenResolution().width][fractal.getScreenResolution().height];
-		System.out.println("starting render");
 		fractal.render(pixels);
-		System.out.println("ending render");
-		for(int i = 0; i < pixels.length; i++)
-			for(int k = 0; k < pixels[i].length; k++)
-				System.out.println(pixels[i][k]);
 		j.setImage(pixels);
 		server.sendMessage(j);
 	}
