@@ -4,6 +4,15 @@ import java.io.Serializable;
 
 import util.Parameters;
 
+/**
+ * A Job describes an action, or a 'job', that needs to be done by a client. Currently,
+ * there are only 'render' jobs--jobs that are created by a server to tell a client to render 
+ * something. However, there is support for other types as well, namely 'compile' jobs that would
+ * tell a client to compile lots of images together into a video. The job can also store the product
+ * of a 'render' job, which can be returned to the server that assigned the job.
+ * @author Calvin
+ *
+ */
 public class Job implements Serializable {
 	
 	/**

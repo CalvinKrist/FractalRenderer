@@ -126,6 +126,7 @@ public class ArrowButton<E extends Serializable> implements Serializable {
 	}
 	
 	/* GETTERS AND SETTERS */
+	
 	public boolean isDown() {
 		return down;
 	}

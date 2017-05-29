@@ -70,8 +70,6 @@ public class RenderManager implements Serializable {
 		name = "";
 		layers = new ArrayList<Layer>();
 		Layer l = Layer.getLayerByType("TriangleAverageLayer");
-		System.out.println(Layer.getLayerByType("TriangleAverageLayer").description);
-		System.out.println(Layer.getLayerByType("HistogramLayer").description);
 
 		
 		l.init(new Palette(), 1);

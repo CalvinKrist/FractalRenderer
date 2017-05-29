@@ -3,15 +3,19 @@ distributed rendering of the Mandelbrot set
 Calvin Krist, David Smith
 
 
+Fix TriangleAverage layer
 Add editable parameters to parameters section
 Make GUI even on all screen sizes
 Change the color picker and opacity picker menus to JavaFX
 Add layer movement controlls
-Add bailout and maxIterations control to NetworkView. Make the parameters on the NetworkView do something
+Add bailout and maxIterations control to NetworkView
 Fix network display
+Allow users to set initial zoom levels in the NetworkCreationTool
 Create image compiler protocal
+Allow users to register new layer types through the GUI
 Integrate the log messages across the application and create error pop-ups when helpful to the user
 Change palette naming conventions to also include fractal name
+Make 'ADD' a button with an image
 Fix glitch where app continues running after menu's closed
 GUI method of changing log options
 Allow server to request log of each client through the NetworkView

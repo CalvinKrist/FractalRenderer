@@ -25,13 +25,28 @@ import javafx.util.Pair;
 import server.Server;
 import util.Constants;
 
+/**
+ * This tool, upon initialization, will bring the user through a series of menus helping them 
+ * set up a Network for use. It will then use this process to create a server which can be 
+ * accessed afterwards
+ * @author Calvin
+ *
+ */
 public class NetworkCreationTool {
 
+	/**
+	 * The server created by this tool
+	 */
 	private Server server;
 
 	public NetworkCreationTool() {
 	}
 
+	/**
+	 * This method, when called, will bring the user through a series of menus helping them
+	 * configure the Network they wish to set up.
+	 * @return whether or not the network was successfully created.
+	 */
 	public boolean createNetwork() {
 
 		File[] fractals = new File(Constants.FRACTAL_FILEPATH).listFiles();
@@ -189,6 +204,11 @@ public class NetworkCreationTool {
 		return new Pair<Integer, Integer>(width, height);
 	}
 
+	/**
+	 * This method should only be called after createNetwork() has been called, and returned true. If that has
+	 * happened, it will return the server created in the createNetwork() method.
+	 * @return the server created in the createNetwork() method.
+	 */
 	public Server getServer() {
 		return server;
 	}
