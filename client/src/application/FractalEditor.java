@@ -23,6 +23,7 @@ import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.CheckBoxTreeCell;
@@ -156,20 +157,51 @@ public class FractalEditor extends Scene {
 		TreeItem xPos = new TreeItem();
 		parameters.getRoot().getChildren().addAll(xPos);
 
-		layers.setRoot(new CheckBoxTreeItem("Layers"));
+		layers.setRoot(new TreeItem());
 		layers.getRoot().setExpanded(true);
 		layers.setShowRoot(false);
 		layers.setEditable(true);
-		layers.setCellFactory(new Callback<TreeView,CheckBoxTreeCell>(){
+		/**layers.setCellFactory(new Callback<TreeView,CheckBoxTreeCell>(){
             @Override
             public CheckBoxTreeCell call(TreeView p) {
                 return new CheckBoxTreeCell();
             }
+        });*/
+        // Use a custom callback to determine the style of the tree item
+        layers.setCellFactory(new Callback<TreeView, TreeCell>() {
+            @Override
+            public TreeCell call(TreeView param) {
+                return new CheckBoxTreeCell(){
+                    @Override
+                    public void updateItem( Object item, boolean empty){
+                        super.updateItem(item, empty);
+                        // If there is no information for the Cell, make it empty
+                        if(empty){
+                            setGraphic(null);
+                            setText(null);
+                        // Otherwise if it's not representation as an item of the tree
+                        // is not a CheckBoxTreeItem, remove the checkbox item
+                        }else if (!(getTreeItem() instanceof CheckBoxTreeItem)){
+                        	BufferedImage image;
+							try {
+								image = ImageIO.read(new File("textures\\plusButton.png"));
+								Image plusImage = SwingFXUtils.toFXImage(image, null);
+	                    		ImageView plusView = new ImageView(plusImage);
+	                    		plusView.setFitHeight(16);
+	                    		plusView.setFitWidth(16);
+	                            setGraphic(plusView);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+                        }
+                    }
+                };
+            }
         });
 
-		CheckBoxTreeItem add = new CheckBoxTreeItem("");
+		TreeItem add = new TreeItem();
 
-		try{
+		/**try{
 		BufferedImage image = ImageIO.read(new File("textures\\plusButton.jpg"));
 		Image plusImage = SwingFXUtils.toFXImage(image, null);
 		ImageView plusView = new ImageView(plusImage);
@@ -178,7 +210,7 @@ public class FractalEditor extends Scene {
 		add.setGraphic(plusView);
 		}catch(Exception e){
 			e.printStackTrace();
-		}
+		}*/
 		layerIndex = 1;
 		add.addEventHandler(CheckBoxTreeItem.checkBoxSelectionChangedEvent(), e -> {
 			if(((CheckBoxTreeItem)(e.getSource())).isSelected()){
