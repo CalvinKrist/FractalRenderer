@@ -19,9 +19,8 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 /**
- * Dynamic java class compiler and executer <br>
- * Demonstrate how to compile dynamic java source code, <br>
- * instantiate instance of the class, and finally call method of the class <br>
+ * This class was copied from the location below and was created by david, the author of the article.
+ * This class is used to dynamically compile any .java classes in the directory for custom layer types.
  *
  * http://www.beyondlinux.com
  *
@@ -29,10 +28,21 @@ import javax.tools.ToolProvider;
  *
  */
 public class DynamicCompiler {
-	/** where shall the compiled class be saved to (should exist already) */
-	public static String classOutputFolder = "/classes/demo";
+	/**
+	 * The directory where all compiled classes will be saved. This should be set before use.
+	 */
+	public static String classOutputFolder = "";
+	/**
+	 * After a .java file is compiled, it will be saved as 'name.class'. This parameter should be set before each
+	 * use to ensure that .class files are named properly.
+	 */
 	public static String name = "default";
 
+	/**
+	 * This class will print diagnostic information about any failed compilations.
+	 * @author david 2011/07
+	 *
+	 */
 	public static class MyDiagnosticListener implements DiagnosticListener<JavaFileObject> {
 		public void report(Diagnostic<? extends JavaFileObject> diagnostic) {
 			System.out.println("Line Number->" + diagnostic.getLineNumber());
@@ -77,7 +87,8 @@ public class DynamicCompiler {
 		return so;
 	}
 
-	/** compile your files by JavaCompiler */
+	/** compile your files by JavaCompiler. If the class was succesfuly compiled, it will print 'Succeded'. Otherwise, it
+	 * will print diagnositc information. */
 	public static void compile(Iterable<? extends JavaFileObject> files) {
 		// get system compiler:
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
@@ -96,7 +107,7 @@ public class DynamicCompiler {
 			System.out.println("Failed");
 	}
 
-	/** run class from the compiled byte code file by URLClassloader */
+	/** returns an instance of the compiled class, or null if the class could not be compiled. */
 	public static Class instanceOf() {
 		// Create a File object on the root of the directory
 		// containing the class file
