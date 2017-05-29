@@ -161,10 +161,10 @@ public class FractalEditor extends Scene {
 		layers.setCellFactory(new Callback<TreeView,CheckBoxTreeCell>(){
             @Override
             public CheckBoxTreeCell call(TreeView p) {
-                return new CheckCell();
+                return new LayerCell();
             }
         });
-		
+
 		CheckBoxTreeItem add = new CheckBoxTreeItem("ADD");
 		/**
 		try{
@@ -177,14 +177,21 @@ public class FractalEditor extends Scene {
 		layerIndex = 1;
 		add.addEventHandler(CheckBoxTreeItem.checkBoxSelectionChangedEvent(), e -> {
 			if(((CheckBoxTreeItem)(e.getSource())).isSelected()){
-				((CheckBoxTreeItem)(e.getSource())).getParent().getChildren().add(0, new CheckBoxTreeItem("Layer"+incrementLayers()));
+				((CheckBoxTreeItem)(e.getSource())).getParent().getChildren().add(0, new LayerItem(new MetaLayer("Layer"+incrementLayers(),null)));
 			((CheckBoxTreeItem)(e.getSource())).setSelected(false);
 			}
+		});
 		layers.getRoot().addEventHandler(layers.getRoot().childrenModificationEvent(), e -> {
-			e.getSource();
-		});});
+			for(Object i:layers.getRoot().getChildren()){
+				if(i!=add)
+					((TreeItem)(i)).addEventHandler(CheckBoxTreeItem.checkBoxSelectionChangedEvent(), e2 -> {
+						if(((CheckBoxTreeItem)e2.getSource()).isSelected())
+						((TreeItem)e2.getSource()).setValue(LayerBox.display((TreeItem)e2.getSource()));
+					});
+			}
+		});
 		layers.getRoot().getChildren().addAll(add);
-		
+
 		}
 
 		//Trying to get this to work
@@ -214,9 +221,9 @@ public class FractalEditor extends Scene {
 			viewNet.setDisable(true);
 			viewNet.setOnAction(e->{
 				Display display = new Display(this.network);
-				
+
 			});
-			
+
 			network.getItems().addAll(newNet,viewNet);
 
 			MenuItem newFract = new MenuItem("New Fractal");

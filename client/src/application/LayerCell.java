@@ -10,9 +10,10 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
 
-public class CheckCell extends CheckBoxTreeCell {
+public class LayerCell extends CheckBoxTreeCell {
 	private TextField textField;
-	public CheckCell(){
+	private MetaLayer m;
+	public LayerCell(){
 		
 	}
 	@Override
@@ -57,4 +58,6 @@ public class CheckCell extends CheckBoxTreeCell {
     private String getString() {
         return getItem() == null ? "" : getItem().toString();
     }
+    
+    
 }
