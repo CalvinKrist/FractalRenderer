@@ -1,0 +1,6 @@
+<name:Layer 1>
+<type:TriangleAverageLayer>
+<bailout:10000>
+<maxIterations:1000>
+<layer:0>
+<palette:fractals/palettes/Layer 1.palette>
