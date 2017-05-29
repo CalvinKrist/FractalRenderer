@@ -3,19 +3,24 @@ distributed rendering of the Mandelbrot set
 Calvin Krist, David Smith
 
 
+Fix clients rendering black screens
+Fix TriangleAverage layer
+Add editable parameters to parameters section
+Make GUI even on all screen sizes
+Change the color picker and opacity picker menus to JavaFX
+Add layer movement controlls
+Add bailout and maxIterations control to NetworkView
+Fix network display
 Create image compiler protocal
-Create the admin GUI (includes statistics and network management tools)
-Fix logging and error messages
-Create the fractal editor GUI
-Fix glitch where, if a window is open when the editor is closed, the editor continues running in the background
-Methods of changing log options from GUI
-Methods of adding to removing new render layers from the RenderingManager
-Add mode to let users explore a fractal and discover zoom points
-Add log requests to the NetworkView 
+Integrate the log messages across the application and create error pop-ups when helpful to the user
+Change palette naming conventions to also include fractal name
+Make 'ADD' a button with an image
+Fix glitch where app continues running after menu's closed
+GUI method of changing log options
+Allow server to request log of each client through the NetworkView
 Make it create the necesarry folders upon first install
-Cleaning up of code
+Document code properly
 Generate JavaDocs
 Create user manual
 Do project writeup
-add anti-alliasing and super sampling to rendering
-Change color picker and opacity chooser menus to javafx menus
+Add anti-alliasing and super sampling to rendering
