@@ -14,7 +14,7 @@ public class HistogramLayer extends Layer {
 		super();
 		bailout = 1000;
 		maxIterations = 400;
-		discription = "Uses a histogram to distribute all the aproximated distances across the palete.";
+		description = "Uses a histogram to distribute all the aproximated distances across the palete.";
 	}
 	
 	public Parameters getParameters() {

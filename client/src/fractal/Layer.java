@@ -89,7 +89,7 @@ public abstract class Layer implements Serializable {
 	/**
 	 * A description of the layer. It can be displayed as a tooltip in the Fractal modifier GUI
 	 */
-	protected String discription = "";
+	public static String description = "";
 	
 	/**
 	 * The name of the layer. This is displayed in the layer view of the fractal GUI and is used
@@ -287,12 +287,6 @@ public abstract class Layer implements Serializable {
 				}
 		}
 		
-	}
-
-	public String getDiscription() {
-		if (discription.equals(""))
-			return null;
-		return discription;
 	}
 
 	/**

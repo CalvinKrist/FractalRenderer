@@ -32,7 +32,9 @@ public class TriangleAverageLayer extends Layer {
 	
 	public TriangleAverageLayer() {
 		super();
-		discription = "Uses the Triangle Average Inequality rendering method.";
+		autoBailout = false;
+		autoMaxIterations = false;
+		description = "Uses the Triangle Average Inequality rendering method.";
 		maxIterations = 1000;
 		bailout = (int)(Math.pow(10, 4));
 		bailoutSquared = bailout * bailout;

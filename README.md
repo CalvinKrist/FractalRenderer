@@ -3,7 +3,6 @@ distributed rendering of the Mandelbrot set
 Calvin Krist, David Smith
 
 
-Fix clients rendering black screens
 Fix TriangleAverage layer
 Add editable parameters to parameters section
 Make GUI even on all screen sizes
