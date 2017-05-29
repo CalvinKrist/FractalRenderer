@@ -61,7 +61,6 @@ public class NetworkCreationTool {
 		dialog1.setHeaderText("Step 1");
 		dialog1.setContentText("Choose a fractal:");
 
-		// Traditional way to get the response value.
 		RenderManager fractal = null;
 		try {
 			fractal = new RenderManager(dialog1.showAndWait().get());
@@ -74,9 +73,15 @@ public class NetworkCreationTool {
 			return false;
 		fractal.setScreenResolution(new Dimension(dimension.getKey(), dimension.getValue()));
 
-		Double zoomSpeed = getZoomSpeed();
-		if (zoomSpeed == null)
+		Pair<Double, Double> params = getParams();
+		if (params == null)
 			return false;
+		if(params.getKey() == null)
+			return false;
+		if(params.getValue() == null)
+			return false;
+		
+		fractal.setZoom(params.getKey());
 
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Create Network");
@@ -103,40 +108,71 @@ public class NetworkCreationTool {
 			return false;
 		}
 
-		this.server = new Server(fractal, zoomSpeed.doubleValue(), directory);
+		this.server = new Server(fractal, params.getValue(), directory);
 
 		return true;
 	}
 
-	private Double getZoomSpeed() {
-		TextInputDialog dialog3 = new TextInputDialog("1.1");
+	private Pair<Double, Double> getParams() {
+		Dialog<Pair<String, String>> dialog3 = new Dialog<>();
 		dialog3.setTitle("Create Network");
 		dialog3.setHeaderText("Step 3");
-		dialog3.setContentText("Zoom speed:");
+		dialog3.setContentText("Choose Parameters:");
+		
+		dialog3.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+		
+		GridPane grid = new GridPane();
+		grid.setHgap(10);
+		grid.setVgap(10);
+		grid.setPadding(new Insets(20, 150, 10, 10));
+
+		TextField zoomField = new TextField(".25");
+		TextField zoomSpeedField = new TextField("1.1");
+
+		grid.add(new Label("Zoom Level:"), 0, 0);
+		grid.add(zoomField, 1, 0);
+		grid.add(new Label("Zoom Speed:"), 0, 1);
+		grid.add(zoomSpeedField, 1, 1);
+
+		dialog3.getDialogPane().setContent(grid);
+		dialog3.setResultConverter(dialogButton->{
+			if(dialogButton == ButtonType.OK)
+				return new Pair<String, String>(zoomField.getText(), zoomSpeedField.getText());
+			return null;
+		});
+
+		Optional<Pair<String, String>> result = dialog3.showAndWait();
 
 		// Traditional way to get the response value.
-		Double d = null;
+		Double speed = null;
 		try {
-			d = Double.valueOf(dialog3.showAndWait().get());
+			speed = Double.valueOf(result.get().getValue());
 		} catch (NumberFormatException e) {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("");
-			alert.setHeaderText("INVALID INPUT: Must be a real number.");
-			alert.setContentText("Please try again.");
-			alert.showAndWait();
-			return getZoomSpeed();
+			AlertMenu aMenu = new AlertMenu("INVALID INPUT: Zoom speed must be a real number.", "Please try again.");
+			return getParams();
 		} catch (Exception e) {
 			return null;
 		}
-		if (d <= 0) {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("");
-			alert.setHeaderText("INVALID INPUT: Zoom speed must be greater than 0.");
-			alert.setContentText("Please try again.");
-			alert.showAndWait();
-			return getZoomSpeed();
+		if (speed <= 0) {
+			AlertMenu aMenu = new AlertMenu("INVALID INPUT: Zoom speed must be greater than 0.", "Please try again");
+			return getParams();
 		}
-		return d;
+		
+		Double zoom = null;
+		try {
+			zoom = Double.valueOf(result.get().getKey());
+		} catch (NumberFormatException e) {
+			AlertMenu aMenu = new AlertMenu("INVALID INPUT: Zoom level must be a real number.", "Please try again.");
+			return getParams();
+		} catch (Exception e) {
+			return null;
+		}
+		if (zoom <= 0) {
+			AlertMenu aMenu = new AlertMenu("INVALID INPUT: Zoom level must be greater than 0.", "Please try again");
+			return getParams();
+		}
+		
+		return new Pair<Double, Double>(zoom, speed);
 	}
 
 	private Pair<Integer, Integer> displayDialog2() {
@@ -191,11 +227,7 @@ public class NetworkCreationTool {
 			width = Integer.valueOf(result.get().getKey());
 			height = Integer.valueOf(result.get().getValue());
 		} catch (NumberFormatException e) {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("");
-			alert.setHeaderText("INVALID INPUT: Must be an integer.");
-			alert.setContentText("Please try again.");
-			alert.showAndWait();
+			AlertMenu aMenu = new AlertMenu("INVALID INPUT: Must be an integer.", "Please try again");
 			return displayDialog2();
 		} catch (Exception e) {
 			e.printStackTrace();

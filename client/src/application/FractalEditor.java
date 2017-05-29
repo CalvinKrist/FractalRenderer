@@ -39,6 +39,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
 import menus.Display;
+import menus.ExportImageTool;
 import menus.NetworkCreationTool;
 import menus.RegisterLayerTool;
 import server.Server;
@@ -75,10 +76,10 @@ public class FractalEditor extends Scene {
 		this.log = log;
 		bp = (BorderPane) this.getRoot();
 		// initialize();
-		// TODO remove size parameters from constructor
 	}
 
 	/**
+	 * Initializes the menus and fractal
 	 * @author David
 	 *
 	 * @throws FileNotFoundException
@@ -334,8 +335,13 @@ public class FractalEditor extends Scene {
 			saveFractAs.setOnAction(e -> {
 				this.fractal.saveFractalAs();
 			});
+			MenuItem exportFract = new MenuItem("Export Fractal");
+			exportFract.setOnAction(e-> {
+				ExportImageTool export = new ExportImageTool();
+				export.exportImage(this.fractal);
+			});
 
-			fractal.getItems().addAll(newFract, openFract, saveFract, saveFractAs);
+			fractal.getItems().addAll(newFract, openFract, saveFract, saveFractAs, exportFract);
 
 			MenuItem newLayer = new MenuItem("New Layer Type");
 			newLayer.setOnAction(e -> {
@@ -373,7 +379,8 @@ public class FractalEditor extends Scene {
 	}
 
 	/**
-	 * @author Calvin Updates the fractal display if it has been changed
+	 * Updates the fractal display if it has been changed
+	 * @author Calvin 
 	 */
 	public void updateFractalImage() {
 		gradient.repaint();
