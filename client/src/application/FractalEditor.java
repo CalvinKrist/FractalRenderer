@@ -148,44 +148,52 @@ public class FractalEditor extends Scene {
 
 			gradient = new Window(p, 50, this.fractal.getLayers().get(0));
 		}
-		{// Tree Stuff
-			parameters.setRoot(new TreeItem("params"));
-			parameters.getRoot().setExpanded(true);
 
-			TreeItem xPos = new TreeItem();
-			parameters.getRoot().getChildren().addAll(xPos);
+		{//Tree Stuff
+		parameters.setRoot(new TreeItem("params"));
+		parameters.getRoot().setExpanded(true);
 
-			layers.setRoot(new CheckBoxTreeItem("Layers"));
-			layers.getRoot().setExpanded(true);
-			layers.setShowRoot(false);
-			layers.setEditable(true);
-			layers.setCellFactory(new Callback<TreeView, CheckBoxTreeCell>() {
-				@Override
-				public CheckBoxTreeCell call(TreeView p) {
-					return new CheckCell();
-				}
-			});
+		TreeItem xPos = new TreeItem();
+		parameters.getRoot().getChildren().addAll(xPos);
 
-			CheckBoxTreeItem add = new CheckBoxTreeItem("ADD");
-			/**
-			 * try{ BufferedImage image = ImageIO.read(new
-			 * File("client\\textures\\plusButton.jpg")); Image plusImage =
-			 * SwingFXUtils.toFXImage(image, null); add.setGraphic(new
-			 * ImageView(plusImage)); }catch(Exception e){ e.printStackTrace();
-			 * }
-			 */
-			layerIndex = 1;
-			add.addEventHandler(CheckBoxTreeItem.checkBoxSelectionChangedEvent(), e -> {
-				if (((CheckBoxTreeItem) (e.getSource())).isSelected()) {
-					((CheckBoxTreeItem) (e.getSource())).getParent().getChildren().add(0,
-							new CheckBoxTreeItem("Layer" + incrementLayers()));
-					((CheckBoxTreeItem) (e.getSource())).setSelected(false);
-				}
-				layers.getRoot().addEventHandler(layers.getRoot().childrenModificationEvent(), e2 -> {
-					e.getSource();
-				});
-			});
-			layers.getRoot().getChildren().addAll(add);
+		layers.setRoot(new CheckBoxTreeItem("Layers"));
+		layers.getRoot().setExpanded(true);
+		layers.setShowRoot(false);
+		layers.setEditable(true);
+		layers.setCellFactory(new Callback<TreeView,CheckBoxTreeCell>(){
+            @Override
+            public CheckBoxTreeCell call(TreeView p) {
+                return new LayerCell();
+            }
+        });
+
+		CheckBoxTreeItem add = new CheckBoxTreeItem("ADD");
+		/**
+		try{
+		BufferedImage image = ImageIO.read(new File("client\\textures\\plusButton.jpg"));
+		Image plusImage = SwingFXUtils.toFXImage(image, null);
+		add.setGraphic(new ImageView(plusImage));
+		}catch(Exception e){
+			e.printStackTrace();
+		}*/
+		layerIndex = 1;
+		add.addEventHandler(CheckBoxTreeItem.checkBoxSelectionChangedEvent(), e -> {
+			if(((CheckBoxTreeItem)(e.getSource())).isSelected()){
+				((CheckBoxTreeItem)(e.getSource())).getParent().getChildren().add(0, new LayerItem(new MetaLayer("Layer"+incrementLayers(),null)));
+			((CheckBoxTreeItem)(e.getSource())).setSelected(false);
+			}
+		});
+		layers.getRoot().addEventHandler(layers.getRoot().childrenModificationEvent(), e -> {
+			for(Object i:layers.getRoot().getChildren()){
+				if(i!=add)
+					((TreeItem)(i)).addEventHandler(CheckBoxTreeItem.checkBoxSelectionChangedEvent(), e2 -> {
+						if(((CheckBoxTreeItem)e2.getSource()).isSelected())
+						((TreeItem)e2.getSource()).setValue(LayerBox.display((TreeItem)e2.getSource()));
+					});
+			}
+		});
+		layers.getRoot().getChildren().addAll(add);
+
 
 		}
 
@@ -219,6 +227,7 @@ public class FractalEditor extends Scene {
 			endNet.setDisable(true);
 			viewNet.setOnAction(e -> {
 				Display display = new Display(this.network);
+
 				this.network.setDisplay(display);
 				display.updateNetworkView(this.network.getChildren(), this.network.getUncompletedJobs());
 			});

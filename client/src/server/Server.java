@@ -89,6 +89,9 @@ public class Server extends NetworkNode {
 		if (o instanceof Job) {
 			uncompletedJobs.get(sender).remove((Job) o);
 			int[][] pixels = ((Job) (o)).getImage();
+			for(int i = 0; i < pixels.length; i++)
+				for(int k = 0; k < pixels[i].length; k++)
+					System.out.println(pixels[i][k]);
 			BufferedImage img = new BufferedImage(pixels.length, pixels[0].length, BufferedImage.TYPE_INT_RGB);
 			File dir = new File(directory + (1 / parameters.getParameter("radius", Double.class)) + ".png");
 			dir.mkdirs();

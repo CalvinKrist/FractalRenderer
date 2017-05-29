@@ -1,7 +1,5 @@
 package application;
 
-import java.awt.Toolkit;
-
 import javafx.application.Application;
 import javafx.stage.Stage;
 import util.Log;
