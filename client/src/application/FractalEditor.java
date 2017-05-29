@@ -163,12 +163,12 @@ public class FractalEditor extends Scene {
 		layers.setCellFactory(new Callback<TreeView,CheckBoxTreeCell>(){
             @Override
             public CheckBoxTreeCell call(TreeView p) {
-                return new LayerCell();
+                return new CheckBoxTreeCell();
             }
         });
-		
+
 		CheckBoxTreeItem add = new CheckBoxTreeItem("");
-		
+
 		try{
 		BufferedImage image = ImageIO.read(new File("textures\\plusButton.jpg"));
 		Image plusImage = SwingFXUtils.toFXImage(image, null);
@@ -182,7 +182,7 @@ public class FractalEditor extends Scene {
 		layerIndex = 1;
 		add.addEventHandler(CheckBoxTreeItem.checkBoxSelectionChangedEvent(), e -> {
 			if(((CheckBoxTreeItem)(e.getSource())).isSelected()){
-				((CheckBoxTreeItem)(e.getSource())).getParent().getChildren().add(0, new LayerItem(new MetaLayer("Layer"+incrementLayers(),null)));
+				((CheckBoxTreeItem)(e.getSource())).getParent().getChildren().add(0, new CheckBoxTreeItem(new MetaLayer("Layer"+incrementLayers(),null)));
 			((CheckBoxTreeItem)(e.getSource())).setSelected(false);
 			}
 		});
