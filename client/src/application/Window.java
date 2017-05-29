@@ -69,7 +69,7 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	 * respectively, relative to the origin of the window.
 	 */
 	private int opacityButtonHeight, colorButtonHeight;
-	
+
 	/**
 	 * The layer whose palette this window edits
 	 */
@@ -77,10 +77,13 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 
 	/**
 	 * @param dimension
-	 *            the desired dimension of the colored rectangle in the center
-	 *            of the window
+	 *            the desired dimension of the main section of the editor. This
+	 *            is all the height of the editor and the width up to the end of
+	 *            the gradient
 	 * @param additionalWidth
-	 *            the padding in place for the square button to the right
+	 *            width of the SquareButton used to store and display the color
+	 *            of the inside of fractals in pixels.
+	 * @param layer the layer whose palette the Window will start off displaying and editing
 	 */
 	public Window(Dimension dimension, int additionalWidth, Layer layer) {
 		this.dimension = dimension;
@@ -118,8 +121,9 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	}
 
 	/**
-	 * @param g2
-	 *            a graphics object used to draw the window on a JPanel
+	 * This method overrides the default JPanel draw method in order to provide custom rendering code. It is
+	 * responsible for drawing the editor to the screen.
+	 * @param g2 a graphics object used to draw the window
 	 */
 	@Override
 	public void paint(Graphics g2) {
@@ -169,7 +173,8 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	}
 
 	/**
-	 * Adds a black color button at the specified location along the gradient
+	 * Adds a black color button at the specified location along the gradient. It will also add
+	 * a color point to the palette the gradient displays after scaling the point to match the palette's size.
 	 * 
 	 * @param x
 	 *            the point where the new button will be
@@ -179,7 +184,8 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	}
 
 	/**
-	 * Adds a color button at the specified location along the gradient
+	 *Adds a color button at the specified location along the gradient. It will also add
+	 * a color point to the palette the gradient displays after scaling the point to match the palette's size.
 	 * 
 	 * @param x
 	 *            the point where the new button will be
@@ -198,13 +204,18 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 		palette.sortColorList();
 	}
 
+	/**
+	 * takes in a new palette for the editor to display and edit
+	 * @param nPalette a new palette for the editor to display and edit
+	 */
 	public void setPalette(Palette nPalette) {
 		this.palette = nPalette;
 	}
 
 	/**
 	 * Adds an opacity button with full opacity at the specified point along the
-	 * gradient
+	 * gradient. It will also add an opacity point to the palette the editor represents after
+	 * scaling the point to fit the palette's size
 	 * 
 	 * @param x
 	 *            the point along the gradient where the new opacity button will
@@ -215,8 +226,9 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	}
 
 	/**
-	 * Adds an opacity button with the specified opacity at the specified point
-	 * along the gradient
+	 * Adds an opacity button at the specified point along the
+	 * gradient. It will also add an opacity point to the palette the editor represents after
+	 * scaling the point to fit the palette's size
 	 * 
 	 * @param x
 	 *            the point where the new opacity button will be
@@ -236,22 +248,28 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	}
 
 	/**
-	 * Returns the palette this window describes
+	 * returns the palette this window describes
+	 * @return the palette this window describes
 	 */
 	public Palette getPalette() {
 		return palette;
 	}
-	
+
 	/**
-	 * This is called when a new layer is selected in the layer view in order to load and display its palette
-	 * @param newLayer the new layer the window displays
+	 * This is called when a new layer is selected in the layer view in order to
+	 * load and display its palette. It will also scale any color and opacity points on the palette
+	 * to match the gradient and add those to the editor.
+	 * 
+	 * @param newLayer
+	 *            the new layer the window displays
 	 */
 	public void updateLayer(Layer newLayer) {
-		
+
 		this.layer = newLayer;
 		this.palette = layer.getPalette();
 		for (ArrowButton b : palette.getColorList()) {
-			b.setLocation(new Point((int)((double)b.getX() / palette.size * gradientRect.width) + gradientRect.x, colorButtonHeight));
+			b.setLocation(new Point((int) ((double) b.getX() / palette.size * gradientRect.width) + gradientRect.x,
+					colorButtonHeight));
 			b.setDown(false);
 			b.setSquareColor((Color) b.getData());
 		}
@@ -267,7 +285,7 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	}
 
 	/**
-	 * Called when the mouse has been clicked. It determined what to do with the
+	 * Called when the mouse has been clicked. It determines what to do with the
 	 * event.
 	 */
 	public void mouseClicked(MouseEvent e) {
@@ -275,7 +293,9 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 		repaint();
 		if (selectedButton == null) {
 			if (bgButton.isClicked(p)) {
-				//TODO: create a color menu for the inside part of the fractal and store the color like this: bgButton.setData(newColor);  this.repaint();
+				// TODO: create a color menu for the inside part of the fractal
+				// and store the color like this: bgButton.setData(newColor);
+				// this.repaint();
 			} else if (saveButton.isClicked(p)) {
 				Platform.runLater(() -> {
 					TextInputDialog dialog = new TextInputDialog("");
@@ -286,26 +306,28 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 					// Traditional way to get the response value.
 					try {
 						String result = dialog.showAndWait().get();
-						if(!result.equals(""))
+						if (!result.equals(""))
 							palette.writeTo(result);
-					} catch(Exception e5) {}
+					} catch (Exception e5) {
+					}
 				});
-			} else if(loadButton.isClicked(p)) {
+			} else if (loadButton.isClicked(p)) {
 				Platform.runLater(new Runnable() {
-			        public void run() {
-			        	FileChooser chooser = new FileChooser();
+					public void run() {
+						FileChooser chooser = new FileChooser();
 						chooser.setTitle("Open Palette");
 						chooser.setInitialDirectory(new File("fractals/palettes"));
-						FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Palettes (*.palette)", "*.palette");
+						FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Palettes (*.palette)",
+								"*.palette");
 						chooser.getExtensionFilters().add(filter);
 						File f = chooser.showOpenDialog(null);
-						palette = new Palette(f.getPath(), false);	
+						palette = new Palette(f.getPath(), false);
 						repaint();
 						layer.setColorPalette(palette);
 					}
-			   });
-				
-			}else if (colorRect.contains(p)) {
+				});
+
+			} else if (colorRect.contains(p)) {
 				addColorButton(p.x);
 				repaint();
 			} else if (opacityRect.contains(p)) {
@@ -316,11 +338,14 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 			if (selectedButton.isSquareClicked(p)) {
 				if (selectedButton.isDown()) {
 
-					
-					//TODO: create a opacity menu for the selected button and store the value like this: selectedButton.setData(newValue);  this.repaint();
-					//NOTE: the value should be between 0 and 1.0
+					// TODO: create a opacity menu for the selected button and
+					// store the value like this:
+					// selectedButton.setData(newValue); this.repaint();
+					// NOTE: the value should be between 0 and 1.0
 				} else {
-					//TODO: create a color menu for the selected button and store the color like this: selectedButton.setData(newColor);  this.repaint();
+					// TODO: create a color menu for the selected button and
+					// store the color like this:
+					// selectedButton.setData(newColor); this.repaint();
 				}
 			}
 		}
@@ -395,7 +420,8 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	}
 
 	/**
-	 * @param x
+	 * Scales any point along the gradient to match the size of the palette.
+	 * @param x the point on the gradient being scaled.
 	 * @return the equivalent point on the palette
 	 */
 	public int windowToPalette(int x) {

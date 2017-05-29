@@ -17,7 +17,6 @@ import fractal.RenderManager;
 import menus.Display;
 import util.Constants;
 import util.DataTag;
-import util.JobComparator;
 import util.Log;
 import util.Parameters;
 
@@ -27,6 +26,7 @@ import util.Parameters;
  * @author Calvin
  *
  */
+
 public class Server extends NetworkNode {
 
 	/**
@@ -161,7 +161,9 @@ public class Server extends NetworkNode {
 		synchronized (unnasignedJobs) {
 			for (int i = 0; i < jobs.size(); i++)
 				unnasignedJobs.addAll(jobs);
-			unnasignedJobs.sort(new JobComparator());
+			unnasignedJobs.sort((Job o1, Job o2)-> {
+					return new Double(o1.getZoom()).compareTo(new Double(o2.getZoom()));
+			});
 		}
 	}
 

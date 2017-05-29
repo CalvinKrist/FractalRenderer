@@ -81,7 +81,7 @@ public class RenderManager implements Serializable {
 	}
 	
 	/**
-	 * Initialized a fractal with the given parameters
+	 * Initializes a fractal with the given parameters
 	 * @param params the parameters of the fractal to be initialized
 	 */
 	public RenderManager(Parameters params) {
@@ -89,7 +89,7 @@ public class RenderManager implements Serializable {
 	}
 	
 	/**
-	 * initialized the fractal will the specifie dparameters
+	 * initializes the fractal will the specific parameters
 	 * @param params the parameters of the fractal to be initialized
 	 */
 	private void init(Parameters params) {
@@ -141,6 +141,7 @@ public class RenderManager implements Serializable {
 	}
 	
 	/**
+	 * used to get a 2D array of pixels representing the image rendered by the layers
 	 * @return a 2D array representing the rendered image of the fractal
 	 */
 	public int[][] render() {
@@ -165,6 +166,7 @@ public class RenderManager implements Serializable {
 	}
 	
 	/**
+	 * used to get a BufferedImage of the rendered fractal
 	 * @return the rendered fractal as a BufferedImage
 	 */
 	public BufferedImage getImage() {
@@ -227,6 +229,10 @@ public class RenderManager implements Serializable {
 			}
 	}
 	
+	/**
+	 * Used to change the location on the Mandelbrot set that the fractal renders
+	 * @param location the new location on the Mandelbrot set
+	 */
 	public void setLocation(Point location) {
 		this.location = location;
 		for(Layer r: layers)
@@ -237,7 +243,7 @@ public class RenderManager implements Serializable {
 	 * Sets the zoom value of the fractal and takes care of any stretching issues of the
 	 * layer so that the fractal is never streched, regardless of the dimension of the 
 	 * image being drawn. It does based on the value of the longest edge.
-	 * @param zoom
+	 * @param zoom the new zoom level of the fractal
 	 */
 	public void setZoom(double zoom) {
 		this.zoom = zoom;
@@ -256,18 +262,35 @@ public class RenderManager implements Serializable {
 		}
 	}
 	
+	/**
+	 * used to get the palette of a certain layer
+	 * @param layer the layer number of the layer in question. this number ranges from 1 to infinity
+	 * @return the palette used by the layer at index layer - 1
+	 */
 	public Palette getPalette(int layer) {
 		return layers.get(layer - 1).getPalette();
 	}
 	
+	/**
+	 * used to get the resolution the fractal renders at
+	 * @return a dimension containing the fractal resolution
+	 */
 	public Dimension getScreenResolution() {
 		return screenResolution;
 	}
 	
+	/**
+	 * used to get the dimension of the fractal in real coordinates
+	 * @return the dimensions of the fractal in read coordinates. the x value represents the width and the y value represents the height
+	 */
 	public Point getRealResolution() {
 		return realResolution;
 	}
 	
+	/**
+	 * used to set the resolution the fractal renders at
+	 * @param screenResolution the new resolution the fractal will render at
+	 */
 	public void setScreenResolution(Dimension screenResolution) {
 		this.screenResolution = screenResolution;
 		for(Layer r: layers)
