@@ -14,35 +14,34 @@ import util.Constants;
 import util.Log;
 
 public class SocketAdder extends Thread {
-	
+
 	private ArrayList<SocketWrapper> children;
 	private Server server;
-	
+
 	public SocketAdder(ArrayList<SocketWrapper> children, Server server) {
 		this.children = children;
 		this.server = server;
 	}
-	
+
 	@Override
 	public void run() {
-		while(true) {
-			try {
-				DatagramSocket sock = new DatagramSocket(Constants.BROADCAST_PORT, InetAddress.getByName("0.0.0.0"));
-				sock.setBroadcast(true);
+		try {
+			DatagramSocket sock = new DatagramSocket(Constants.BROADCAST_PORT, InetAddress.getByName("0.0.0.0"));
+			sock.setBroadcast(true);
+			while (true) {
 				byte[] buffer = new byte[15000];
 				DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 				sock.receive(packet);
-				
-				//TODO: only create socket if the data matches a certain string
+
+				// TODO: only create socket if the data matches a certain string
 				System.out.println(new String(packet.getData()));
-				
+
 				Socket s = new Socket(packet.getAddress().getHostAddress(), Constants.PORT);
-				
-				
+
 				server.getLog().blankLine();
 				server.getLog().newLine("New connection from " + s.getInetAddress().getHostAddress());
 				server.getLog().blankLine();
-				synchronized(children) {
+				synchronized (children) {
 					SocketWrapper w = new SocketWrapper(s, server.getLog());
 					w.addNoConnectionListener(new NoConnectionListener() {
 						public void response(Exception e) {
@@ -56,7 +55,7 @@ public class SocketAdder extends Thread {
 					});
 					w.addMessageListener(new MessageListener() {
 						public void messageRecieved(Object o) {
-							synchronized(server) {
+							synchronized (server) {
 								server.handleMessage(o, w);
 							}
 						}
@@ -66,12 +65,13 @@ public class SocketAdder extends Thread {
 					server.assignJob(w);
 					server.assignJob(w);
 					server.getLog().newLine("User from " + w.getInetAdress() + " added to list.");
-					if(server.getDisplay() != null)
+					if (server.getDisplay() != null)
 						server.getDisplay().updateNetworkView(children, server.getUncompletedJobs());
 				}
-			} catch (IOException e) {
-				server.getLog().addError(e);
+
 			}
+		} catch (IOException e) {
+			server.getLog().addError(e);
 		}
 	}
 

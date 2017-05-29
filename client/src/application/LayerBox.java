@@ -22,7 +22,7 @@ public class LayerBox {
         window.setTitle("Edit Layer");
         window.setMinWidth(250);
         window.setMinHeight(200);
-        
+
         VBox layout = new VBox(10);
 
         Label name = new Label();
@@ -40,10 +40,15 @@ public class LayerBox {
         Button closeButton = new Button("Submit");
         closeButton.setOnAction(e -> window.close());
 
-       
+
         layout.getChildren().addAll(name,nameIn,type,typeIn,closeButton);
         layout.setAlignment(Pos.CENTER);
 
+        if(((MetaLayer)t.getValue()).getName()!=null)
+        	nameIn.setText(((MetaLayer)t.getValue()).getName());
+        if(((MetaLayer)t.getValue()).getType()!=null){
+        	typeIn.getSelectionModel().select(((MetaLayer)t.getValue()).getType());
+        }
         //Display window and wait for it to be closed before returning
         Scene scene = new Scene(layout);
         window.setScene(scene);
