@@ -15,6 +15,7 @@ import fractal.Layer;
 import fractal.RenderManager;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.embed.swing.SwingNode;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -30,6 +31,7 @@ import javafx.scene.control.cell.CheckBoxTreeCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -79,7 +81,7 @@ public class FractalEditor extends Scene {
 	 * @throws FileNotFoundException
 	 * @throws AWTException
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes", "unchecked", "static-access" })
 	public void initialize() throws FileNotFoundException, AWTException {
 		// initializing stuff
 		try {
@@ -212,13 +214,26 @@ public class FractalEditor extends Scene {
 			e.printStackTrace();
 		}*/
 		layerIndex = 1;
-		add.addEventHandler(CheckBoxTreeItem.checkBoxSelectionChangedEvent(), e -> {
+		/**add.addEventHandler(CheckBoxTreeItem.checkBoxSelectionChangedEvent(), e -> {
 			if(((CheckBoxTreeItem)(e.getSource())).isSelected()){
 				((CheckBoxTreeItem)(e.getSource())).getParent().getChildren().add(0, new CheckBoxTreeItem(new MetaLayer("Layer"+incrementLayers(),null)));
 			((CheckBoxTreeItem)(e.getSource())).setSelected(false);
-			}
+			}});*/
+		layers.setOnMouseClicked(new EventHandler<MouseEvent>(){
+			@Override
+			public void handle(MouseEvent mouseEvent)
+		    {
+		        if(mouseEvent.getClickCount() == 2)
+		        {
+		            if(layers.getSelectionModel().getSelectedItem()==add){
+		            	layers.getRoot().getChildren().add(0, new CheckBoxTreeItem(new MetaLayer("Layer"+incrementLayers(),null)));
+		            }else{
+		            	((TreeItem)layers.getSelectionModel().getSelectedItem()).setValue(LayerBox.display((TreeItem<MetaLayer>) layers.getSelectionModel().getSelectedItem()));
+		            }
+		        }
+		    }
 		});
-		layers.getRoot().addEventHandler(layers.getRoot().childrenModificationEvent(), e -> {
+		/**layers.getRoot().addEventHandler(layers.getRoot().childrenModificationEvent(), e -> {
 			for(Object i:layers.getRoot().getChildren()){
 				if(i!=add)
 					((TreeItem)(i)).addEventHandler(CheckBoxTreeItem.checkBoxSelectionChangedEvent(), e2 -> {
@@ -226,10 +241,8 @@ public class FractalEditor extends Scene {
 						((TreeItem)e2.getSource()).setValue(LayerBox.display((TreeItem)e2.getSource()));
 					});
 			}
-		});
+		});*/
 		layers.getRoot().getChildren().addAll(add);
-
-
 		}
 
 		// Trying to get this to work
