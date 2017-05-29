@@ -102,11 +102,11 @@ public class Palette implements Serializable {
 	public Double getOpacityAtPoint(int x) {
 		if(opacityList.size() == 1)
 			return opacityList.get(0).getData();
-		if(x <= opacityList.get(0).getLocation().x)
+		if(x <= opacityList.get(0).getX())
 			return opacityList.get(0).getData();
 		for(int i = 0; i < opacityList.size() - 1; i++) {
-			if(x >= opacityList.get(i).getLocation().x && x < opacityList.get(i + 1).getLocation().x)
-				return Utils.interpolateDouble(opacityList.get(i).getData(), opacityList.get(i + 1).getData(), x - opacityList.get(i).getLocation().x, opacityList.get(i + 1).getLocation().x - opacityList.get(i).getLocation().x);
+			if(x >= opacityList.get(i).getX() && x < opacityList.get(i + 1).getX())
+				return Utils.interpolateDouble(opacityList.get(i).getData(), opacityList.get(i + 1).getData(), x - opacityList.get(i).getX(), opacityList.get(i + 1).getX() - opacityList.get(i).getX());
 		}
 		return opacityList.get(opacityList.size() - 1).getData();
 	}
@@ -132,11 +132,11 @@ public class Palette implements Serializable {
 	public Color getColorAtPoint(int x) {
 		if(colorList.size() == 1)
 			return colorList.get(0).getData();
-		if(x <= colorList.get(0).getLocation().x)
+		if(x <= colorList.get(0).getX())
 			return colorList.get(0).getData();
 		for(int i = 0; i < colorList.size() - 1; i++) {
-			if(x >= colorList.get(i).getLocation().x && x < colorList.get(i + 1).getLocation().x)
-				return Utils.interpolateColors(colorList.get(i).getData(), colorList.get(i + 1).getData(), x - colorList.get(i).getLocation().x, colorList.get(i + 1).getLocation().x - colorList.get(i).getLocation().x);
+			if(x >= colorList.get(i).getX() && x < colorList.get(i + 1).getX())
+				return Utils.interpolateColors(colorList.get(i).getData(), colorList.get(i + 1).getData(), x - colorList.get(i).getX(), colorList.get(i + 1).getX() - colorList.get(i).getX());
 		}
 		return colorList.get(colorList.size() - 1).getData();
 	}

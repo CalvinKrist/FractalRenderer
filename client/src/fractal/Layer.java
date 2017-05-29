@@ -301,7 +301,7 @@ public abstract class Layer implements Serializable {
 	public static List<String> getLayerTypes() {
 		List<String> list = new LinkedList<String>();
 		for (Class<? extends Layer> c : fractalRegistry)
-			list.add(c.getName());
+			list.add(c.getSimpleName());
 		return list;
 	}
 
