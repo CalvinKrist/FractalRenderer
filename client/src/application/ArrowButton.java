@@ -51,14 +51,14 @@ public class ArrowButton<E extends Serializable> implements Serializable {
 	private E data; 
 	
 	/**
-	 * This constructor does nothing
+	 * This constructor does nothing. All parameters must be set using the setter methods,
 	 */
 	public ArrowButton() {
 	
 	}
 	
 	/**
-	 * Draws the arrow in the screen
+	 * Draws the arrow on the screen
 	 * @param g a graphics object used to draw the arrow
 	 */
 	public void draw(Graphics2D g) {
@@ -126,39 +126,77 @@ public class ArrowButton<E extends Serializable> implements Serializable {
 	}
 	
 	/* GETTERS AND SETTERS */
+	/**
+	 * @return whether or not the button points downwards. If falsem the button points upwards.
+	 */
 	public boolean isDown() {
 		return down;
 	}
+	/**
+	 * @param down the new value for down. If true, the button will point down. If false, the button will point up.
+	 */
 	public void setDown(boolean down) {
 		this.down = down;
 	}
+	/**
+	 * @return whether or not the button is selected
+	 */
 	public boolean isSelected() {
 		return selected;
 	}
+	/**
+	 * @param selected the new value for whether or not this button is selected
+	 */
 	public void setSelected(boolean selected) {
 		this.selected = selected;
 	}
+	/**
+	 * @return the color of the square part of the button
+	 */
 	public Color getSquareColor() {
 		return squareColor;
 	}
+	/**
+	 * @param squareColor a new color for the square section of the button
+	 */
 	public void setSquareColor(Color squareColor) {
 		this.squareColor = squareColor;
 	}
+	/**
+	 * @param x the new x value of the button. This value is how the palette keeps track of which order
+	 * all the buttons are in. This value does NOT represent the x location of the button on the screen.
+	 */
 	public void setX(int x) {
 		this.x = x;
 	}
+	/**
+	 * @return the x value of the button. This value is how the palette keeps track of which order
+	 * all the buttons are in. This value does NOT represent the x location of the button on the screen.
+	 */
 	public int getX() {
 		return x;
 	}
+	/**
+	 * @return the location of the button on the screen.
+	 */
 	public Point getLocation() {
 		return location;
 	}
+	/**
+	 * @param location a new location for the button on the screen
+	 */
 	public void setLocation(Point location) {
 		this.location = location;
 	}
+	/**
+	 * @return the data that the button stores.
+	 */
 	public E getData() {
 		return data;
 	}
+	/**
+	 * @param data can be used to set custom data for the button to store.
+	 */
 	public void setData(E data) {
 		this.data = data;
 	}

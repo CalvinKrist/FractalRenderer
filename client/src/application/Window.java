@@ -275,7 +275,7 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 		repaint();
 		if (selectedButton == null) {
 			if (bgButton.isClicked(p)) {
-				ColorArrowMenu menu = new ColorArrowMenu(bgButton, palette.getColorList(), this);
+				//TODO: create a color menu for the inside part of the fractal and store the color like this: bgButton.setData(newColor);  this.repaint();
 			} else if (saveButton.isClicked(p)) {
 				Platform.runLater(() -> {
 					TextInputDialog dialog = new TextInputDialog("");
@@ -315,9 +315,12 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 		} else {
 			if (selectedButton.isSquareClicked(p)) {
 				if (selectedButton.isDown()) {
-					OpacityArrowMenu menu = new OpacityArrowMenu(selectedButton, palette.getOpacityList(), this);
+
+					
+					//TODO: create a opacity menu for the selected button and store the value like this: selectedButton.setData(newValue);  this.repaint();
+					//NOTE: the value should be between 0 and 1.0
 				} else {
-					ColorArrowMenu menu = new ColorArrowMenu(selectedButton, palette.getColorList(), this);
+					//TODO: create a color menu for the selected button and store the color like this: selectedButton.setData(newColor);  this.repaint();
 				}
 			}
 		}
