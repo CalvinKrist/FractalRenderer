@@ -69,6 +69,7 @@ public class SquareButton {
 	}
 	
 	/**
+	 * returns the color stored and displayed by this button
 	 * @return the color stored and displayed by this button
 	 */
 	public Color getData() {
@@ -76,6 +77,8 @@ public class SquareButton {
 	}
 	
 	/**
+	 * takes in the new image for the button to display. The image should be square and have the same dimensions of the button.
+	 * Otherwise, it will not fit properly and could even throw exceptions.
 	 * @param img the new image for the button to display. The image should be square and have the same dimensions of the button.
 	 * Otherwise, it will not fit properly and could even throw exceptions.
 	 */
@@ -84,6 +87,7 @@ public class SquareButton {
 	}
 	
 	/**
+	 * takes in the new color for the button to store and display.
 	 * @param c the new color for the button to store and display.
 	 */
 	public void setData(Color c) {
@@ -101,6 +105,7 @@ public class SquareButton {
 	}
 	
 	/**
+	 * returns the location of the button on the screen
 	 * @return the location of the button on the screen
 	 */
 	public Point getLocation() {

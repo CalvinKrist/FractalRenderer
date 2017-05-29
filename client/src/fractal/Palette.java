@@ -39,8 +39,14 @@ public class Palette implements Serializable {
 	 */
 	private Color background;
 	
+	/**
+	 * The number of colors and data points the palette can store
+	 */
 	public int size;
 	
+	/**
+	 * Creates a simple black to white gradient with 100% opacity with 1000 colors. It sets the background color to black.
+	 */
 	public Palette() {
 		size = 1000;
 		background = new Color(0, 0, 0);
@@ -68,6 +74,11 @@ public class Palette implements Serializable {
 		this.sortOpacityList();
 	}
 	
+	/**
+	 * Creates a palette object from a filepath.
+	 * @param filePath the file path of the palette to be created
+	 * @param remove whether or not to delete the palette after loading it in
+	 */
 	public Palette(String filePath, boolean remove) {
 		try {
 			ObjectInputStream o = new ObjectInputStream(new FileInputStream(filePath));
@@ -86,17 +97,25 @@ public class Palette implements Serializable {
 			e.printStackTrace();
 		}
 	}
-	
+	/**
+	 * returns a list of the opacity data points
+	 * @return a list of the opacity data points
+	 */
 	public List<ArrowButton<Double>> getOpacityList() {
 		return opacityList;
 	}
 	
+	/**
+	 * returns a list of the color data points
+	 * @return a list of the color data points
+	 */
 	public List<ArrowButton<Color>> getColorList() {
 		return colorList;
 	}
 	
 	/**
-	 * @param x
+	 * Used to find out what the opacity is at any point on the gradient
+	 * @param x the location on the Palette where the opacity value is requested
 	 * @return a percent opacity at that point
 	 */
 	public Double getOpacityAtPoint(int x) {
@@ -111,6 +130,9 @@ public class Palette implements Serializable {
 		return opacityList.get(opacityList.size() - 1).getData();
 	}
 	
+	/**
+	 * Used to sort the opacity list by x position 
+	 */
 	public void sortOpacityList() {
 		opacityList.sort((Object o1, Object o2) -> {
 			ArrowButton<?> b1 = (ArrowButton<?>)o1;
@@ -120,6 +142,9 @@ public class Palette implements Serializable {
 		});
 	}
 	
+	/**
+	 * Sorts the color list by x position
+	 */
 	public void sortColorList() {
 		colorList.sort((Object o1, Object o2) -> {
 			ArrowButton<?> b1 = (ArrowButton<?>)o1;
@@ -129,6 +154,11 @@ public class Palette implements Serializable {
 		});
 	}
 	
+	/**
+	 * used to get the color at any point along the gradient
+	 * @param x the position in palette coordinates (ie, ranging from 0-size) of the point
+	 * @return the color of the gradient at point x
+	 */
 	public Color getColorAtPoint(int x) {
 		if(colorList.size() == 1)
 			return colorList.get(0).getData();
@@ -141,11 +171,16 @@ public class Palette implements Serializable {
 		return colorList.get(colorList.size() - 1).getData();
 	}
 	
+	/**
+	 * used to set the background color of the palette
+	 * @param background the new background color
+	 */
 	public void setBackground(Color background) {
 		this.background = background;
 	}
 	
 	/**
+	 * used to find the color a certain percent of the way through the gradient
 	 * @param d a proportion representing a percent of the gradient
 	 * @return the color at the specified proportion of the gradient
 	 */
@@ -155,13 +190,17 @@ public class Palette implements Serializable {
 		return new Color(c.getRed(), c.getGreen(), c.getBlue(), opacity);
 	}
 	
+	/**
+	 * returns the background color of the palette
+	 * @return the background color of the palette
+	 */
 	public Color getBackground() {
 		return background;
 	}
 	
 	/**
 	 * Saves the palette as a .palette file
-	 * @param filePath the file path where the palette should save itself to
+	 * @param name name of the saved palette
 	 */
 	public void writeTo(String name) {
 		try {

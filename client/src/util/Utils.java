@@ -91,8 +91,8 @@ public class Utils {
 	 * This method doesn't really belong in this class because it is used only by the HistogramLayer class. Also, now that I know I can just 
 	 * call List.sort(new Comparator...); I would not write this again.
 	 * Anyways, this method applies merge sort to a 2D array of doubles, sorting them based on a specific value of one element of the grid.
-	 * @param array
-	 * @return
+	 * @param array the array to be sorted
+	 * @return the sorted array
 	 */
 	public static double[][] mergeSort(double[][] array) {
 		int i = 0;

@@ -81,6 +81,7 @@ public class Parameters implements Serializable {
 	 * removing the need to cast it afterwards. For example, a call of getParameter("zoom", Double.class) would return an object of
 	 * type Double.
 	 * @param name the name of the parameter to be returned
+	 * @param <E> the type of object the parameter should be returned as
 	 * @param c the object type the parameter should be returned as
 	 * @return the parameter named'name' as type c
 	 */
@@ -111,6 +112,7 @@ public class Parameters implements Serializable {
 	 * removing the need to cast it afterwards. For example, a call of removeParameter("zoom", Double.class) would return an object of
 	 * type Double.
 	 * @param name the name of the parameter to be deleted and returned.
+	 * @param <E> the type of object the parameter should be returned as
 	 * @param c the type of object the parameter should be returned as
 	 * @return the parameter that was deleted
 	 */
@@ -140,7 +142,7 @@ public class Parameters implements Serializable {
 	}
 	
 	/**
-	 * Prints the contents of the parameters as a series of DataTags, one on each line. It follows the format <key:value>
+	 * Prints the contents of the parameters as a series of DataTags, one on each line. It follows the format &lt;key:value&gt;
 	 */
 	public String toString() {
 		String s = "";

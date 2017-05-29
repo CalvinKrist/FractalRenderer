@@ -83,6 +83,7 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	 * @param additionalWidth
 	 *            width of the SquareButton used to store and display the color
 	 *            of the inside of fractals in pixels.
+	 * @param layer the layer whose palette the Window will start off displaying and editing
 	 */
 	public Window(Dimension dimension, int additionalWidth, Layer layer) {
 		this.dimension = dimension;
@@ -204,6 +205,7 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	}
 
 	/**
+	 * takes in a new palette for the editor to display and edit
 	 * @param nPalette a new palette for the editor to display and edit
 	 */
 	public void setPalette(Palette nPalette) {
@@ -246,7 +248,8 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	}
 
 	/**
-	 * Returns the palette this window describes
+	 * returns the palette this window describes
+	 * @return the palette this window describes
 	 */
 	public Palette getPalette() {
 		return palette;

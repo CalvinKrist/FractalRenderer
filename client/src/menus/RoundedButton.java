@@ -38,6 +38,7 @@ public class RoundedButton extends Component {
      * gets the label
      *
      * @see setLabel
+     * @return the label on the button
      */
     public String getLabel() {
         return label;
@@ -47,6 +48,7 @@ public class RoundedButton extends Component {
      * sets the label
      *
      * @see getLabel
+     * @param label the new label of the button
      */
     public void setLabel(String label) {
         this.label = label;

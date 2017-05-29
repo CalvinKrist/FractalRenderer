@@ -59,7 +59,7 @@ public class Point implements Serializable {
 	
 	/**
 	 * Creates a point from the normal, integer precision point.
-	 * @param p
+	 * @param p the normal integer precision point that will be used to create the double precision point
 	 */
 	public Point(java.awt.Point p) {
 		this.x = p.getX();

@@ -147,10 +147,18 @@ public abstract class Layer implements Serializable {
 	 */
 	protected abstract void calculateIterationsAndBailout(double rWidth, double rHeight);
 
+	/**
+	 * Used to change this layer's color palette
+	 * @param palette the new color palette for this layer to use
+	 */
 	public void setColorPalette(Palette palette) {
 		this.palette = palette;
 	}
 
+	/**
+	 * Used to set the location of the Mandelbrot set that this layer renders
+	 * @param location the new location of the Mandelbrot set
+	 */
 	public void setLocation(Point location) {
 		this.location = location;
 	}
@@ -159,7 +167,7 @@ public abstract class Layer implements Serializable {
 	 * Sets the zoom value of the layer and takes care of any stretching issues of the
 	 * layer so that the fractal is never streched, regardless of the dimension of the 
 	 * image being drawn. It does based on the value of the longest edge.
-	 * @param zoom
+	 * @param zoom the new zoom level of the layer
 	 */
 	public void setZoom(double zoom) {
 		this.zoom = zoom;
@@ -178,6 +186,10 @@ public abstract class Layer implements Serializable {
 		}
 	}
 
+	/**
+	 * returns the resolution this layer renders at
+	 * @param screenResolution the resolution this layer renders at
+	 */
 	public void setScreenResolution(Dimension screenResolution) {
 		this.screenResolution = screenResolution;
 	}
@@ -185,7 +197,7 @@ public abstract class Layer implements Serializable {
 	/**
 	 * This can be used to set the layer index of the layer. This is important because some rendering code will be
 	 * different for layers with an index of 0 than all others.
-	 * @param layer
+	 * @param layer the new layer index for this layer
 	 */
 	public void setLayer(int layer) {
 		this.layer = layer;
@@ -199,6 +211,10 @@ public abstract class Layer implements Serializable {
 		this.name = name;
 	}
 
+	/**
+	 * returns the name of the layer
+	 * @return the name of the layer
+	 */
 	public String getName() {
 		return name;
 	}
@@ -216,6 +232,10 @@ public abstract class Layer implements Serializable {
 	 */
 	public abstract void setParameters(Parameters newProperties);
 	
+	/**
+	 * returns the palette this layer uses to color the fractal
+	 * @return the palette this layer uses to color the fractal
+	 */
 	public Palette getPalette() {
 		return palette;
 	}
@@ -223,7 +243,7 @@ public abstract class Layer implements Serializable {
 	/**
 	 * Saves the fractal at the specified location with the specified fractal name
 	 * @param fractalName the name of the fractal this layer is a part of
-	 * @throws IOException
+	 * @throws IOException thrown if the file isn't found or if the SecurityManager denies write access to the file
 	 */
 	public void save(String fractalName) throws IOException {
 		File f = new File(Constants.FRACTAL_FILEPATH + "/" + fractalName);
@@ -252,9 +272,16 @@ public abstract class Layer implements Serializable {
 	/**
 	 * This static method must be called at startup of the application if any Layers are to be used. It looks at the specified 
 	 * directory for all custom layer files, compiles them, and loads Class representations of them
-	 * into the registry so they can be created later
+	 * into the registry so they can be created later. If errors are thrown, it might be because a jdk is not being used. 
+	 * This method will only work if a jdk is installed
+	 * @throws IOException thrown if the .java files aren't found
+	 * @throws IllegalAccessException Caused by errors when calling ClassLoader.getSystemClassLoader() to add the custom layer directory to the class path
+	 * @throws InvocationTargetException Caused by errors when calling ClassLoader.getSystemClassLoader() to add the custom layer directory to the class path
+	 * @throws NoSuchMethodException Caused by errors when calling URLClassloader.class.getDeclaredMethod("addURL", new Class[] {URL.class})
+	 * @throws SecurityException Caused when the security manager denied write access to filed
+	 * and being used: a JRE will not work.
 	 */
-	public static void initializeFractalRegistry() throws IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	public static void initializeFractalRegistry() throws IOException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		while (fractalRegistry.size() != 0)
 			fractalRegistry.remove(0);
 
@@ -299,6 +326,7 @@ public abstract class Layer implements Serializable {
 	}
 
 	/**
+	 * Returns a list of all valid layer types a user can choose from
 	 * @return a list of all the valid layer types a user can choose from
 	 */
 	public static List<String> getLayerTypes() {
@@ -309,6 +337,7 @@ public abstract class Layer implements Serializable {
 	}
 
 	/**
+	 * Determines if a layer is a valid layer
 	 * @param type a type of layer
 	 * @return whether or not the type passed to this method corresponds to a real layer type
 	 */

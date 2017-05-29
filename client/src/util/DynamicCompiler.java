@@ -75,6 +75,8 @@ public class DynamicCompiler {
 	 * Get a simple Java File Object ,<br>
 	 * It is just for demo, content of the source code is dynamic in real use
 	 * case
+	 * @param javaFile the contents of the class to be compiled
+	 * @return an instance of the JavaFileObject
 	 */
 	public static JavaFileObject getJavaFileObject(String javaFile) {
 		StringBuilder contents = new StringBuilder(javaFile);
@@ -88,7 +90,9 @@ public class DynamicCompiler {
 	}
 
 	/** compile your files by JavaCompiler. If the class was succesfuly compiled, it will print 'Succeded'. Otherwise, it
-	 * will print diagnositc information. */
+	 * will print diagnositc information. 
+	 * @param files takes in an Arrays.asList of the JavaFileObject
+	 */
 	public static void compile(Iterable<? extends JavaFileObject> files) {
 		// get system compiler:
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
@@ -107,7 +111,9 @@ public class DynamicCompiler {
 			System.out.println("Failed");
 	}
 
-	/** returns an instance of the compiled class, or null if the class could not be compiled. */
+	/** returns an instance of the compiled class, or null if the class could not be compiled. 
+	 * @return a Class object for the compiled class (ie, HistogramLayer.class).
+	*/
 	public static Class instanceOf() {
 		// Create a File object on the root of the directory
 		// containing the class file
