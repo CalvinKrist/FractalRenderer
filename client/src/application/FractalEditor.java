@@ -74,10 +74,10 @@ public class FractalEditor extends Scene {
 		this.log = log;
 		bp = (BorderPane) this.getRoot();
 		// initialize();
-		// TODO remove size parameters from constructor
 	}
 
 	/**
+	 * Initializes the menus and fractal
 	 * @author David
 	 *
 	 * @throws FileNotFoundException
@@ -362,7 +362,8 @@ public class FractalEditor extends Scene {
 	}
 
 	/**
-	 * @author Calvin Updates the fractal display if it has been changed
+	 * Updates the fractal display if it has been changed
+	 * @author Calvin 
 	 */
 	public void updateFractalImage() {
 		gradient.repaint();

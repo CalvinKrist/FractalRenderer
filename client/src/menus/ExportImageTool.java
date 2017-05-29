@@ -23,11 +23,24 @@ import javafx.stage.FileChooser;
 import javafx.util.Pair;
 import server.Server;
 
+/**
+ * This class brings the user through a series of menus to configure a fractal for export as an image
+ * @author Calvin
+ *
+ */
 public class ExportImageTool {
 	
 	public ExportImageTool() {}
 	
+	/**
+	 * This method is where the actual menus and user interaction happens. First, a window appears allowing the user to specify the
+	 * resolution of the image. After that, the user chooses a directory and a file name and exports it as an image.
+	 * When the image is done rendering and saving, a final menu will pop up informing the user that the image was succesfully
+	 * exported
+	 * @param fractal the fractal to be exported as an image
+	 */
 	public void exportImage(RenderManager fractal) {
+		Dimension initRes = fractal.getScreenResolution();
 		Dialog<Pair<String, String>> dialog = new Dialog<>();
 		dialog.setTitle("Export Fractal");
 		dialog.setHeaderText("Step 1");
@@ -79,7 +92,6 @@ public class ExportImageTool {
 		try {
 			width = Integer.valueOf(result.get().getKey());
 			height = Integer.valueOf(result.get().getValue());
-			fractal.setScreenResolution(new Dimension(width, height));
 		} catch (NumberFormatException e) {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("");
@@ -115,13 +127,17 @@ public class ExportImageTool {
 			if(file != null) {
 				try {
 					file.createNewFile();
+					fractal.setScreenResolution(new Dimension(width, height));
 					ImageIO.write(fractal.getImage(), formatName, file);
 					Alert alert2 = new Alert(AlertType.INFORMATION);
 					alert2.setTitle("Export Fractal");
 					alert2.setHeaderText(null);
 					alert2.setContentText("Image Succesfully Saved.");
 					alert2.showAndWait();
-				} catch(Exception e) {}
+					fractal.setScreenResolution(initRes);
+				} catch(Exception e) {
+					fractal.setScreenResolution(initRes);
+				}
 			}
 		} else {
 			return;
