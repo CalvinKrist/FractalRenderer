@@ -21,9 +21,11 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBoxTreeItem;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -216,20 +218,24 @@ public class FractalEditor extends Scene {
 				((CheckBoxTreeItem)(e.getSource())).getParent().getChildren().add(0, new CheckBoxTreeItem(new MetaLayer("Layer"+incrementLayers(),null)));
 			((CheckBoxTreeItem)(e.getSource())).setSelected(false);
 			}});*/
-		layers.setOnMouseClicked(new EventHandler<MouseEvent>(){
-			@Override
-			public void handle(MouseEvent mouseEvent)
+		layers.setOnMouseClicked(new EventHandler<MouseEvent>()
+		{
+		    @Override
+		    public void handle(MouseEvent mouseEvent)
 		    {
-		        if(mouseEvent.getClickCount() == 2)
+		    	if(mouseEvent.getClickCount() == 2)
 		        {
 		            if(layers.getSelectionModel().getSelectedItem()==add){
-		            	layers.getRoot().getChildren().add(0, new CheckBoxTreeItem(new MetaLayer("Layer"+incrementLayers(),null)));
+		            	layers.getRoot().getChildren().add(0, new CheckBoxTreeItem(new MetaLayer("Layer"+incrementLayers(),"")));
 		            }else{
 		            	((TreeItem)layers.getSelectionModel().getSelectedItem()).setValue(LayerBox.display((TreeItem<MetaLayer>) layers.getSelectionModel().getSelectedItem()));
 		            }
 		        }
 		    }
 		});
+		System.out.println(layers.getRoot().getChildren());
+
+
 		/**layers.getRoot().addEventHandler(layers.getRoot().childrenModificationEvent(), e -> {
 			for(Object i:layers.getRoot().getChildren()){
 				if(i!=add)
@@ -240,6 +246,17 @@ public class FractalEditor extends Scene {
 			}
 		});*/
 		layers.getRoot().getChildren().addAll(add);
+		{//TODO I DONT KNOW WHY THIS ISNT WORKING IUEAWBIUBFAI
+		layers.getRoot().addEventHandler(layers.getRoot().childrenModificationEvent(),e -> {
+			for(Object i :((TreeItem)e.getSource()).getChildren()){
+				if(i!=add)
+				if(((MetaLayer)((TreeItem)(i)).getValue()).isDelete()){
+					layers.getSelectionModel().select(i);
+					layers.getSelectionModel().clearSelection();
+					}
+			}
+		});
+		}
 		}
 
 		// Trying to get this to work
@@ -327,9 +344,9 @@ public class FractalEditor extends Scene {
 				register.registerLayer();
 				Layer.registerLayer(register.getFile());
 			});
-			
+
 			system.getItems().addAll(newLayer);
-			
+
 			menu.getMenus().addAll(fractal);
 			menu.getMenus().addAll(network);
 			menu.getMenus().addAll(system);
