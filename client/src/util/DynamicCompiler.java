@@ -92,8 +92,9 @@ public class DynamicCompiler {
 	/** compile your files by JavaCompiler. If the class was succesfuly compiled, it will print 'Succeded'. Otherwise, it
 	 * will print diagnositc information. 
 	 * @param files takes in an Arrays.asList of the JavaFileObject
+	 * @throws NullPointerException this is thrown if the java file is run from a JRE instead of a JDK.
 	 */
-	public static void compile(Iterable<? extends JavaFileObject> files) {
+	public static void compile(Iterable<? extends JavaFileObject> files) throws NullPointerException {
 		// get system compiler:
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 

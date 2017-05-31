@@ -17,6 +17,7 @@ import java.util.List;
 
 import javax.tools.JavaFileObject;
 
+import menus.AlertMenu;
 import util.Constants;
 import util.DynamicCompiler;
 import util.Parameters;
@@ -315,11 +316,13 @@ public abstract class Layer implements Serializable {
 		else
 			writer.write("<maxIterations:" + maxIterations + ">\r\n");
 		writer.write("<layer:" + layer + ">\r\n");
-		writer.write("<palette:" + Constants.FRACTAL_FILEPATH + "palettes/" + fractalName + "_" + name + ".palette>\r\n");
+		writer.write(
+				"<palette:" + Constants.FRACTAL_FILEPATH + "palettes/" + fractalName + "_" + name + ".palette>\r\n");
 		palette.writeTo(fractalName + "_" + name);
 		writer.close();
 	}
 
+	//TODO: test error message
 	/**
 	 * This static method must be called at startup of the application if any
 	 * Layers are to be used. It looks at the specified directory for all custom
@@ -327,68 +330,60 @@ public abstract class Layer implements Serializable {
 	 * the registry so they can be created later. If errors are thrown, it might
 	 * be because a jdk is not being used. This method will only work if a jdk
 	 * is installed
-	 * 
-	 * @throws IOException
-	 *             thrown if the .java files aren't found
-	 * @throws IllegalAccessException
-	 *             Caused by errors when calling
-	 *             ClassLoader.getSystemClassLoader() to add the custom layer
-	 *             directory to the class path
-	 * @throws InvocationTargetException
-	 *             Caused by errors when calling
-	 *             ClassLoader.getSystemClassLoader() to add the custom layer
-	 *             directory to the class path
-	 * @throws NoSuchMethodException
-	 *             Caused by errors when calling
-	 *             URLClassloader.class.getDeclaredMethod("addURL", new Class[]
-	 *             {URL.class})
-	 * @throws SecurityException
-	 *             Caused when the security manager denied write access to filed
-	 *             and being used: a JRE will not work.
 	 */
-	public static void initializeFractalRegistry() throws IOException, IllegalAccessException,
-			InvocationTargetException, NoSuchMethodException, SecurityException {
+	public static void initializeFractalRegistry() {
 		while (fractalRegistry.size() != 0)
 			fractalRegistry.remove(0);
 
-		File fractalFolder = new File(Constants.CUSTOM_FRACTAL_FILEPATH);
-		Method method = URLClassLoader.class.getDeclaredMethod("addURL", new Class[] { URL.class });
-		method.setAccessible(true);
-		method.invoke(ClassLoader.getSystemClassLoader(), new Object[] { fractalFolder.toURI().toURL() });
-		File[] fractals = fractalFolder.listFiles();
-		File classFolder = new File(Constants.CUSTOM_FRACTAL_FILEPATH + "fractal/");
+		fractalRegistry.add(HistogramLayer.class);
+		fractalRegistry.add(TriangleAverageLayer.class);
 
-		DynamicCompiler.classOutputFolder = Constants.CUSTOM_FRACTAL_FILEPATH;
-		for (File f : fractals) {
-			if (!f.isDirectory()) {
-				String name = f.getName().substring(0, f.getName().indexOf("."));
-				File classFile = new File(Constants.CUSTOM_FRACTAL_FILEPATH + "fractal/" + name + ".class");
-				if (classFile.exists())
-					classFile.delete();
-				DynamicCompiler.name = f.getName().substring(0, f.getName().indexOf("."));
-				String classContents = new String(Files.readAllBytes(f.toPath()));
-				JavaFileObject file = DynamicCompiler.getJavaFileObject(classContents);
-				Iterable<? extends JavaFileObject> files = Arrays.asList(file);
-				DynamicCompiler.compile(files);
-			}
-		}
+		try {
+			File fractalFolder = new File(Constants.CUSTOM_FRACTAL_FILEPATH);
+			Method method = URLClassLoader.class.getDeclaredMethod("addURL", new Class[] { URL.class });
+			method.setAccessible(true);
+			method.invoke(ClassLoader.getSystemClassLoader(), new Object[] { fractalFolder.toURI().toURL() });
+			File[] fractals = fractalFolder.listFiles();
+			File classFolder = new File(Constants.CUSTOM_FRACTAL_FILEPATH + "fractal/");
 
-		URL[] urlArray = { classFolder.toURI().toURL() };
-		fractals = classFolder.listFiles();
-		URLClassLoader classLoader = new URLClassLoader(urlArray);
-		for (File f : classFolder.listFiles()) {
-			String name = f.getName();
-			if (name.indexOf("$") == -1)
-				try {
-					Class<? extends Layer> instance = (Class<? extends Layer>) classLoader
-							.loadClass("fractal." + name.substring(0, name.indexOf(".")));
-					fractalRegistry.add(instance);
-
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
+			DynamicCompiler.classOutputFolder = Constants.CUSTOM_FRACTAL_FILEPATH;
+			for (File f : fractals) {
+				if (!f.isDirectory()) {
+					String name = f.getName().substring(0, f.getName().indexOf("."));
+					File classFile = new File(Constants.CUSTOM_FRACTAL_FILEPATH + "fractal/" + name + ".class");
+					if (classFile.exists())
+						classFile.delete();
+					DynamicCompiler.name = f.getName().substring(0, f.getName().indexOf("."));
+					String classContents = new String(Files.readAllBytes(f.toPath()));
+					JavaFileObject file = DynamicCompiler.getJavaFileObject(classContents);
+					Iterable<? extends JavaFileObject> files = Arrays.asList(file);
+					try {
+						DynamicCompiler.compile(files);
+					} catch (NullPointerException e) {
+						AlertMenu alert = new AlertMenu("Unable to compile custom layer types.",
+								"Please try again using a JDK insteaded of a JRE.");
+					}
 				}
-		}
+			}
 
+			URL[] urlArray = { classFolder.toURI().toURL() };
+			fractals = classFolder.listFiles();
+			URLClassLoader classLoader = new URLClassLoader(urlArray);
+			for (File f : classFolder.listFiles()) {
+				String name = f.getName();
+				if (name.indexOf("$") == -1)
+					try {
+						Class<? extends Layer> instance = (Class<? extends Layer>) classLoader
+								.loadClass("fractal." + name.substring(0, name.indexOf(".")));
+						fractalRegistry.add(instance);
+
+					} catch (ClassNotFoundException e) {
+						e.printStackTrace();
+					}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -467,6 +462,8 @@ public abstract class Layer implements Serializable {
 		return l;
 	}
 
+	
+	//TODO: test method
 	/**
 	 * Used to register a new layer type
 	 * 
@@ -489,7 +486,12 @@ public abstract class Layer implements Serializable {
 
 			JavaFileObject fi = DynamicCompiler.getJavaFileObject(classContents);
 			Iterable<? extends JavaFileObject> files = Arrays.asList(fi);
-			DynamicCompiler.compile(files);
+			try {
+				DynamicCompiler.compile(files);
+			} catch (NullPointerException e) {
+				AlertMenu alert = new AlertMenu("Unable to compile custom layer types.",
+						"Please try again using a JDK insteaded of a JRE.");
+			}
 			fractalRegistry.add(DynamicCompiler.instanceOf());
 			return true;
 		} catch (IOException e) {

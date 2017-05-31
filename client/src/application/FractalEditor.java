@@ -86,12 +86,7 @@ public class FractalEditor extends Scene {
 	@SuppressWarnings({ "rawtypes", "unchecked", "static-access" })
 	public void initialize() throws FileNotFoundException, AWTException {
 		// initializing stuff
-		try {
-			Layer.initializeFractalRegistry();
-		} catch (IOException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException | SecurityException e1) {
-			e1.printStackTrace();
-		}
+		Layer.initializeFractalRegistry();
 		fractal = new RenderManager();
 
 		MenuBar menu = new MenuBar();

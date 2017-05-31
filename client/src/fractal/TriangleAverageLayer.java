@@ -10,6 +10,11 @@ import util.Parameters;
 import util.Utils;
 import util.Vector2;
 
+/**
+ * 
+ * @author Calvin
+ *
+ */
 @SuppressWarnings("serial")
 public class TriangleAverageLayer extends Layer {
 
