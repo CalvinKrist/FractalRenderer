@@ -80,6 +80,7 @@ public class FractalEditor extends Scene {
 
 	/**
 	 * Initializes the menus and fractal
+	 * 
 	 * @author David
 	 *
 	 * @throws FileNotFoundException
@@ -156,112 +157,115 @@ public class FractalEditor extends Scene {
 			gradient = new Window(p, 50, this.fractal.getLayers().get(0));
 		}
 
-		{//Tree Stuff
-		parameters.setRoot(new TreeItem("params"));
-		parameters.getRoot().setExpanded(true);
+		{// Tree Stuff
+			parameters.setRoot(new TreeItem("params"));
+			parameters.getRoot().setExpanded(true);
 
-		TreeItem xPos = new TreeItem();
-		parameters.getRoot().getChildren().addAll(xPos);
+			TreeItem xPos = new TreeItem();
+			parameters.getRoot().getChildren().addAll(xPos);
 
-		layers.setRoot(new TreeItem());
-		layers.getRoot().setExpanded(true);
-		layers.setShowRoot(false);
-		layers.setEditable(true);
-		/**layers.setCellFactory(new Callback<TreeView,CheckBoxTreeCell>(){
-            @Override
-            public CheckBoxTreeCell call(TreeView p) {
-                return new CheckBoxTreeCell();
-            }
-        });*/
-        // Use a custom callback to determine the style of the tree item
-        layers.setCellFactory(new Callback<TreeView, TreeCell>() {
-            @Override
-            public TreeCell call(TreeView param) {
-                return new CheckBoxTreeCell(){
-                    @Override
-                    public void updateItem( Object item, boolean empty){
-                        super.updateItem(item, empty);
-                        // If there is no information for the Cell, make it empty
-                        if(empty){
-                            setGraphic(null);
-                            setText(null);
-                        // Otherwise if it's not representation as an item of the tree
-                        // is not a CheckBoxTreeItem, remove the checkbox item
-                        }else if (!(getTreeItem() instanceof CheckBoxTreeItem)){
-                        	BufferedImage image;
-							try {
-								image = ImageIO.read(new File("textures\\plusButton.png"));
-								Image plusImage = SwingFXUtils.toFXImage(image, null);
-	                    		ImageView plusView = new ImageView(plusImage);
-	                    		plusView.setFitHeight(16);
-	                    		plusView.setFitWidth(16);
-	                            setGraphic(plusView);
-							} catch (IOException e) {
-								e.printStackTrace();
+			layers.setRoot(new TreeItem());
+			layers.getRoot().setExpanded(true);
+			layers.setShowRoot(false);
+			layers.setEditable(true);
+			/**
+			 * layers.setCellFactory(new Callback<TreeView,CheckBoxTreeCell>(){
+			 * 
+			 * @Override public CheckBoxTreeCell call(TreeView p) { return new
+			 *           CheckBoxTreeCell(); } });
+			 */
+			// Use a custom callback to determine the style of the tree item
+			layers.setCellFactory(new Callback<TreeView, TreeCell>() {
+				@Override
+				public TreeCell call(TreeView param) {
+					return new CheckBoxTreeCell() {
+						@Override
+						public void updateItem(Object item, boolean empty) {
+							super.updateItem(item, empty);
+							// If there is no information for the Cell, make it
+							// empty
+							if (empty) {
+								setGraphic(null);
+								setText(null);
+								// Otherwise if it's not representation as an
+								// item of the tree
+								// is not a CheckBoxTreeItem, remove the
+								// checkbox item
+							} else if (!(getTreeItem() instanceof CheckBoxTreeItem)) {
+								BufferedImage image;
+								try {
+									image = ImageIO.read(new File("textures\\plusButton.png"));
+									Image plusImage = SwingFXUtils.toFXImage(image, null);
+									ImageView plusView = new ImageView(plusImage);
+									plusView.setFitHeight(16);
+									plusView.setFitWidth(16);
+									setGraphic(plusView);
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
 							}
-                        }
-                    }
-                };
-            }
-        });
+						}
+					};
+				}
+			});
 
-		TreeItem add = new TreeItem();
+			TreeItem add = new TreeItem();
 
-		/**try{
-		BufferedImage image = ImageIO.read(new File("textures\\plusButton.jpg"));
-		Image plusImage = SwingFXUtils.toFXImage(image, null);
-		ImageView plusView = new ImageView(plusImage);
-		plusView.setFitWidth(16);
-		plusView.setFitHeight(16);
-		add.setGraphic(plusView);
-		}catch(Exception e){
-			e.printStackTrace();
-		}*/
-		layerIndex = 1;
-		/**add.addEventHandler(CheckBoxTreeItem.checkBoxSelectionChangedEvent(), e -> {
-			if(((CheckBoxTreeItem)(e.getSource())).isSelected()){
-				((CheckBoxTreeItem)(e.getSource())).getParent().getChildren().add(0, new CheckBoxTreeItem(new MetaLayer("Layer"+incrementLayers(),null)));
-			((CheckBoxTreeItem)(e.getSource())).setSelected(false);
-			}});*/
-		layers.setOnMouseClicked(new EventHandler<MouseEvent>()
-		{
-		    @Override
-		    public void handle(MouseEvent mouseEvent)
-		    {
-		    	if(mouseEvent.getClickCount() == 2)
-		        {
-		            if(layers.getSelectionModel().getSelectedItem()==add){
-		            	layers.getRoot().getChildren().add(0, new CheckBoxTreeItem(new MetaLayer("Layer"+incrementLayers(),"")));
-		            }else{
-		            	((TreeItem)layers.getSelectionModel().getSelectedItem()).setValue(LayerBox.display((TreeItem<MetaLayer>) layers.getSelectionModel().getSelectedItem()));
-		            }
-		        }
-		    }
-		});
-		System.out.println(layers.getRoot().getChildren());
-
-
-		/**layers.getRoot().addEventHandler(layers.getRoot().childrenModificationEvent(), e -> {
-			for(Object i:layers.getRoot().getChildren()){
-				if(i!=add)
-					((TreeItem)(i)).addEventHandler(CheckBoxTreeItem.checkBoxSelectionChangedEvent(), e2 -> {
-						if(((CheckBoxTreeItem)e2.getSource()).isSelected())
-						((TreeItem)e2.getSource()).setValue(LayerBox.display((TreeItem)e2.getSource()));
-					});
-			}
-		});*/
-		layers.getRoot().getChildren().addAll(add);
-		{//TODO I DONT KNOW WHY THIS ISNT WORKING IUEAWBIUBFAI
-		layers.getRoot().addEventHandler(layers.getRoot().childrenModificationEvent(),e -> {
-			for(Object i :((TreeItem)e.getSource()).getChildren()){
-				if(i!=add)
-				if(((MetaLayer)((TreeItem)(i)).getValue()).isDelete()){
-					layers.getSelectionModel().select(i);
-					layers.getSelectionModel().clearSelection();
+			/**
+			 * try{ BufferedImage image = ImageIO.read(new
+			 * File("textures\\plusButton.jpg")); Image plusImage =
+			 * SwingFXUtils.toFXImage(image, null); ImageView plusView = new
+			 * ImageView(plusImage); plusView.setFitWidth(16);
+			 * plusView.setFitHeight(16); add.setGraphic(plusView);
+			 * }catch(Exception e){ e.printStackTrace(); }
+			 */
+			layerIndex = 1;
+			/**
+			 * add.addEventHandler(CheckBoxTreeItem.checkBoxSelectionChangedEvent(),
+			 * e -> { if(((CheckBoxTreeItem)(e.getSource())).isSelected()){
+			 * ((CheckBoxTreeItem)(e.getSource())).getParent().getChildren().add(0,
+			 * new CheckBoxTreeItem(new
+			 * MetaLayer("Layer"+incrementLayers(),null)));
+			 * ((CheckBoxTreeItem)(e.getSource())).setSelected(false); }});
+			 */
+			layers.setOnMouseClicked(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent mouseEvent) {
+					if (mouseEvent.getClickCount() == 2) {
+						if (layers.getSelectionModel().getSelectedItem() == add) {
+							layers.getRoot().getChildren().add(0,
+									new CheckBoxTreeItem(new MetaLayer("Layer" + incrementLayers(), "")));
+						} else {
+							((TreeItem) layers.getSelectionModel().getSelectedItem()).setValue(LayerBox
+									.display((TreeItem<MetaLayer>) layers.getSelectionModel().getSelectedItem()));
+							//TODO add layer change code here
+							String layer = ((MetaLayer)(((TreeItem)layers.getSelectionModel().getSelectedItem()).getValue())).getType();
+							System.out.println(layer);
+						}
 					}
+				}
+			});
+			System.out.println(layers.getRoot().getChildren());
+
+			/**
+			 * layers.getRoot().addEventHandler(layers.getRoot().childrenModificationEvent(),
+			 * e -> { for(Object i:layers.getRoot().getChildren()){ if(i!=add)
+			 * ((TreeItem)(i)).addEventHandler(CheckBoxTreeItem.checkBoxSelectionChangedEvent(),
+			 * e2 -> { if(((CheckBoxTreeItem)e2.getSource()).isSelected())
+			 * ((TreeItem)e2.getSource()).setValue(LayerBox.display((TreeItem)e2.getSource()));
+			 * }); } });
+			 */
+			layers.getRoot().getChildren().addAll(add);
+			{// TODO I DONT KNOW WHY THIS ISNT WORKING IUEAWBIUBFAI
+				/**
+				 * layers.getRoot().addEventHandler(layers.getRoot().childrenModificationEvent(),e
+				 * -> { for(Object i :((TreeItem)e.getSource()).getChildren()){
+				 * if(i!=add)
+				 * if(((MetaLayer)((TreeItem)(i)).getValue()).isDelete()){
+				 * layers.getSelectionModel().select(i);
+				 * layers.getSelectionModel().clearSelection(); } } });
+				 */
 			}
-		});
-		}
 		}
 
 		// Trying to get this to work
@@ -336,7 +340,7 @@ public class FractalEditor extends Scene {
 				this.fractal.saveFractalAs();
 			});
 			MenuItem exportFract = new MenuItem("Export Fractal");
-			exportFract.setOnAction(e-> {
+			exportFract.setOnAction(e -> {
 				ExportImageTool export = new ExportImageTool();
 				export.exportImage(this.fractal);
 			});
@@ -380,7 +384,8 @@ public class FractalEditor extends Scene {
 
 	/**
 	 * Updates the fractal display if it has been changed
-	 * @author Calvin 
+	 * 
+	 * @author Calvin
 	 */
 	public void updateFractalImage() {
 		gradient.repaint();
