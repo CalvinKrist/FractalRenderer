@@ -64,7 +64,7 @@ public class RenderManager implements Serializable {
 		screenResolution = new Dimension(1600, 1600);
 		name = "";
 		layers = new ArrayList<Layer>();
-		Layer l = Layer.getLayerByType("TriangleAverageLayer");
+		Layer l = Layer.getLayerByType("HistogramLayer");
 
 		
 		l.init(new Palette(), 1);

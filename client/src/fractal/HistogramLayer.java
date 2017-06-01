@@ -7,9 +7,22 @@ import java.util.Comparator;
 import java.util.HashMap;
 import util.Parameters;
 
+/**
+ * This is one of the two included layers that all installs of this program has. It sorts all the points outside the 
+ * fractal based on their approximate distance from the fractal. It then assigns each point a color proportional to
+ * its location in the list, such that the point at the 34% percentile would get the color at the 34% percentile of the
+ * palette.
+ * @author Calvin
+ *
+ */
 @SuppressWarnings("serial")
 public class HistogramLayer extends Layer {
 	
+	/**
+	 * Creates default bailout and maxIterations values for the layer to use. It also assigns this layer a description
+	 * so that users can understand what it does in the layer editor.
+	 * Bailout = 1000, maxIterations = 400;
+	 */
 	public HistogramLayer() {
 		super();
 		bailout = 1000;
@@ -17,6 +30,10 @@ public class HistogramLayer extends Layer {
 		description = "Uses a histogram to distribute all the aproximated distances across the palete.";
 	}
 	
+	/**
+	 *This method will return bailout and maxIterations as being editable parameters. 
+	 * @return a list of all editable parameters
+	 */
 	public Parameters getParameters() {
 		Parameters props = new Parameters(new HashMap<String, Serializable>());
 		if(autoBailout = true)
@@ -30,6 +47,11 @@ public class HistogramLayer extends Layer {
 		return props;
 	}
 	
+	/**
+	 * This method is used to set the new values of the editable parameters after they have
+	 * been changed by the user
+	 * @param params a map of the new values for the editable parameters
+	 */
 	public void setParameters(Parameters params) {
 		String bailout = params.getParameter("bailout", String.class);
 		try {
@@ -47,6 +69,19 @@ public class HistogramLayer extends Layer {
 		}
 	}
 
+	/**
+	 * This method executes the actual rendering code of the layer assuming the given parameters.
+	 * It will sort all the points outside the fractal based on their approximate distance from the fractal. 
+	 * It then assigns each point a color proportional to its location in the list, such that the point at the 
+	 * 34% percentile would get the color at the 34% percentile of the palette.
+	 * @param pixels the array of pixel data the layer draws itself to
+	 * @param width the width of the image created in pixels
+	 * @param height the height of the image created in pixels
+	 * @param rWidth the width of the viewport being drawn in real coordinates
+	 * @param rHeight the height of the viewport being drawn in real coordinates
+	 * @param xPos the x position the viewport is centered on in real coordinates
+	 * @param yPos the y position the viewport is centered on in real coordinates
+	 */
 	public void render(int[][] pixels, int width, int height, double rWidth, double rHeight, double xPos, double yPos) {
 		calculateIterationsAndBailout(rWidth, rHeight);
 		ArrayList<double[]> info = new ArrayList<double[]>(width * height);
@@ -113,6 +148,13 @@ public class HistogramLayer extends Layer {
 		}
 	}
 
+	/**
+	 * This method attempts to automatically calculate bailout and maxIteration values (if they are set
+	 * to auto) given a certain viewport size. Currently, it does not do this and just sets them to 
+	 * constants.
+	 * @param rWidth
+	 * @param rHeight
+	 */
 	protected void calculateIterationsAndBailout(double rWidth, double rHeight) {
 		double zoom = rWidth > rHeight ? rWidth : rHeight;
 		zoom = 1 / zoom;
