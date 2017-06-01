@@ -82,7 +82,8 @@ public class HistogramLayer extends Layer {
 	 * @param xPos the x position the viewport is centered on in real coordinates
 	 * @param yPos the y position the viewport is centered on in real coordinates
 	 */
-	public void render(int[][] pixels, int width, int height, double rWidth, double rHeight, double xPos, double yPos) {
+	@Override
+	protected void render(Color[][] pixels, int width, int height, double rWidth, double rHeight, double xPos, double yPos) {
 		calculateIterationsAndBailout(rWidth, rHeight);
 		ArrayList<double[]> info = new ArrayList<double[]>(width * height);
 		for (int i = 0; i < width; i++)
@@ -122,29 +123,12 @@ public class HistogramLayer extends Layer {
 		});
 		for (int i = 0; i < info.size(); i++) 
 			if ((int) (info.get(i)[3]) == maxIterations) {
-				if(layer == 0) 
-					pixels[(int) (info.get(i)[1])][(int) (info.get(i)[2])] = palette.getBackground().getRGB();
-				else {
-					Color c1 = new Color(pixels[(int)info.get(i)[1]][(int)info.get(i)[2]]);
-					Color c2 = palette.getBackground();
-					double weight = c2.getAlpha() / 255.0;
-					Color finalColor = new Color((int)layerAverage(c1.getRed(), c2.getRed(), weight), (int)layerAverage(c1.getGreen(), c2.getGreen(), weight), (int)layerAverage(c1.getBlue(), c2.getBlue(), weight)); 
-					pixels[(int)info.get(i)[1]][(int)info.get(i)[2]] = finalColor.getRGB(); 
-				}
+				pixels[(int) (info.get(i)[1])][(int) (info.get(i)[2])] = palette.getBackground();
 				info.remove(i--);
 			}
 		for(int i = 0; i < info.size(); i++) {
-
 			double hue = (double)i / info.size();
-			if(layer == 0) 
-				pixels[(int) (info.get(i)[1])][(int) (info.get(i)[2])] = palette.colorAt(hue).getRGB();
-			else {
-				Color c1 = new Color(pixels[(int)info.get(i)[1]][(int)info.get(i)[2]]);
-				Color c2 = palette.colorAt(hue);
-				double weight = c2.getAlpha() / 255.0;
-				Color finalColor = new Color((int)layerAverage(c1.getRed(), c2.getRed(), weight), (int)layerAverage(c1.getGreen(), c2.getGreen(), weight), (int)layerAverage(c1.getBlue(), c2.getBlue(), weight)); 
-				pixels[(int)info.get(i)[1]][(int)info.get(i)[2]] = finalColor.getRGB(); 
-			}
+			pixels[(int) (info.get(i)[1])][(int) (info.get(i)[2])] = palette.colorAt(hue);
 		}
 	}
 
