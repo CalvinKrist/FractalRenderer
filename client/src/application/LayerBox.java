@@ -40,7 +40,7 @@ public class LayerBox {
         typeIn.getItems().addAll(Layer.getLayerTypes());
         typeIn.minWidthProperty().bind(window.minWidthProperty().divide(2));
         typeIn.maxWidthProperty().bind(window.minWidthProperty().multiply(.75));
-        typeIn.getSelectionModel().select(0);
+        typeIn.getSelectionModel().selectFirst();
         HBox hbox = new HBox();
         Button closeButton = new Button("Submit");
         closeButton.setOnAction(e -> window.close());
