@@ -12,6 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 import javax.imageio.ImageIO;
 
 import fractal.Layer;
+import fractal.Palette;
 import fractal.RenderManager;
 import javafx.beans.Observable;
 import javafx.beans.value.ObservableValue;
@@ -239,7 +240,15 @@ public class FractalEditor extends Scene {
 						} else {
 							((TreeItem) layers.getSelectionModel().getSelectedItem()).setValue(LayerBox
 									.display((TreeItem<MetaLayer>) layers.getSelectionModel().getSelectedItem()));
-							//TODO: metadata change
+							MetaLayer meta = ((MetaLayer)((TreeItem)layers.getSelectionModel().getSelectedItem()).getValue());
+							int index = layers.getRoot().getChildren().size() - 2 - layers.getRoot().getChildren().indexOf(layers.getSelectionModel().getSelectedItem());
+							Layer l = fractal.getLayers().get(index);
+							if(meta.getType() != l.getClass().getSimpleName()) {
+								Layer newLayer = Layer.getLayerByType(meta.getType());
+								newLayer.init(new Palette(), index + 1);
+								fractal.getLayers().set(index, newLayer);
+								fractal.update();
+							}
 						}
 					} else if(mouseEvent.getClickCount() == 1 && layers.getSelectionModel().getSelectedItem() != add) {
 						int index = layers.getRoot().getChildren().size() - 2 - layers.getRoot().getChildren().indexOf(layers.getSelectionModel().getSelectedItem());

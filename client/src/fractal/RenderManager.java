@@ -74,9 +74,7 @@ public class RenderManager implements Serializable {
 		l.init(new Palette(), 1);
 		l.setName("Layer 1");
 		layers.add(l);
-		this.setScreenResolution(screenResolution);
-		this.setLocation(location);
-		this.setZoom(zoom);
+		update();
 	}
 
 	/**
@@ -111,9 +109,7 @@ public class RenderManager implements Serializable {
 						Constants.FRACTAL_FILEPATH + this.name + "/" + params.getParameter(name, String.class)));
 			}
 		}
-		this.setScreenResolution(screenResolution);
-		this.setLocation(location);
-		this.setZoom(zoom);
+		update();
 	}
 
 	/**
@@ -494,8 +490,14 @@ public class RenderManager implements Serializable {
 	public void addLayer(String layerType) {
 		Layer l = Layer.getLayerByType(layerType);
 		layers.add(l);
-		l.setLayer(layers.size());
-		l.setColorPalette(new Palette());
+		l.init(new Palette(), layers.size());
+		update();
+	}
+	
+	/**
+	 * Used to update the fields of all the layers. 
+	 */
+	public void update() {
 		this.setScreenResolution(screenResolution);
 		this.setLocation(location);
 		this.setZoom(zoom);

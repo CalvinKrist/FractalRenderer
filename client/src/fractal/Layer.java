@@ -460,7 +460,8 @@ public abstract class Layer implements Serializable {
 	 * This method is used to get a new instance of a Layer, by type. For
 	 * example, if "HistogramLayer" is passed to this method, it will return a
 	 * new instance of a HistogramLayer.class, assuming that layer was
-	 * initialized in the registry
+	 * initialized in the registry. It does not initialize the specific instance
+	 * of the layer.
 	 * 
 	 * @param type
 	 *            a type of layer
