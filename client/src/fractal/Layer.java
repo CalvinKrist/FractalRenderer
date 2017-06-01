@@ -1,5 +1,6 @@
 package fractal;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.io.File;
 import java.io.FileWriter;
@@ -102,6 +103,16 @@ public abstract class Layer implements Serializable {
 	 * GUI and is used in the saving of files
 	 */
 	protected String name;
+	
+	/**
+	 * The opacity of this layer. 1 = perfectly visible, 0 = invisible
+	 */
+	protected double opacity = 1.0;
+	
+	/**
+	 * Whether or not the layer is visible.
+	 */
+	protected boolean visible = true;
 
 	/**
 	 * A list of all valid layer types. There a lots of utility methods built
@@ -131,19 +142,26 @@ public abstract class Layer implements Serializable {
 	 * A render method that takes in a 2D array of pixels which represent the
 	 * image. The layer will render itself to the array.
 	 * 
-	 * @param pixels
-	 *            the 2D array of pixels representing the image.
+	 * @return the 2D array of colors representing the image rendered by this layer. Returns null if the layer is not visible.
 	 */
-	public void render(int[][] pixels) {
-		render(pixels, screenResolution.width, screenResolution.height, realResolution.x, realResolution.y, location.x,
+	public Color[][] render() {
+		if(visible && opacity != 0) {
+			Color[][] pixels = new Color[screenResolution.width][screenResolution.height];
+			render(pixels, screenResolution.width, screenResolution.height, realResolution.x, realResolution.y, location.x,
 				location.y);
+			for(int i = 0; i < pixels.length; i++)
+				for(int k = 0; k < pixels[i].length; k++)
+					pixels[i][k] = new Color(pixels[i][k].getRed(), pixels[i][k].getGreen(), pixels[i][k].getBlue(), (int)(pixels[i][k].getAlpha() * opacity));
+			return pixels;
+		}
+		return null;
 	}
 
 	/**
 	 * A method containing the actual rendering logic of the layer.
 	 * 
 	 * @param pixels
-	 *            the array of pixels to be drawn on
+	 *            the array of colors that need to be created
 	 * @param width
 	 *            the width in pixels of the image being drawn
 	 * @param height
@@ -159,7 +177,7 @@ public abstract class Layer implements Serializable {
 	 *            the y position in real units where the layer will center its
 	 *            rendering
 	 */
-	public abstract void render(int[][] pixels, int width, int height, double rWidth, double rHeight, double xPos,
+	protected abstract void render(Color[][] pixels, int width, int height, double rWidth, double rHeight, double xPos,
 			double yPos);
 
 	/**
@@ -286,7 +304,31 @@ public abstract class Layer implements Serializable {
 	public Palette getPalette() {
 		return palette;
 	}
-
+	
+	/**
+	 * Used to change the visibility of this layer
+	 * @param visible the new visiblity of the layer
+	 */
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+	
+	/**
+	 * Used to get the visibility of this layer
+	 * @return the visibility of this layer
+	 */
+	public boolean getVisible() {
+		return visible;
+	}
+	
+	/**
+	 * Used to get the opacity of a layer
+	 * @return the opacity of the layer
+	 */
+	public double getOpacity() {
+		return opacity;
+	}
+	
 	/**
 	 * Saves the fractal at the specified location with the specified fractal
 	 * name

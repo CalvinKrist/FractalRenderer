@@ -79,7 +79,7 @@ public class TriangleAverageLayer extends Layer {
 		}
 	}
 	
-	private void findColor(int[][] pixels, int id, int k) {
+	private void findColor(Color[][] pixels, int id, int k) {
 		int i;
 		ac = c.length();
 		il = 1.0 / Math.log(2);
@@ -104,16 +104,8 @@ public class TriangleAverageLayer extends Layer {
 			}
 		}
 		MinMax colVal = bounds.getLast();
-		if(i == maxIterations) {
-			if(layer != 0) {
-				Color c1 = new Color(pixels[id][k]);
-				Color c2 = palette.getBackground();
-				double weight = c2.getAlpha() / 255.0;
-				Color finalColor = new Color((int)layerAverage(c1.getRed(), c2.getRed(), weight), (int)layerAverage(c1.getGreen(), c2.getGreen(), weight), (int)layerAverage(c1.getBlue(), c2.getBlue(), weight)); 
-				pixels[id][k] = finalColor.getRGB(); 
-			} else
-				pixels[id][k] = palette.getBackground().getRGB();
-		}
+		if(i == maxIterations) 
+			pixels[id][k] = palette.getBackground();
 		else {
 			//tia
 			sum = sum / i;
@@ -144,7 +136,8 @@ public class TriangleAverageLayer extends Layer {
 			maxIterations = (int)(Math.log(Math.pow(zoom, 3.8)) * 10);
 	}
 
-	public void render(int[][] pixels, int width, int height, double rWidth, double rHeight, double xPos, double yPos) {
+	@Override
+	protected void render(Color[][] pixels, int width, int height, double rWidth, double rHeight, double xPos, double yPos) {
 		yPos = -yPos;
 		calculateIterationsAndBailout(rWidth, rHeight);
 		data = new LinkedList<double[]>();
@@ -187,19 +180,8 @@ public class TriangleAverageLayer extends Layer {
 				prop2 = .9999999999;
 			if(prop2 < 0)
 				prop2 = 0;
-			if(layer != 0) {
-				Color c1 = new Color(pixels[(int)d[3]][(int)d[4]]);
-				Color c2 = Utils.interpolateColors(palette.colorAt(prop1), palette.colorAt(prop2), d[2]);
-				double weight = c2.getAlpha() / 255.0;
-				Color finalColor = new Color((int)layerAverage(c1.getRed(), c2.getRed(), weight), (int)layerAverage(c1.getGreen(), c2.getGreen(), weight), (int)layerAverage(c1.getBlue(), c2.getBlue(), weight)); 
-				pixels[(int)d[3]][(int)d[4]] = finalColor.getRGB(); 
-			} else 
-				pixels[(int)d[3]][(int)d[4]] = Utils.interpolateColors(palette.colorAt(prop1), palette.colorAt(prop2), d[2]).getRGB();
+			pixels[(int)d[3]][(int)d[4]] = Utils.interpolateColors(palette.colorAt(prop1), palette.colorAt(prop2), d[2]);
 		}
-	}
-	
-	private double layerAverage(double d1, double d2, double weight) {
-		return (d1 * layer + d2 * weight) / (layer + weight);
 	}
 	
 }
