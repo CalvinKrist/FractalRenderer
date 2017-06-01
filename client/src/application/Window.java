@@ -23,7 +23,7 @@ import javafx.stage.FileChooser;
 
 /**
  * A swing based menu to modify and display a color palette
- * 
+ *
  * @author Calvin
  *
  */
@@ -152,7 +152,7 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 
 	/**
 	 * A method to return the opacity at any point along the gradient
-	 * 
+	 *
 	 * @param x
 	 *            the point along the gradient that will be analyzed
 	 * @return the opacity at point x
@@ -164,7 +164,7 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 
 	/**
 	 * Returns the color at any point along the gradient
-	 * 
+	 *
 	 * @param x
 	 *            the point along the gradient that will be analysed
 	 * @return the color at point x
@@ -177,7 +177,7 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	/**
 	 * Adds a black color button at the specified location along the gradient. It will also add
 	 * a color point to the palette the gradient displays after scaling the point to match the palette's size.
-	 * 
+	 *
 	 * @param x
 	 *            the point where the new button will be
 	 */
@@ -188,7 +188,7 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	/**
 	 *Adds a color button at the specified location along the gradient. It will also add
 	 * a color point to the palette the gradient displays after scaling the point to match the palette's size.
-	 * 
+	 *
 	 * @param x
 	 *            the point where the new button will be
 	 * @param c
@@ -219,7 +219,7 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	 * Adds an opacity button with full opacity at the specified point along the
 	 * gradient. It will also add an opacity point to the palette the editor represents after
 	 * scaling the point to fit the palette's size
-	 * 
+	 *
 	 * @param x
 	 *            the point along the gradient where the new opacity button will
 	 *            be
@@ -232,7 +232,7 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	 * Adds an opacity button at the specified point along the
 	 * gradient. It will also add an opacity point to the palette the editor represents after
 	 * scaling the point to fit the palette's size
-	 * 
+	 *
 	 * @param x
 	 *            the point where the new opacity button will be
 	 * @param d
@@ -263,7 +263,7 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	 * This is called when a new layer is selected in the layer view in order to
 	 * load and display its palette. It will also scale any color and opacity points on the palette
 	 * to match the gradient and add those to the editor.
-	 * 
+	 *
 	 * @param newLayer
 	 *            the new layer the window displays
 	 */
@@ -300,6 +300,9 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 				// TODO: create a color menu for the inside part of the fractal
 				// and store the color like this: bgButton.setData(newColor);
 				// this.repaint();
+				Platform.runLater(() -> {
+					ColorBox.display(bgButton);
+				});
 			} else if (saveButton.isClicked(p)) {
 				Platform.runLater(() -> {
 					TextInputDialog dialog = new TextInputDialog("");
@@ -387,7 +390,7 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	/**
 	 * Can be used to change the Dimension of the colored inner rectangle and,
 	 * as a result, the whole menu
-	 * 
+	 *
 	 * @param newDimension
 	 *            the new dimension of the colored inner rectangle
 	 */
