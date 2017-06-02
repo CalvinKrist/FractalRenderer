@@ -42,8 +42,7 @@ public class Parameters implements Serializable {
 	
 	/**
 	 * This constructor takes in a file path and turns the elements of that file into a series of parameters. It is assumed that 
-	 * the file is formated as a DataTag on each line and no more than one DataTag per line. See the DataTag class for more information
-	 * on how this method reads in the DataTags as parameters and for how DataTags should be formatted.
+	 * the file is formated as a DataTag on each line and no more than one DataTag per line. 
 	 * @param filePath the path pointing to the file to be read in.
 	 */
 	public Parameters(String filePath) {

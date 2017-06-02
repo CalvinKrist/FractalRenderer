@@ -45,6 +45,7 @@ import menus.ExportImageTool;
 import menus.NetworkCreationTool;
 import menus.RegisterLayerTool;
 import server.Server;
+import util.Constants;
 import util.Log;
 import util.Point;
 
@@ -93,6 +94,15 @@ public class FractalEditor extends Scene {
 	public void initialize() throws FileNotFoundException, AWTException {
 		// initializing stuff
 		Layer.initializeFractalRegistry();
+		File fractalDirectory = new File(Constants.FRACTAL_FILEPATH);
+		if(!fractalDirectory.exists()) {
+			fractalDirectory.mkdirs();
+			try {
+				fractalDirectory.createNewFile();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
 		fractal = new RenderManager();
 
 		MenuBar menu = new MenuBar();

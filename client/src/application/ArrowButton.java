@@ -8,13 +8,13 @@ import java.awt.Rectangle;
 import java.io.Serializable;
 
 /**
- * 
- * @author Calvin
  *
  *A button resembling a triangle with a square at one end. It can be oriented
  *either up or down and the color of the square can be changed. It can
  *store and return a data type. It waS built specifically for use in the
  *gradient editor and is not fit for other use.
+ *
+ *@author Calvin
  *
  * @param <E> the data type the button can store
  */
@@ -92,6 +92,7 @@ public class ArrowButton<E extends Serializable> implements Serializable {
 	}
 	
 	/**
+	 * Used to determine whether or not the button was clicked
 	 * @param p a point on the screen that was clicked
 	 * @return whether or not the arrow contains the point
 	 */

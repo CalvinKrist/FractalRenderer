@@ -2,6 +2,11 @@ package util;
 
 import java.awt.Font;
 
+/**
+ * A series of constants used throughout the project.
+ * @author Calvin
+ *
+ */
 public class Constants {
 
 	/**

@@ -61,10 +61,7 @@ public class SocketAdder extends Thread {
 					w.addMessageListener(new MessageListener() {
 						public void messageRecieved(Object o) {
 							synchronized (server) {
-								if(o instanceof String && o.equals("removed"))
-									w.sendMessage("removed");
-								else
-									server.handleMessage(o, w);
+								server.handleMessage(o, w);
 							}
 						}
 					});

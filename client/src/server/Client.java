@@ -125,7 +125,7 @@ public class Client extends NetworkNode {
 							server.sendMessage("removed.");
 							log.blankLine();
 							log.newLine("Removed by server.");
-							kill();
+							System.exit(0);
 						}
 					}
 				}

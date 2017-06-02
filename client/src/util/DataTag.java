@@ -5,10 +5,8 @@ import java.io.Serializable;
 /**
  * This class provides an easy way to represent and read pairs of data. This is incredibly useful when loading in parameters.
  * 
- * All DataTags follow this format: &lt;key:value&gt;. An example use of this is in how fractals are read into the program.
- * A fractal is saved as a lot of different DataTags on each line, and then a Scanner reads each line and each DataTag. Then, when, say, the 
- * &lt;bailout:1000&gt; DataTag apears, it's easy to read that it describes the bailout value and the value is 1000.
- * @author 1355710
+ * All DataTags follow this format: &lt;key:value&gt;. 
+ * @author Calvin
  *
  */
 public class DataTag implements Serializable {
