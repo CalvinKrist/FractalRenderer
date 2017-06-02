@@ -4,18 +4,20 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Optional;
 
 import javax.imageio.ImageIO;
 
 import javafx.scene.control.TextInputDialog;
+import javafx.stage.FileChooser;
 import menus.AlertMenu;
 import util.Constants;
 import util.Parameters;
@@ -54,10 +56,13 @@ public class RenderManager implements Serializable {
 	 * screenResolution isn't square.
 	 */
 	protected Point realResolution;
+	
 	/**
 	 * The name of the fractal.
 	 */
 	protected String name;
+	
+	private String filePath = null;
 
 	/**
 	 * Initializes a fractal with a black to white palette centered at tbe point
@@ -130,8 +135,19 @@ public class RenderManager implements Serializable {
 	 *            a .fractal file
 	 */
 	public RenderManager(File f) {
-		Parameters params = new Parameters(f.getPath());
-		init(params);
+		try {
+			ObjectInputStream objIn = new ObjectInputStream(new FileInputStream(f));
+			RenderManager o = (RenderManager)(objIn.readObject());
+			this.layers = o.layers;
+			this.location = o.location;
+			this.zoom = o.zoom;
+			this.screenResolution = o.screenResolution;
+			this.realResolution = o.realResolution;
+			this.name = o.name;
+			objIn.close();
+		} catch (IOException | ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -388,41 +404,21 @@ public class RenderManager implements Serializable {
 	 * directory based on the fractal's name
 	 */
 	public void saveFractal() {
-		if (name.equals("")) {
-			TextInputDialog dialog = new TextInputDialog("");
-			dialog.setContentText("Fractal name:");
-			dialog.setTitle("Save Fractal");
-			dialog.setHeaderText(null);
-
-			Optional<String> result = dialog.showAndWait();
-			if (!result.isPresent())
-				return;
-			String name = result.get();
-			if (name.equals("")) {
-				AlertMenu aMenu = new AlertMenu("Invalid input: name invalid.", "Please try again.");
-				saveFractal();
-				return;
-			}
-			setName(name);
-		}
-		Map<String, Serializable> params = new HashMap<String, Serializable>();
-		params.put("name", name);
-		params.put("location", getLocation().toString());
-		params.put("radius", getRadius());
-		params.put("resolution", getScreenResolution().width + "," + getScreenResolution().height);
-		for (int i = 0; i < getNumLayers(); i++) {
-			params.put("layer" + (i + 1), getLayers().get(i).getName() + ".layer");
-			try {
-				getLayers().get(i).save(name);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		if (filePath == null) {
+			FileChooser chooser = new FileChooser();
+			chooser.setTitle("Save Fractal");
+			chooser.setInitialDirectory(new File("fractals"));
+			FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Fractals (*.fractal)",
+					"*.fractal");
+			chooser.getExtensionFilters().add(filter);
+			File f = chooser.showSaveDialog(null);
+			filePath = f.getAbsolutePath();
+			setName(f.getName().substring(0, f.getName().indexOf(".")));
 		}
 		try {
-			FileWriter writer = new FileWriter(
-					new File(Constants.FRACTAL_FILEPATH + "/" + name + "/" + name + ".fractal"));
-			writer.write(new Parameters(params).toString());
-			writer.close();
+			ObjectOutputStream objOut = new ObjectOutputStream(new FileOutputStream(new File(filePath)));
+			objOut.writeObject(this);
+			objOut.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -433,24 +429,21 @@ public class RenderManager implements Serializable {
 	 * not change the name of the current instance.
 	 */
 	public void saveFractalAs() {
-		TextInputDialog dialog = new TextInputDialog("");
-		dialog.setContentText("Fractal name:");
-		dialog.setTitle("Save Fractal As");
-		dialog.setHeaderText(null);
-
-		Optional<String> result = dialog.showAndWait();
-		if (!result.isPresent())
-			return;
-		String name = result.get();
-		if (name.equals("")) {
-			AlertMenu aMenu = new AlertMenu("Invalid input: name invalid.", "Please try again.");
-			saveFractalAs();
-			return;
+		FileChooser chooser = new FileChooser();
+		chooser.setTitle("Save Fractal");
+		chooser.setInitialDirectory(new File("fractals"));
+		FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Fractals (*.fractal)",
+				"*.fractal");
+		chooser.getExtensionFilters().add(filter);
+		File f = chooser.showSaveDialog(null);
+		try {
+			ObjectOutputStream objOut = new ObjectOutputStream(new FileOutputStream(f));
+			objOut.writeObject(this);
+			objOut.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		String currName = this.name;
-		setName(name);
-		saveFractal();
-		setName(currName);
+		
 	}
 
 	public void setName(String name) {

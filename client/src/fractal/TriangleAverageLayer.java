@@ -132,22 +132,10 @@ public class TriangleAverageLayer extends Layer {
 			colVal.update(colval2);
 		}
 	}
-	
-	protected void calculateIterationsAndBailout(double rWidth, double rHeight) {
-		double zoom = rWidth > rHeight ? rWidth : rHeight;
-		zoom = 1 / zoom;
-		if(autoBailout) {
-			bailout = (int)Math.pow(zoom, .25);
-			bailoutSquared = bailout * bailout;
-		}
-		if(autoMaxIterations)
-			maxIterations = (int)(Math.log(Math.pow(zoom, 3.8)) * 10);
-	}
 
 	@Override
 	protected void render(Color[][] pixels, int width, int height, double rWidth, double rHeight, double xPos, double yPos) {
 		yPos = -yPos;
-		calculateIterationsAndBailout(rWidth, rHeight);
 		data = new LinkedList<double[]>();
 		bounds.add(new MinMax());
 		for(int i = 0; i < width; i++) {
@@ -190,6 +178,16 @@ public class TriangleAverageLayer extends Layer {
 				prop2 = 0;
 			pixels[(int)d[3]][(int)d[4]] = Utils.interpolateColors(palette.colorAt(prop1), palette.colorAt(prop2), d[2]);
 		}
+	}
+
+	@Override
+	protected void calculateIterations(double rWidth, double rHeight) {
+		maxIterations = 10000;
+	}
+
+	@Override
+	protected void calculateBailout(double rWidth, double rHeight) {
+		bailout = 10000;
 	}
 	
 }

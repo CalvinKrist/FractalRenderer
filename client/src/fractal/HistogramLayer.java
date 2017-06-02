@@ -78,7 +78,6 @@ public class HistogramLayer extends Layer {
 	 */
 	@Override
 	protected void render(Color[][] pixels, int width, int height, double rWidth, double rHeight, double xPos, double yPos) {
-		calculateIterationsAndBailout(rWidth, rHeight);
 		ArrayList<double[]> info = new ArrayList<double[]>(width * height);
 		for (int i = 0; i < width; i++)
 			for (int k = 0; k < height; k++) {
@@ -126,24 +125,17 @@ public class HistogramLayer extends Layer {
 		}
 	}
 
-	/**
-	 * This method attempts to automatically calculate bailout and maxIteration values (if they are set
-	 * to auto) given a certain viewport size. Currently, it does not do this and just sets them to 
-	 * constants.
-	 * @param rWidth
-	 * @param rHeight
-	 */
-	protected void calculateIterationsAndBailout(double rWidth, double rHeight) {
-		double zoom = rWidth > rHeight ? rWidth : rHeight;
-		zoom = 1 / zoom;
-		if(autoBailout) {
-			bailout = 40;
-		}
-		//TODO: create an algorithm for maxIterations/
-		//Attempt 1: (int)(Math.log(Math.pow(1 / zoom, 6.8)) * 100)
-		if(autoMaxIterations) 
-			maxIterations = 1000;
+	protected void calculateMaxBailout(double rWidth, double rHeight) {
 		
+	}
+	
+	protected void calculateIterations(double rWidth, double rHeight) {
+		maxIterations = 10000;
+	}
+
+	@Override
+	protected void calculateBailout(double rWidth, double rHeight) {
+		bailout = 10000;
 	}
 
 }

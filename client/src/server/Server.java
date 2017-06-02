@@ -1,5 +1,6 @@
 package server;
 
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +14,7 @@ import java.util.Queue;
 
 import javax.imageio.ImageIO;
 
+import fractal.Layer;
 import fractal.RenderManager;
 import menus.Display;
 import util.Constants;
@@ -143,6 +145,21 @@ public class Server extends NetworkNode {
 		}
 		Parameters param = new Parameters(params);
 		return param;
+	}
+	
+	/**
+	 * This method is used by the Display to modify the parameters of the network. After the server updates
+	 * its own fractal with the new parameters, it then sends that very fractal out to all the clients.
+	 * @param params the new parameters for the fractal
+	 */
+	public void updateParameters(Parameters params) {
+		zoomSpeed = params.getParameter("zSpeed", Double.class);
+		parameters.put("zoom", params.getParameter("zoom"));
+		for(Layer l : fractal.getLayers()) {
+			l.setBailout(params.getParameter("bailout", Integer.class));
+			l.setMaxIterations(params.getParameter("maxIterations", Integer.class));
+		}
+		fractal.setLocation(params.getParameter("location", util.Point.class));
 	}
 
 	public void createNextRenderJobSet() {

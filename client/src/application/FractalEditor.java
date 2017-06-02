@@ -250,6 +250,7 @@ public class FractalEditor extends Scene {
 								fractal.update();
 							}
 							fractal.getLayers().get(index).setName(meta.getName());
+							updateFractalImage();
 						}
 					} else if (mouseEvent.getClickCount() == 1 && layers.getSelectionModel().getSelectedItem() != add) {
 						int index = layers.getRoot().getChildren().size() - 2
@@ -386,8 +387,8 @@ public class FractalEditor extends Scene {
 				Layer.registerLayer(register.getFile());
 			});
 			MenuItem changeLog = new MenuItem("Edit Log Options");
-			changeLog.setOnAction(e-> {
-				//TODO: two dropdown menu stuff with tooltips 
+			changeLog.setOnAction(e -> {
+				// TODO: two dropdown menu stuff with tooltips
 			});
 
 			system.getItems().addAll(newLayer, changeLog);
@@ -424,6 +425,7 @@ public class FractalEditor extends Scene {
 						int index = layers.getRoot().getChildren().size() - 2
 								- layers.getRoot().getChildren().indexOf(i);
 						fractal.setLayerVisiblity(index, i.selectedProperty().get());
+						updateFractalImage();
 					}
 				});
 		return i;

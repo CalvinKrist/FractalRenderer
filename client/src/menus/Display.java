@@ -38,6 +38,7 @@ import server.SocketWrapper;
 import util.Constants;
 import util.Log;
 import util.Parameters;
+import util.Point;
 
 /**
  * This class contains a lot of the rendering code and logic code for the Network View.
@@ -191,9 +192,7 @@ public class Display extends JPanel implements Runnable {
 		maxItrsAccept.setFont(new Font("Arial", 12, 14));
 		maxItrsAccept.setBackground(Color.white);
 		maxItrsAccept.setAlignmentY(1);
-		maxItrsAccept.addActionListener(e -> {
-			// TODO
-		});
+		maxItrsAccept.addActionListener(new FractalUpdateListener());
 		maxItrs.add(maxItrsAccept);
 		p.add(maxItrs, 5, 0);
 
@@ -209,9 +208,7 @@ public class Display extends JPanel implements Runnable {
 		bailoutAccept.setFont(new Font("Arial", 12, 14));
 		bailoutAccept.setBackground(Color.white);
 		bailoutAccept.setAlignmentY(1);
-		bailoutAccept.addActionListener(e -> {
-			// TODO
-		});
+		bailoutAccept.addActionListener(new FractalUpdateListener());
 		bailout.add(bailoutAccept);
 		p.add(bailout, 6, 0);
 
@@ -227,11 +224,7 @@ public class Display extends JPanel implements Runnable {
 		speedAccept.setFont(new Font("Arial", 12, 14));
 		speedAccept.setBackground(Color.white);
 		speedAccept.setAlignmentY(1);
-		speedAccept.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// TODO
-			}
-		});
+		speedAccept.addActionListener(new FractalUpdateListener());
 		zSpeed.add(speedAccept);
 		p.add(zSpeed, 3, 0);
 
@@ -248,11 +241,7 @@ public class Display extends JPanel implements Runnable {
 		zoomAccept.setFont(new Font("Arial", 12, 14));
 		zoomAccept.setBackground(Color.white);
 		zoomAccept.setAlignmentY(1);
-		zoomAccept.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// TODO
-			}
-		});
+		zoomAccept.addActionListener(new FractalUpdateListener());
 		zoomPanel.add(zoomAccept);
 
 		p.add(zoomPanel, 2, 0);
@@ -269,11 +258,7 @@ public class Display extends JPanel implements Runnable {
 		yPosAccept.setFont(new Font("Arial", 12, 14));
 		yPosAccept.setBackground(Color.white);
 		yPosAccept.setAlignmentY(1);
-		yPosAccept.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// TODO
-			}
-		});
+		yPosAccept.addActionListener(new FractalUpdateListener());
 		yPosP.add(yPosAccept);
 		p.add(yPosP, 1, 0);
 
@@ -289,11 +274,7 @@ public class Display extends JPanel implements Runnable {
 		xPosAccept.setFont(new Font("Arial", 12, 14));
 		xPosAccept.setBackground(Color.white);
 		xPosAccept.setAlignmentY(1);
-		xPosAccept.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// TODO
-			}
-		});
+		xPosAccept.addActionListener(new FractalUpdateListener());
 		xPosP.add(xPosAccept);
 		p.add(xPosP, 0, 0);
 
@@ -415,6 +396,69 @@ public class Display extends JPanel implements Runnable {
 			zoomSpeed.setText(1 / params.getParameter("zSpeed", Double.class) + "");
 		numUsersLabel.setText("  User Count: " + params.getParameter("userCount"));
 		frameCountLabel.setText("  Frame Count: " + params.getParameter("frameCount"));
+	}
+	
+	private class FractalUpdateListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			Parameters params = new Parameters();
+			Integer maxIterations = null;
+			try {
+				maxIterations = Integer.valueOf(maxItrs.getText());
+			} catch(Exception e) {
+				AlertMenu alert = new AlertMenu("Invalid Input: Max iterations not an integer.", "Please try again.");
+				return;
+			}
+			params.put("maxIterations", maxIterations);
+			
+			Integer bail = null;
+			try {
+				bail = Integer.valueOf(bailout.getText());
+			} catch(Exception e) {
+				AlertMenu alert = new AlertMenu("Invalid Input: Bailout not an integer.", "Please try again.");
+				return;
+			}
+			params.put("bailout", bail);
+			
+			Double speed = null;
+			try {
+				speed = Double.valueOf(zoomSpeed.getText());
+			} catch(Exception e) {
+				AlertMenu alert = new AlertMenu("Invalid Input: Zoom speed not a double.", "Please try again.");
+				return;
+			}
+			params.put("zSpeed", speed);
+			
+			Double zooom = null;
+			try {
+				zooom = Double.valueOf(zoom.getText());
+			} catch(Exception e) {
+				AlertMenu alert = new AlertMenu("Invalid Input: Zoom not a double.", "Please try again.");
+				return;
+			}
+			params.put("zoom", zooom);
+			
+			Double y = null;
+			try {
+				y = Double.valueOf(yPos.getText());
+			} catch(Exception e) {
+				AlertMenu alert = new AlertMenu("Invalid Input: Y-Position not a double.", "Please try again.");
+				return;
+			}
+			
+			Double x = null;
+			try {
+				x = Double.valueOf(xPos.getText());
+			} catch(Exception e) {
+				AlertMenu alert = new AlertMenu("Invalid Input: X-Position not a double.", "Please try again.");
+				return;
+			} 
+			
+			params.put("location", new Point(x, y));
+			
+			server.updateParameters(params);
+			
+		}
 	}
 
 }

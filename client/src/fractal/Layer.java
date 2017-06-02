@@ -3,8 +3,10 @@ package fractal;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -83,14 +85,14 @@ public abstract class Layer implements Serializable {
 	 * This is not recommended for high quality renderings. This is intended for
 	 * use in deep zooms.
 	 */
-	protected boolean autoBailout = true;
+	protected boolean autoBailout = false;
 
 	/**
 	 * whether or not the program will automatically calculate a maxIterations
 	 * value. This is not recommended for high quality renderings. This is
 	 * intended for use in deep zooms.
 	 */
-	protected boolean autoMaxIterations = true;
+	protected boolean autoMaxIterations = false;
 
 	/**
 	 * A description of the layer. It can be displayed as a tooltip in the
@@ -137,7 +139,7 @@ public abstract class Layer implements Serializable {
 		this.palette = palette;
 		this.layer = layer - 1;
 	}
-
+	
 	/**
 	 * A render method that takes in a 2D array of pixels which represent the
 	 * image. The layer will render itself to the array.
@@ -146,6 +148,10 @@ public abstract class Layer implements Serializable {
 	 */
 	public Color[][] render() {
 		if(visible && opacity != 0) {
+			if(autoMaxIterations)
+				calculateIterations(realResolution.x, realResolution.y);
+			if(autoBailout)
+				calculateBailout(realResolution.x, realResolution.y);
 			Color[][] pixels = new Color[screenResolution.width][screenResolution.height];
 			render(pixels, screenResolution.width, screenResolution.height, realResolution.x, realResolution.y, location.x,
 				location.y);
@@ -181,16 +187,26 @@ public abstract class Layer implements Serializable {
 			double yPos);
 
 	/**
-	 * This method is called at the start of every rendering cycle. This gives
-	 * the layer an opportunity to automtically calculate bailout and
-	 * maxIterations values
+	 * This method is called at the start of every rendering cycle if autoMaxIterations is true. This gives
+	 * the layer an opportunity to automtically calculate maxIterations values
 	 * 
 	 * @param rWidth
 	 *            the width in real units of the image being drawn
 	 * @param rHeight
 	 *            the height in real units of the image being drawn
 	 */
-	protected abstract void calculateIterationsAndBailout(double rWidth, double rHeight);
+	protected abstract void calculateIterations(double rWidth, double rHeight);
+	
+	/**
+	 * This method is called at the start of every rendering cycle if autoBailout is true. This gives
+	 * the layer an opportunity to automtically calculate bailout
+	 * 
+	 * @param rWidth
+	 *            the width in real units of the image being drawn
+	 * @param rHeight
+	 *            the height in real units of the image being drawn
+	 */
+	protected abstract void calculateBailout(double rWidth, double rHeight);
 
 	/**
 	 * Used to change this layer's color palette
@@ -210,6 +226,18 @@ public abstract class Layer implements Serializable {
 	 */
 	public void setLocation(Point location) {
 		this.location = location;
+	}
+	
+	/**
+	 * Used to change the bailout value of the layer.
+	 * @param newBailout the new bailout value for the layer
+	 */
+	public void setBailout(int newBailout) {
+		this.bailout = newBailout;
+	}
+	
+	public void setMaxIterations(int maxIterations) {
+		this.maxIterations = maxIterations;
 	}
 
 	/**
@@ -327,41 +355,6 @@ public abstract class Layer implements Serializable {
 	 */
 	public double getOpacity() {
 		return opacity;
-	}
-	
-	/**
-	 * Saves the fractal at the specified location with the specified fractal
-	 * name
-	 * 
-	 * @param fractalName
-	 *            the name of the fractal this layer is a part of
-	 * @throws IOException
-	 *             thrown if the file isn't found or if the SecurityManager
-	 *             denies write access to the file
-	 */
-	public void save(String fractalName) throws IOException {
-		File f = new File(Constants.FRACTAL_FILEPATH + "/" + fractalName);
-		if (!f.exists()) {
-			f.mkdirs();
-			f.createNewFile();
-		}
-		FileWriter writer = new FileWriter(
-				new File(Constants.FRACTAL_FILEPATH + "/" + fractalName + "/" + name + ".layer"));
-		writer.write("<name:" + name + ">\r\n");
-		writer.write("<type:" + this.getClass().getSimpleName() + ">\r\n");
-		if (autoBailout)
-			writer.write("<bailout:auto>\r\n");
-		else
-			writer.write("<bailout:" + bailout + ">\r\n");
-		if (autoMaxIterations)
-			writer.write("<maxIterations:auto>\r\n");
-		else
-			writer.write("<maxIterations:" + maxIterations + ">\r\n");
-		writer.write("<layer:" + layer + ">\r\n");
-		writer.write(
-				"<palette:" + Constants.FRACTAL_FILEPATH + "palettes/" + fractalName + "_" + name + ".palette>\r\n");
-		palette.writeTo(fractalName + "_" + name);
-		writer.close();
 	}
 
 	//TODO: test error message
