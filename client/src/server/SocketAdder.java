@@ -17,6 +17,11 @@ public class SocketAdder extends Thread {
 
 	private ArrayList<SocketWrapper> children;
 	private Server server;
+	/**
+	 * This varialbe is used to stop the thread. The main logic loop within the run() method will continue running
+	 * until this is set to false.
+	 */
+	public volatile boolean running = true;
 
 	public SocketAdder(ArrayList<SocketWrapper> children, Server server) {
 		this.children = children;
@@ -28,7 +33,7 @@ public class SocketAdder extends Thread {
 		try {
 			DatagramSocket sock = new DatagramSocket(Constants.BROADCAST_PORT, InetAddress.getByName("0.0.0.0"));
 			sock.setBroadcast(true);
-			while (true) {
+			while (running) {
 				byte[] buffer = new byte[15000];
 				DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 				sock.receive(packet);
@@ -56,7 +61,10 @@ public class SocketAdder extends Thread {
 					w.addMessageListener(new MessageListener() {
 						public void messageRecieved(Object o) {
 							synchronized (server) {
-								server.handleMessage(o, w);
+								if(o instanceof String && o.equals("removed"))
+									w.sendMessage("removed");
+								else
+									server.handleMessage(o, w);
 							}
 						}
 					});

@@ -446,5 +446,9 @@ public class FractalEditor extends Scene {
 		fractalView.setImage(SwingFXUtils.toFXImage(this.fractal.getImage(), null));
 		bp.layout();
 	}
+	
+	public Server getServer() {
+		return network;
+	}
 
 }

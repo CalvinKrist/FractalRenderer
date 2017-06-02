@@ -30,9 +30,12 @@ import util.Point;
  * @author Calvin
  *
  */
-@SuppressWarnings("serial")
 public class RenderManager implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5287342340788760671L;
 	/**
 	 * A list of all the layers making up a fractal
 	 */
@@ -124,8 +127,7 @@ public class RenderManager implements Serializable {
 	 *            of a saved fractal
 	 */
 	public RenderManager(String name) {
-		Parameters params = new Parameters(Constants.FRACTAL_FILEPATH + name + "/" + name + ".fractal");
-		init(params);
+		this(new File(Constants.FRACTAL_FILEPATH + name));
 	}
 
 	/**

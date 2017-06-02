@@ -120,6 +120,13 @@ public class Client extends NetworkNode {
 					else if(j instanceof RenderManager) {
 						fractal = (RenderManager)j;
 						log.newLine("RenderManager recieved: " + fractal.toString());
+					} else if(j instanceof String) {
+						if(j.equals("removing")) {
+							server.sendMessage("removed.");
+							log.blankLine();
+							log.newLine("Removed by server.");
+							kill();
+						}
 					}
 				}
 			});
@@ -133,7 +140,7 @@ public class Client extends NetworkNode {
 			log.addError(e);
 			log.newLine("Server not available. Shutting down.");
 			AlertMenu alert = new AlertMenu("Server not Available", "Shutting down. Please try again.");
-			kill();
+			System.exit(0);
 		}	
 	}
 

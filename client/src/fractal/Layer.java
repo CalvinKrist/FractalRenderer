@@ -33,8 +33,13 @@ import util.Point;
  * @author Calvin
  *
  */
-@SuppressWarnings({ "serial", "unchecked", "rawtypes" })
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public abstract class Layer implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5915996459965340211L;
 
 	/**
 	 * The palette the layer will use to color itself
@@ -229,11 +234,27 @@ public abstract class Layer implements Serializable {
 	}
 	
 	/**
+	 * Used to get the bailout value of the layer.
+	 * @return the bailout value of the layer
+	 */
+	public long getBailout() {
+		return bailout;
+	}
+	
+	/**
 	 * Used to change the bailout value of the layer.
 	 * @param newBailout the new bailout value for the layer
 	 */
-	public void setBailout(int newBailout) {
+	public void setBailout(long newBailout) {
 		this.bailout = newBailout;
+	}
+	
+	/**
+	 * Used to get the maximum iterations of the layer.
+	 * @return the maximum iterations of the layer.
+	 */
+	public int getMaxIterations() {
+		return maxIterations;
 	}
 	
 	public void setMaxIterations(int maxIterations) {

@@ -137,6 +137,8 @@ public class Server extends NetworkNode {
 		params.put("zSpeed", zoomSpeed);
 		params.put("location", parameters.getParameter("location"));
 		params.put("userCount", children.size());
+		params.put("maxIterations", fractal.getLayers().get(0).getMaxIterations());
+		params.put("bailout", fractal.getLayers().get(0).getBailout());
 		try {
 			params.put("frameCount",
 					(int) (Math.log(zoomLevel / 4) / Math.log(zoomSpeed)));
@@ -156,7 +158,7 @@ public class Server extends NetworkNode {
 		zoomSpeed = params.getParameter("zSpeed", Double.class);
 		parameters.put("zoom", params.getParameter("zoom"));
 		for(Layer l : fractal.getLayers()) {
-			l.setBailout(params.getParameter("bailout", Integer.class));
+			l.setBailout(params.getParameter("bailout", Long.class));
 			l.setMaxIterations(params.getParameter("maxIterations", Integer.class));
 		}
 		fractal.setLocation(params.getParameter("location", util.Point.class));
@@ -213,6 +215,7 @@ public class Server extends NetworkNode {
 		for (int i = 0; i < children.size(); i++) {
 			if (children.get(i).getInet().equals(addr)) {
 				children.get(i).close();
+				children.get(i).sendMessage("removing");
 				children.remove(i);
 				log.blankLine();
 				log.newLine("User at " + addr.getHostAddress() + " removed.");
@@ -239,7 +242,9 @@ public class Server extends NetworkNode {
 	}
 
 	public void kill() {
-		// TODO: shut down server
+		adder.running = false;
+		for(SocketWrapper w: children)
+			w.close();
 	}
 
 }

@@ -56,18 +56,22 @@ public class NetworkCreationTool {
 			choices.add(f.getName());
 		}
 
-		ChoiceDialog<String> dialog1 = new ChoiceDialog<>(choices.get(0), choices);
+		ChoiceDialog<String> dialog1 = null;
+		try {
+			dialog1 = new ChoiceDialog<>(choices.get(0), choices);
+		} catch(IndexOutOfBoundsException e) {
+			AlertMenu alarm = new AlertMenu("Cannot create network: no fractal found on this computer.", "Fractals are searched for in the fractals folder. Please save a fractal to that folder and try again.");
+		}
 		dialog1.setTitle("Create Network");
 		dialog1.setHeaderText("Step 1");
 		dialog1.setContentText("Choose a fractal:");
-
+		System.out.println("here...");
 		RenderManager fractal = null;
 		try {
 			fractal = new RenderManager(dialog1.showAndWait().get());
 		} catch (Exception e) {
 			return false;
 		}
-
 		Pair<Integer, Integer> dimension = displayDialog2();
 		if (dimension == null)
 			return false;

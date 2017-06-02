@@ -175,7 +175,13 @@ public class Display extends JPanel implements Runnable {
 		zoomSpeed = new JTextField(10);
 		zoomSpeed.setFont(labelFont);
 		zoomSpeed.setText("");
-
+		maxItrs = new JTextField(10);
+		maxItrs.setFont(labelFont);
+		maxItrs.setText("");
+		bailout = new JTextField(10);
+		bailout.setFont(labelFont);
+		bailout.setText("");
+				
 		JPanel p = new JPanel();
 		p.setBackground(bgColor);
 		p.setLayout(new GridLayout(7, 2));
@@ -183,7 +189,7 @@ public class Display extends JPanel implements Runnable {
 		// MaxIteraions
 		JPanel maxItrs = new JPanel();
 		maxItrs.setBackground(bgColor);
-		JLabel maxItrsLabel = new JLabel("Max. Iterations:");
+		JLabel maxItrsLabel = new JLabel("Max. Iters:");
 		maxItrsLabel.setFont(labelFont);
 		maxItrs.add(maxItrsLabel);
 		maxItrs.add(this.maxItrs);
@@ -194,15 +200,15 @@ public class Display extends JPanel implements Runnable {
 		maxItrsAccept.setAlignmentY(1);
 		maxItrsAccept.addActionListener(new FractalUpdateListener());
 		maxItrs.add(maxItrsAccept);
-		p.add(maxItrs, 5, 0);
+		p.add(maxItrs, 6, 0);
 
-		// MaxIteraions
+		// Bailout
 		JPanel bailout = new JPanel();
-		maxItrs.setBackground(bgColor);
+		bailout.setBackground(bgColor);
 		JLabel bailoutLabel = new JLabel("Bailout:");
-		maxItrsLabel.setFont(labelFont);
-		maxItrs.add(bailout);
-		maxItrs.add(this.bailout);
+		bailoutLabel.setFont(labelFont);
+		bailout.add(bailoutLabel);
+		bailout.add(this.bailout);
 		this.bailout.setAlignmentY(0);
 		JButton bailoutAccept = new JButton("Submit");
 		bailoutAccept.setFont(new Font("Arial", 12, 14));
@@ -210,7 +216,7 @@ public class Display extends JPanel implements Runnable {
 		bailoutAccept.setAlignmentY(1);
 		bailoutAccept.addActionListener(new FractalUpdateListener());
 		bailout.add(bailoutAccept);
-		p.add(bailout, 6, 0);
+		p.add(bailout, 5, 0);
 
 		// zoomSpeed
 		JPanel zSpeed = new JPanel();
@@ -394,6 +400,10 @@ public class Display extends JPanel implements Runnable {
 			yPos.setText(params.getParameter("location", util.Point.class).y + "");
 		if (!zoomSpeed.isFocusOwner())
 			zoomSpeed.setText(1 / params.getParameter("zSpeed", Double.class) + "");
+		if(!maxItrs.isFocusOwner())
+			maxItrs.setText(params.getParameter("maxIterations") + "");
+		if(!bailout.isFocusOwner())
+			bailout.setText(params.getParameter("bailout") + "");
 		numUsersLabel.setText("  User Count: " + params.getParameter("userCount"));
 		frameCountLabel.setText("  Frame Count: " + params.getParameter("frameCount"));
 	}
@@ -404,25 +414,25 @@ public class Display extends JPanel implements Runnable {
 			Parameters params = new Parameters();
 			Integer maxIterations = null;
 			try {
-				maxIterations = Integer.valueOf(maxItrs.getText());
+				maxIterations = Integer.valueOf(maxItrs.getText().trim());
 			} catch(Exception e) {
 				AlertMenu alert = new AlertMenu("Invalid Input: Max iterations not an integer.", "Please try again.");
 				return;
 			}
 			params.put("maxIterations", maxIterations);
 			
-			Integer bail = null;
+			Long bail = null;
 			try {
-				bail = Integer.valueOf(bailout.getText());
+				bail = Long.valueOf(bailout.getText().trim());
 			} catch(Exception e) {
-				AlertMenu alert = new AlertMenu("Invalid Input: Bailout not an integer.", "Please try again.");
+				AlertMenu alert = new AlertMenu("Invalid Input: Bailout not a long.", "Please try again.");
 				return;
 			}
 			params.put("bailout", bail);
 			
 			Double speed = null;
 			try {
-				speed = Double.valueOf(zoomSpeed.getText());
+				speed = Double.valueOf(zoomSpeed.getText().trim());
 			} catch(Exception e) {
 				AlertMenu alert = new AlertMenu("Invalid Input: Zoom speed not a double.", "Please try again.");
 				return;
@@ -431,7 +441,7 @@ public class Display extends JPanel implements Runnable {
 			
 			Double zooom = null;
 			try {
-				zooom = Double.valueOf(zoom.getText());
+				zooom = Double.valueOf(zoom.getText().trim());
 			} catch(Exception e) {
 				AlertMenu alert = new AlertMenu("Invalid Input: Zoom not a double.", "Please try again.");
 				return;
@@ -440,7 +450,7 @@ public class Display extends JPanel implements Runnable {
 			
 			Double y = null;
 			try {
-				y = Double.valueOf(yPos.getText());
+				y = Double.valueOf(yPos.getText().trim());
 			} catch(Exception e) {
 				AlertMenu alert = new AlertMenu("Invalid Input: Y-Position not a double.", "Please try again.");
 				return;
@@ -448,7 +458,7 @@ public class Display extends JPanel implements Runnable {
 			
 			Double x = null;
 			try {
-				x = Double.valueOf(xPos.getText());
+				x = Double.valueOf(xPos.getText().trim());
 			} catch(Exception e) {
 				AlertMenu alert = new AlertMenu("Invalid Input: X-Position not a double.", "Please try again.");
 				return;
