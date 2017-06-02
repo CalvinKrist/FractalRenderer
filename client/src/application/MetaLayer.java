@@ -3,6 +3,7 @@ package application;
 public class MetaLayer {
 	private String name, type;
 	private boolean delete;
+	private int opacity;
 
 	public MetaLayer(String name, String type) {
 		this.name = name;
@@ -43,5 +44,14 @@ public class MetaLayer {
 	public String toString() {
 		return getName();
 	}
+
+	public int getOpacity() {
+		return opacity;
+	}
+
+	public void setOpacity(int opacity) {
+		this.opacity = opacity;
+	}
+
 
 }
