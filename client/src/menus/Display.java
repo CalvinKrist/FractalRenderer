@@ -39,6 +39,14 @@ import util.Constants;
 import util.Log;
 import util.Parameters;
 
+/**
+ * This class contains a lot of the rendering code and logic code for the Network View.
+ * It interfaces with the server when data is needed or modified. It displays all the
+ * computers connected to the network and is the only way to modify the parameters
+ * of the network.
+ * @author Calvin
+ *
+ */
 public class Display extends JPanel implements Runnable {
 
 	private JTextField zoom, xPos, yPos, zoomSpeed, maxItrs, bailout;
@@ -47,7 +55,13 @@ public class Display extends JPanel implements Runnable {
 
 	private JLabel numUsersLabel, frameCountLabel, avgRenderTimeLabel;
 
+	/**
+	 * The width of the panel in pixels
+	 */
 	public static final int DISPLAY_WIDTH = 320;
+	/**
+	 * The height of the panel in pixels
+	 */
 	public static final int DISPLAY_HEIGHT = 320;
 
 	private DecimalFormat df;
@@ -60,8 +74,16 @@ public class Display extends JPanel implements Runnable {
 
 	private NetworkView view;
 
+	/**
+	 * Because the Display implements Running, there needs to be some way to shut it down. This boolean is used. The display will
+	 * ask the server for data updares every few seconds while this is true. Once set to false, that will end.
+	 */
 	public volatile boolean running = true;
 
+	/**
+	 * Creates the display and starts the thread
+	 * @param server the server whose data the Display will represent and modify
+	 */
 	public Display(Server server) {
 		this.server = server;
 		log = server.getLog();
@@ -319,6 +341,10 @@ public class Display extends JPanel implements Runnable {
 		return p;
 	}
 
+	/**
+	 * This contains one of the main logic loops of this class. It starts by creating the JFrame the display
+	 * is shown in. After that, it enters a loop where every few seconds it will ask the server for updates
+	 */
 	@Override
 	public void run() {
 		JFrame f = new JFrame("Network");
@@ -366,6 +392,11 @@ public class Display extends JPanel implements Runnable {
 		}
 	}
 
+	/**
+	 * Called to update the visual representation of the network when changes occur
+	 * @param networkElements a list of all the SockeWrappers connecting to the server
+	 * @param map maps each SocketWrapper to the jobs it has assigned
+	 */
 	public void updateNetworkView(List<SocketWrapper> networkElements, Map<SocketWrapper, Queue<Job>> map) {
 		ArrayList<NetworkElement> elements = new ArrayList<NetworkElement>();
 		for (SocketWrapper w : networkElements)

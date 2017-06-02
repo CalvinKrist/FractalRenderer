@@ -12,6 +12,11 @@ import javax.swing.JScrollPane;
 
 import server.Server;
 
+/**
+ * Displays all the NetworkElements and interfaces between the server and each element
+ * @author 1355710
+ *
+ */
 public class NetworkView extends JPanel {
 	
 	//TODO: computer stats
@@ -22,6 +27,10 @@ public class NetworkView extends JPanel {
 	
 	private Server server;
 	
+	/**
+	 * Initializes the GUI to display network elements
+	 * @param server
+	 */
 	public NetworkView(Server server) {
 		this.setPreferredSize(new Dimension(Display.DISPLAY_WIDTH, Display.DISPLAY_HEIGHT));
 		this.server = server;
@@ -34,6 +43,10 @@ public class NetworkView extends JPanel {
 		this.add(scroll, BorderLayout.CENTER);
 	}
 	
+	/**
+	 * Used to add a new NetworkElement to the display
+	 * @param element the new element to be added to the display
+	 */
 	public void addNewNetworkElement(NetworkElement element) {
 		elements.add(element);
 		panel.removeAll();
@@ -57,6 +70,10 @@ public class NetworkView extends JPanel {
 
 	}
 	
+	/**
+	 * Used to set all the network elements of this display
+	 * @param elements all the elements to be displayed
+	 */
 	public void setNetworkElements(ArrayList<NetworkElement> elements) {
 		this.elements = elements;
 		panel.removeAll();
@@ -79,6 +96,10 @@ public class NetworkView extends JPanel {
 		this.repaint();
 	}
 	
+	/**
+	 * Used to remove a network element from the display
+	 * @param element the element to be removed
+	 */
 	public void removeNetworkElement(NetworkElement element) {
 		elements.remove(element);
 		panel.removeAll();

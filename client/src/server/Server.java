@@ -56,6 +56,12 @@ public class Server extends NetworkNode {
 	
 	private double zoomSpeed;
 
+	/**
+	 * Creates a server using the given fractal, the given zoom speed, and that will save images to the selected directory
+	 * @param fractal the fractal the network render
+	 * @param zoomSpeed the speed at which the rendered images will zoom into the fractal
+	 * @param directory the directory the rendered images will be saved to
+	 */
 	public Server(RenderManager fractal, double zoomSpeed, String directory) {
 		this.fractal = fractal;
 		this.zoomSpeed = zoomSpeed;
@@ -68,6 +74,10 @@ public class Server extends NetworkNode {
 		parameters.put("name", fractal.getName());
 	}
 
+	/**
+	 * This method actually starts the server using the given log to output information/
+	 * @param log the log where information will be output to
+	 */
 	public void init(Log log) {
 		this.log = log;
 
@@ -85,6 +95,12 @@ public class Server extends NetworkNode {
 		log.newLine("Server started.");
 	}
 
+	/**
+	 * When a SocketWrapper recieves a message of any kind, it call that method. Hence, this method described what to do
+	 * when different types of messages are recieved.
+	 * @param o the message recieved
+	 * @param sender the SocketWrapper that revieved the message (or, from the perspective of the server, the client that sent the message)
+	 */
 	public void handleMessage(Object o, SocketWrapper sender) {
 		if (o instanceof Job) {
 			uncompletedJobs.get(sender).remove((Job) o);
@@ -102,6 +118,11 @@ public class Server extends NetworkNode {
 		}
 	}
 
+	/**
+	 * Returns the parameters that admins might be concerned with. This includes parameters and statistics. All of this 
+	 * data can be viewed from the NetworkView menu
+	 * @return the parameters admins might be concerned with.
+	 */
 	public Parameters getAdminParameters() {
 		Map<String, Serializable> params = new HashMap<String, Serializable>();
 		double zoomLevel;

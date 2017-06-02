@@ -9,6 +9,11 @@ import javax.swing.JPanel;
 
 import server.Job;
 
+/**
+ * Represents a job in the NetowkrDisplay. Currently incomplete and disfunctional.
+ * @author Calvin
+ *
+ */
 public class JobElement extends JPanel {
 	
 	public JobElement(Job b) {

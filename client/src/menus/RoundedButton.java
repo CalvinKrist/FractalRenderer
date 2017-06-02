@@ -11,10 +11,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
+/**
+ * Functions as a normal JButton but it overrides the rendering code to instead be a roudned rectangle, as opposed to a rectangle with hard corners
+ * @author Calvin
+ *
+ */
 public class RoundedButton extends Component {
 
-    ActionListener actionListener;     // Post action events to listeners
-    String label;                      // The Button's text
+    private ActionListener actionListener;     // Post action events to listeners
+    private String label;                      // The Button's text
     protected boolean pressed = false; // true if the button is detented.
 
     /**

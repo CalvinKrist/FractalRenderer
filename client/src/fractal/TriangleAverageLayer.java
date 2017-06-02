@@ -11,7 +11,8 @@ import util.Utils;
 import util.Vector2;
 
 /**
- * 
+ * A layer which uses a rendering method called 'Triangle Average Inequality'. Please refer to
+ * "Härkönen, Jussi: On Smooth Fractal Coloring Techniques" for more information
  * @author Calvin
  *
  */
@@ -35,6 +36,10 @@ public class TriangleAverageLayer extends Layer {
 	//video
 	int su = 0;
 	
+	/**
+	 * Initializes the layer with some basic values. AutoBailout and AutoMaxIterations are false, is creates a 
+	 * description, maxIterations is 1000, bailout is set to 10^4
+	 */
 	public TriangleAverageLayer() {
 		super();
 		autoBailout = false;
@@ -48,6 +53,9 @@ public class TriangleAverageLayer extends Layer {
 		bounds = new LinkedList<MinMax>();
 	}
 	
+	/**
+	 * Returns bailout and maxIterations as customizable parameters
+	 */
 	public Parameters getParameters() {
 		Parameters props = new Parameters(new HashMap<String, Serializable>());
 		if(autoBailout = true)

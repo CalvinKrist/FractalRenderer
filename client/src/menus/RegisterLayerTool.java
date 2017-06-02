@@ -10,12 +10,26 @@ import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 import util.Constants;
 
+/**
+ * This is a tool that takes the user through a series of menus to register a new layer type while the program is still
+ * running. Alternatively, new layer types can be registered by just restarting the application.
+ * @author Calvin
+ *
+ */
 public class RegisterLayerTool {
 	
 	private File file;
 	
+	/**
+	 * An empty constructor
+	 */
 	public RegisterLayerTool() {}
 	
+	/**
+	 * This method takes the user through a series of menus that, at the end, will locate the file
+	 * containing the data for the new layer type. It will then store that file internally for access later.
+	 * @return true if the file was located, false if the user cancelled.
+	 */
 	public boolean registerLayer() {
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Register Layer");
@@ -51,6 +65,10 @@ public class RegisterLayerTool {
 		return true;
 	}
 	
+	/**
+	 * Used to access the file stored by the registerLayer() method
+	 * @return the file located by the menu
+	 */
 	public File getFile() {
 		return file;
 	}

@@ -14,6 +14,7 @@ import java.util.Scanner;
 import com.sun.javafx.scene.paint.GradientUtils.Point;
 
 import fractal.RenderManager;
+import menus.AlertMenu;
 import util.Constants;
 import util.DataTag;
 import util.Log;
@@ -71,6 +72,7 @@ public class Client extends NetworkNode {
 	 * @param log The log the client and all the objects it creates will use to log and print information.
 	 */
 	public void init(Log log) {
+		System.out.println("creaing");
 		this.log = log;
 		log.blankLine();
 		log.newLine("Creating new client.");
@@ -80,10 +82,10 @@ public class Client extends NetworkNode {
 		
 		initializeServer();
 		log.newLine("Succesfully connected to server at " + ipAdress + ".");
+		System.out.println("success");
 		doJob();
 	}
 	
-	//TODO: create a pop-up message if no server is found
 	/**
 	 * Connects to the server by broadcasting on a pre-determined port to send the server its ipAddress and
 	 * then waiting for the server to connect to it using conventional Sockets. Creates the various listeners
@@ -130,6 +132,7 @@ public class Client extends NetworkNode {
 		} catch (Exception e) {
 			log.addError(e);
 			log.newLine("Server not available. Shutting down.");
+			AlertMenu alert = new AlertMenu("Server not Available", "Shutting down. Please try again.");
 			kill();
 		}	
 	}
@@ -185,10 +188,18 @@ public class Client extends NetworkNode {
 		
 	}
 	
+	/**
+	 * Used to get the fractal the client uses to render
+	 * @return the fractal the client uses to render
+	 */
 	public RenderManager getFractal() {
 		return fractal;
 	}
 	
+	/**
+	 * Used to set the fractal the client uses to render
+	 * @param fractal the new fractal for the client to use in rendering
+	 */
 	public void setFractal(RenderManager fractal) {
 		this.fractal = fractal;
 	}

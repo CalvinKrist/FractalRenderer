@@ -7,15 +7,14 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
 import fractal.Layer;
 import fractal.Palette;
 import fractal.RenderManager;
-import javafx.beans.Observable;
-import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.embed.swing.SwingNode;
 import javafx.event.EventHandler;
@@ -25,11 +24,10 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.CheckBoxTreeItem.TreeModificationEvent;
-import javafx.scene.control.Label;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -240,30 +238,35 @@ public class FractalEditor extends Scene {
 						} else {
 							((TreeItem) layers.getSelectionModel().getSelectedItem()).setValue(LayerBox
 									.display((TreeItem<MetaLayer>) layers.getSelectionModel().getSelectedItem()));
-							MetaLayer meta = ((MetaLayer)((TreeItem)layers.getSelectionModel().getSelectedItem()).getValue());
-							int index = layers.getRoot().getChildren().size() - 2 - layers.getRoot().getChildren().indexOf(layers.getSelectionModel().getSelectedItem());
+							MetaLayer meta = ((MetaLayer) ((TreeItem) layers.getSelectionModel().getSelectedItem())
+									.getValue());
+							int index = layers.getRoot().getChildren().size() - 2 - layers.getRoot().getChildren()
+									.indexOf(layers.getSelectionModel().getSelectedItem());
 							Layer l = fractal.getLayers().get(index);
-							if(meta.getType() != l.getClass().getSimpleName()) {
+							if (meta.getType() != l.getClass().getSimpleName()) {
 								Layer newLayer = Layer.getLayerByType(meta.getType());
 								newLayer.init(new Palette(), index + 1);
 								fractal.getLayers().set(index, newLayer);
 								fractal.update();
 							}
+							fractal.getLayers().get(index).setName(meta.getName());
 						}
-					} else if(mouseEvent.getClickCount() == 1 && layers.getSelectionModel().getSelectedItem() != add) {
-						int index = layers.getRoot().getChildren().size() - 2 - layers.getRoot().getChildren().indexOf(layers.getSelectionModel().getSelectedItem());
+					} else if (mouseEvent.getClickCount() == 1 && layers.getSelectionModel().getSelectedItem() != add) {
+						int index = layers.getRoot().getChildren().size() - 2
+								- layers.getRoot().getChildren().indexOf(layers.getSelectionModel().getSelectedItem());
 						Layer l = fractal.getLayers().get(index);
 						gradient.updateLayer(l);
 					}
 				}
 			});
-			/*layers.getSelectionModel().selectedItemProperty().addListener((ObservableValue observable, Object oldValue, Object newValue)-> {
-				if(newValue != add) {
-					int index = layers.getRoot().getChildren().size() - 2 - layers.getRoot().getChildren().indexOf(newValue);
-					Layer l = fractal.getLayers().get(index);
-					gradient.updateLayer(l);
-				}
-			});*/
+			/*
+			 * layers.getSelectionModel().selectedItemProperty().addListener((
+			 * ObservableValue observable, Object oldValue, Object newValue)-> {
+			 * if(newValue != add) { int index =
+			 * layers.getRoot().getChildren().size() - 2 -
+			 * layers.getRoot().getChildren().indexOf(newValue); Layer l =
+			 * fractal.getLayers().get(index); gradient.updateLayer(l); } });
+			 */
 			/**
 			 * layers.getRoot().addEventHandler(layers.getRoot().childrenModificationEvent(),
 			 * e -> { for(Object i:layers.getRoot().getChildren()){ if(i!=add)
@@ -294,6 +297,7 @@ public class FractalEditor extends Scene {
 			Menu system = new Menu("System");
 
 			MenuItem newNet = new MenuItem("Create New Network");
+			MenuItem viewNetLog = new MenuItem("View Network Log");
 			MenuItem viewNet = new MenuItem("View Network");
 			MenuItem endNet = new MenuItem("Close Network");
 
@@ -309,11 +313,13 @@ public class FractalEditor extends Scene {
 					viewNet.setDisable(false);
 					endNet.setDisable(false);
 					newNet.setDisable(true);
+					viewNetLog.setDisable(false);
 					alert.showAndWait();
 				}
 			});
 			viewNet.setDisable(true);
 			endNet.setDisable(true);
+			viewNetLog.setDisable(true);
 			viewNet.setOnAction(e -> {
 				Display display = new Display(this.network);
 
@@ -324,10 +330,19 @@ public class FractalEditor extends Scene {
 				this.network.kill();
 				viewNet.setDisable(true);
 				endNet.setDisable(true);
+				viewNetLog.setDisable(true);
 				newNet.setDisable(false);
 			});
+			viewNetLog.setOnAction(e -> {
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle("Network Log");
+				alert.setHeaderText(null);
+				alert.setContentText(this.network.getLog().getLog());
 
-			network.getItems().addAll(newNet, viewNet, endNet);
+				alert.showAndWait();
+			});
+
+			network.getItems().addAll(newNet, viewNet, viewNetLog, endNet);
 
 			MenuItem newFract = new MenuItem("New Fractal");
 			newFract.setOnAction(e -> {
@@ -370,8 +385,12 @@ public class FractalEditor extends Scene {
 				register.registerLayer();
 				Layer.registerLayer(register.getFile());
 			});
+			MenuItem changeLog = new MenuItem("Edit Log Options");
+			changeLog.setOnAction(e-> {
+				//TODO: two dropdown menu stuff with tooltips 
+			});
 
-			system.getItems().addAll(newLayer);
+			system.getItems().addAll(newLayer, changeLog);
 
 			menu.getMenus().addAll(fractal);
 			menu.getMenus().addAll(network);
@@ -394,17 +413,19 @@ public class FractalEditor extends Scene {
 		fractalEditor.minHeight(200);
 
 	}
-	
-	@SuppressWarnings({"rawtypes", "unchecked"})
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private CheckBoxTreeItem getNewTreeItem() {
 		CheckBoxTreeItem i = new CheckBoxTreeItem(new MetaLayer("Layer" + incrementLayers(), "HistogramLayer"));
 		i.setSelected(true);
-		i.addEventHandler(CheckBoxTreeItem.checkBoxSelectionChangedEvent(), new EventHandler<CheckBoxTreeItem.TreeModificationEvent>() {
-			public void handle(TreeModificationEvent event) {
-				int index = layers.getRoot().getChildren().size() - 2 - layers.getRoot().getChildren().indexOf(i);
-				fractal.setLayerVisiblity(index, i.selectedProperty().get());
-			}
-		});
+		i.addEventHandler(CheckBoxTreeItem.checkBoxSelectionChangedEvent(),
+				new EventHandler<CheckBoxTreeItem.TreeModificationEvent>() {
+					public void handle(TreeModificationEvent event) {
+						int index = layers.getRoot().getChildren().size() - 2
+								- layers.getRoot().getChildren().indexOf(i);
+						fractal.setLayerVisiblity(index, i.selectedProperty().get());
+					}
+				});
 		return i;
 	}
 

@@ -19,6 +19,12 @@ import server.Server;
 import server.SocketWrapper;
 import util.Constants;
 
+/**
+ * Represents an element of the network: in other words, represents computers that are connected to the
+ * network. It provides buttons for kicking those computers and for requesting and displaying their logs.
+ * @author Calvin
+ *
+ */
 public class NetworkElement extends JPanel {
 	
 	private InetAddress address;
@@ -29,8 +35,16 @@ public class NetworkElement extends JPanel {
 	
 	private Server server;
 	
+	/**
+	 * The height of the element in pixels
+	 */
 	public static final int HEIGHT = 50;
 	
+	/**
+	 * Initializes the network element given the server and the SocketWrapper.
+	 * @param server the server whose data this element can modify
+	 * @param wrapper the SocketWrapper this element represents
+	 */
 	public NetworkElement(Server server, SocketWrapper wrapper) {
 		address = wrapper.getInet();
 		displayName = new JLabel();
@@ -109,20 +123,36 @@ public class NetworkElement extends JPanel {
 		this.repaint();
 	}
 	
+	/**
+	 * Used to add a new job to the submenu of this NetworkElement
+	 * @param b the new job to be added to the submenu. Currently doesn't work.
+	 */
 	public void addNewJob(Job b) {
 		jobs.add(new JobElement(b));
 		createAndPlaceJobPanel();
 	}
 	
+	/**
+	 * Used to remove a job from the submenu of this element
+	 * @param b the job to be removed from the submenu. Currently doesn't work.
+	 */
 	public void removeJob(Job b) {
 		
 	}
 	
+	/**
+	 * Used to set the InetAddress of this NetworkElement
+	 * @param address the new InetAddress
+	 */
 	public void setAddress(InetAddress address) {
 		this.address = address;
 		displayName.setText(address.getHostName());
 	}
 	
+	/**
+	 * Used to get the name displayed for this network element
+	 * @return the name displayed for this network element
+	 */
 	public String getDisplayName() {
 		return displayName.getText();
 	}

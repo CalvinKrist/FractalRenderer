@@ -32,7 +32,6 @@ public class HistogramLayer extends Layer {
 	
 	/**
 	 *This method will return bailout and maxIterations as being editable parameters. 
-	 * @return a list of all editable parameters
 	 */
 	public Parameters getParameters() {
 		Parameters props = new Parameters(new HashMap<String, Serializable>());
@@ -47,11 +46,6 @@ public class HistogramLayer extends Layer {
 		return props;
 	}
 	
-	/**
-	 * This method is used to set the new values of the editable parameters after they have
-	 * been changed by the user
-	 * @param params a map of the new values for the editable parameters
-	 */
 	public void setParameters(Parameters params) {
 		String bailout = params.getParameter("bailout", String.class);
 		try {
@@ -150,10 +144,6 @@ public class HistogramLayer extends Layer {
 		if(autoMaxIterations) 
 			maxIterations = 1000;
 		
-	}
-	
-	private double layerAverage(double d1, double d2, double weight) {
-		return (d1 * layer + d2 * weight) / (layer + weight);
 	}
 
 }

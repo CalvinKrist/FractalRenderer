@@ -382,11 +382,19 @@ public abstract class Layer implements Serializable {
 
 		try {
 			File fractalFolder = new File(Constants.CUSTOM_FRACTAL_FILEPATH);
+			if(!fractalFolder.exists()) {
+				fractalFolder.mkdirs();
+				fractalFolder.createNewFile();
+			}
 			Method method = URLClassLoader.class.getDeclaredMethod("addURL", new Class[] { URL.class });
 			method.setAccessible(true);
 			method.invoke(ClassLoader.getSystemClassLoader(), new Object[] { fractalFolder.toURI().toURL() });
 			File[] fractals = fractalFolder.listFiles();
 			File classFolder = new File(Constants.CUSTOM_FRACTAL_FILEPATH + "fractal/");
+			if(!classFolder.exists()) {
+				classFolder.mkdirs();
+				classFolder.createNewFile();
+			}
 
 			DynamicCompiler.classOutputFolder = Constants.CUSTOM_FRACTAL_FILEPATH;
 			for (File f : fractals) {
