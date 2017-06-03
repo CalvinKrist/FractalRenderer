@@ -321,7 +321,16 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 					public void run() {
 						FileChooser chooser = new FileChooser();
 						chooser.setTitle("Open Palette");
-						chooser.setInitialDirectory(new File("fractals/palettes"));
+						File f1 = new File("fractals/palettes");
+						if(!f1.exists()) {
+							f1.mkdirs();
+							try {
+								f1.createNewFile();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+						chooser.setInitialDirectory(f1);
 						FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Palettes (*.palette)",
 								"*.palette");
 						chooser.getExtensionFilters().add(filter);
