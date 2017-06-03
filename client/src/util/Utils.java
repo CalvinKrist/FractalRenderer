@@ -13,19 +13,29 @@ import java.util.Set;
 import fractal.Palette;
 
 /**
- * A series of public static methods that are written to provide utility to other classes
+ * A series of public static methods that are written to provide utility to
+ * other classes
+ *
  * @author Calvin
  *
  */
 public class Utils {
 
 	/**
-	 * Will return a color evenly interpolated between two others assuming one is stepCount between them out of totalSteps. This
-	 * method uses linear interpolation
-	 * @param color1 the first color. If stepCount was 0, this color would be returned.
-	 * @param color2 the second color. If stepCount equaled totalSteps, this color would be returned.
-	 * @param stepCount the amount of steps one is between the two colors
-	 * @param totalSteps the total amount of steps between the two colors
+	 * Will return a color evenly interpolated between two others assuming one
+	 * is stepCount between them out of totalSteps. This method uses linear
+	 * interpolation
+	 *
+	 * @param color1
+	 *            the first color. If stepCount was 0, this color would be
+	 *            returned.
+	 * @param color2
+	 *            the second color. If stepCount equaled totalSteps, this color
+	 *            would be returned.
+	 * @param stepCount
+	 *            the amount of steps one is between the two colors
+	 * @param totalSteps
+	 *            the total amount of steps between the two colors
 	 * @return a new color which is the result of interpolating the two colors
 	 */
 	public static Color interpolateColors(Color color1, Color color2, double stepCount, double totalSteps) {
@@ -33,11 +43,18 @@ public class Utils {
 	}
 
 	/**
-	 * Will return a color evenly interpolated between the two assuming one is fraction% of the way between them. This method uses
-	 * linear interpolation.
-	 * @param color1 the first color. if fraction is 0, this color will be returned.
-	 * @param color2 the second color. if fraction is 1, this color will be returned.
-	 * @param fraction the percent of the way between the two colors where interpolation needs to take place
+	 * Will return a color evenly interpolated between the two assuming one is
+	 * fraction% of the way between them. This method uses linear interpolation.
+	 *
+	 * @param color1
+	 *            the first color. if fraction is 0, this color will be
+	 *            returned.
+	 * @param color2
+	 *            the second color. if fraction is 1, this color will be
+	 *            returned.
+	 * @param fraction
+	 *            the percent of the way between the two colors where
+	 *            interpolation needs to take place
 	 * @return a new Color which is the result of interpolating the two colors
 	 */
 	public static Color interpolateColors(Color color1, Color color2, double fraction) {
@@ -48,21 +65,60 @@ public class Utils {
 		return new Color(color1.getRed() + red, color1.getGreen() + green, color1.getBlue() + blue,
 				color1.getAlpha() + a);
 	}
+	//TODO Document
+	/**
+	 *
+	 * @param c
+	 * @return
+	 */
+	public static javafx.scene.paint.Color convertColortoFX(java.awt.Color color) {
+		java.awt.Color awtColor = color;
+		int r = awtColor.getRed();
+		int g = awtColor.getGreen();
+		int b = awtColor.getBlue();
+		int a = awtColor.getAlpha();
+		double opacity = a / 255.0;
+		javafx.scene.paint.Color fxColor = javafx.scene.paint.Color.rgb(r, g, b, opacity);
+		return fxColor;
+	}
+	//TODO Document
+	/**
+	 *
+	 * @param color
+	 * @return
+	 */
+	public static java.awt.Color convertColortoAWT(javafx.scene.paint.Color color) {
+		javafx.scene.paint.Color fx = color;
+		java.awt.Color awtColor = new java.awt.Color((float) fx.getRed(), (float) fx.getGreen(), (float) fx.getBlue(),
+				(float) fx.getOpacity());
+		return awtColor;
+	}
 
 	/**
-	 * Interpolates two doubles using linear interpolation assuming one is (stepCount / totalSteps)% between the two colors
-	 * @param d1 the first number. if stepCount is 0, this number will be returned.
-	 * @param d2 the second number. If stepCount equals totalSteps, this number will be returned.
-	 * @param stepCount the amount of steps one is between the two colors
-	 * @param totalSteps the total amount of steps between the two colors
-	 * @return a double which is the result of linearly interpolating the two doubles
+	 * Interpolates two doubles using linear interpolation assuming one is
+	 * (stepCount / totalSteps)% between the two colors
+	 *
+	 * @param d1
+	 *            the first number. if stepCount is 0, this number will be
+	 *            returned.
+	 * @param d2
+	 *            the second number. If stepCount equals totalSteps, this number
+	 *            will be returned.
+	 * @param stepCount
+	 *            the amount of steps one is between the two colors
+	 * @param totalSteps
+	 *            the total amount of steps between the two colors
+	 * @return a double which is the result of linearly interpolating the two
+	 *         doubles
 	 */
 	public static Double interpolateDouble(Double d1, Double d2, int stepCount, int totalSteps) {
 		return (d2 - d1) * stepCount / totalSteps + d1;
 	}
 
 	/**
-	 * This method finds and returns the broadcast InetAddress of the specific router being accessed
+	 * This method finds and returns the broadcast InetAddress of the specific
+	 * router being accessed
+	 *
 	 * @return the broadcast InetAddress of the specific router being accessed
 	 */
 	public static InetAddress getBroadcastAddress() {
@@ -88,10 +144,14 @@ public class Utils {
 	}
 
 	/**
-	 * This method doesn't really belong in this class because it is used only by the HistogramLayer class. Also, now that I know I can just 
-	 * call List.sort(new Comparator...); I would not write this again.
-	 * Anyways, this method applies merge sort to a 2D array of doubles, sorting them based on a specific value of one element of the grid.
-	 * @param array the array to be sorted
+	 * This method doesn't really belong in this class because it is used only
+	 * by the HistogramLayer class. Also, now that I know I can just call
+	 * List.sort(new Comparator...); I would not write this again. Anyways, this
+	 * method applies merge sort to a 2D array of doubles, sorting them based on
+	 * a specific value of one element of the grid.
+	 *
+	 * @param array
+	 *            the array to be sorted
 	 * @return the sorted array
 	 */
 	public static double[][] mergeSort(double[][] array) {

@@ -84,7 +84,7 @@ public class FractalEditor extends Scene {
 
 	/**
 	 * Initializes the menus and fractal
-	 * 
+	 *
 	 * @author David
 	 *
 	 * @throws FileNotFoundException
@@ -112,7 +112,6 @@ public class FractalEditor extends Scene {
 		VBox trees = new VBox();
 		trees.minHeightProperty().bind(bp.minHeightProperty().subtract(menu.minHeightProperty()));
 		trees.minWidthProperty().bind(bp.minWidthProperty().divide(6));
-		// bp.setPadding(new Insets(5));
 
 		Button render = new Button("Update");
 		render.minWidthProperty().bind(trees.minWidthProperty());
@@ -178,7 +177,7 @@ public class FractalEditor extends Scene {
 			layers.setEditable(true);
 			/**
 			 * layers.setCellFactory(new Callback<TreeView,CheckBoxTreeCell>(){
-			 * 
+			 *
 			 * @Override public CheckBoxTreeCell call(TreeView p) { return new
 			 *           CheckBoxTreeCell(); } });
 			 */
@@ -270,22 +269,7 @@ public class FractalEditor extends Scene {
 					}
 				}
 			});
-			/*
-			 * layers.getSelectionModel().selectedItemProperty().addListener((
-			 * ObservableValue observable, Object oldValue, Object newValue)-> {
-			 * if(newValue != add) { int index =
-			 * layers.getRoot().getChildren().size() - 2 -
-			 * layers.getRoot().getChildren().indexOf(newValue); Layer l =
-			 * fractal.getLayers().get(index); gradient.updateLayer(l); } });
-			 */
-			/**
-			 * layers.getRoot().addEventHandler(layers.getRoot().childrenModificationEvent(),
-			 * e -> { for(Object i:layers.getRoot().getChildren()){ if(i!=add)
-			 * ((TreeItem)(i)).addEventHandler(CheckBoxTreeItem.checkBoxSelectionChangedEvent(),
-			 * e2 -> { if(((CheckBoxTreeItem)e2.getSource()).isSelected())
-			 * ((TreeItem)e2.getSource()).setValue(LayerBox.display((TreeItem)e2.getSource()));
-			 * }); } });
-			 */
+			
 			layers.getRoot().getChildren().addAll(item, add);
 			{// TODO I DONT KNOW WHY THIS ISNT WORKING IUEAWBIUBFAI
 				/**
@@ -447,7 +431,7 @@ public class FractalEditor extends Scene {
 
 	/**
 	 * Updates the fractal display if it has been changed
-	 * 
+	 *
 	 * @author Calvin
 	 */
 	public void updateFractalImage() {
@@ -456,7 +440,7 @@ public class FractalEditor extends Scene {
 		fractalView.setImage(SwingFXUtils.toFXImage(this.fractal.getImage(), null));
 		bp.layout();
 	}
-	
+
 	public Server getServer() {
 		return network;
 	}
