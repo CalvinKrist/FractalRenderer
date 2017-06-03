@@ -350,7 +350,8 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 					// selectedButton.setData(newValue); this.repaint();
 					// NOTE: the value should be between 0 and 1.0
 					Platform.runLater(() -> {
-						selectedButton.setData(opacityBox.display(selectedButton));
+						selectedButton.setData(OpacityBox.display(selectedButton));
+						this.repaint();
 					});
 				} else {
 					// TODO: create a color menu for the selected button and

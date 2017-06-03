@@ -12,16 +12,14 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class opacityBox {
+public class OpacityBox {
 
-	final static Slider opacityLevel = new Slider(0, 1, 1);
-    final static Label opacityCaption = new Label("Opacity Level:");
-    final static Label opacityValue = new Label(Double.toString(opacityLevel.getValue()));
 
 	public static double display(ArrowButton button){
 		//TODO this isn't working correctly
-		opacityLevel.setValue((Double)button.getData());
-		System.out.println(button.getData());
+		Slider opacityLevel = new Slider(0,1,(Double)button.getData());
+		Label opacityCaption = new Label("Opacity Level:");
+		Label opacityValue = new Label(Double.toString(opacityLevel.getValue()));
 
 		Stage window  = new Stage();
 		window.setTitle("Opacity Picker");
@@ -64,6 +62,10 @@ public class opacityBox {
 
         GridPane.setConstraints(b, 2, 2);
         grid.getChildren().add(b);
+
+        window.setOnCloseRequest(e -> {
+
+        });
 
         window.setScene(scene);
         window.show();
