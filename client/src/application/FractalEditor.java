@@ -280,7 +280,11 @@ public class FractalEditor extends Scene {
 							int index = layers.getRoot().getChildren().size() - 2 - layers.getRoot().getChildren()
 									.indexOf(layers.getSelectionModel().getSelectedItem());
 							Layer l = fractal.getLayers().get(index);
-							if (!meta.getType().equals(l.getClass().getSimpleName())) {
+							if(meta.getType().equals("DELETE")) {
+								fractal.getLayers().remove(index);
+								return;
+							}
+							else if (!meta.getType().equals(l.getClass().getSimpleName())) {
 								Layer newLayer = Layer.getLayerByType(meta.getType());
 								newLayer.init(new Palette(), index + 1);
 								l = newLayer;
