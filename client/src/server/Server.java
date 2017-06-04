@@ -59,9 +59,6 @@ public class Server extends NetworkNode {
 	private double zoomSpeed;
 	
 	private int frameCount = 0;
-	
-	private LinkedList<Long> times;
-	private Map<Job, Long> assignedTimes;
 
 	/**
 	 * Creates a server using the given fractal, the given zoom speed, and that will save images to the selected directory
@@ -79,9 +76,6 @@ public class Server extends NetworkNode {
 		parameters.put("radius", fractal.getRadius());
 		parameters.put("resolution", fractal.getScreenResolution());
 		parameters.put("name", fractal.getName());
-		
-		times = new LinkedList<Long>();
-		assignedTimes = new HashMap<Job, Long>();
 	}
 
 	/**
@@ -121,11 +115,6 @@ public class Server extends NetworkNode {
 			File dir = new File(directory + zoom + ".png");
 			dir.mkdirs();
 			frameCount++;
-			Long elapsed = System.currentTimeMillis() - assignedTimes.get(o);
-			System.out.println("elapsed: " + elapsed);
-			times.add(elapsed);
-			if(times.size() > 5)
-				times.removeFirst();
 			try {
 				ImageIO.write(img, "png", dir);
 			} catch (IOException e) {
@@ -155,10 +144,6 @@ public class Server extends NetworkNode {
 		params.put("maxIterations", fractal.getLayers().get(0).getMaxIterations());
 		params.put("bailout", fractal.getLayers().get(0).getBailout());
 			params.put("frameCount", frameCount);
-		Long avgTime = 0L;
-		for(Long l : times)
-			avgTime += l / times.size();
-		params.put("avgTime", avgTime);
 		Parameters param = new Parameters(params);
 		return param;
 	}
@@ -176,6 +161,8 @@ public class Server extends NetworkNode {
 			l.setMaxIterations(params.getParameter("maxIterations", Integer.class));
 		}
 		fractal.setLocation(params.getParameter("location", util.Point.class));
+		parameters.put("location", fractal.getLocation());
+		
 	}
 
 	public void createNextRenderJobSet() {
@@ -190,7 +177,7 @@ public class Server extends NetworkNode {
 	}
 
 	public void assignJob(SocketWrapper w) {
-		while (unnasignedJobs.size() < 2 || unnasignedJobs.size() < children.size() + 4)
+		while (unnasignedJobs.size() < 2 || unnasignedJobs.size() < children.size() * 1.2 + 1)
 			createNextRenderJobSet();
 		Job b = unnasignedJobs.remove();
 		if (b != null) {
@@ -198,7 +185,6 @@ public class Server extends NetworkNode {
 			if (!uncompletedJobs.containsKey(w))
 				uncompletedJobs.put(w, new LinkedList<Job>());
 			uncompletedJobs.get(w).add(b);
-			assignedTimes.put(b, System.currentTimeMillis());
 		}
 	}
 

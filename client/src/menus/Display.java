@@ -134,7 +134,6 @@ public class Display extends JPanel implements Runnable {
 						String dir = fileChooser.getSelectedFile().getPath();
 						if (!dir.substring(dir.lastIndexOf(".") + 1).equals("txt"))
 							dir = dir.substring(0, dir.lastIndexOf(".")) + ".txt";
-						System.out.println("\n\n" + dir + "\n\n");
 						try {
 							PrintWriter out = new PrintWriter(dir);
 							Scanner s = new Scanner(textArea.getText());
@@ -362,7 +361,6 @@ public class Display extends JPanel implements Runnable {
 
 			@Override
 			public void windowClosing(WindowEvent e) {
-				System.out.println("closing");
 				running = false;
 				server.setDisplay(null);
 			}
@@ -405,7 +403,6 @@ public class Display extends JPanel implements Runnable {
 		if(!bailout.isFocusOwner())
 			bailout.setText(params.getParameter("bailout") + "");
 		numUsersLabel.setText("  User Count: " + params.getParameter("userCount"));
-		avgRenderTimeLabel.setText("  Average Render Time: " + params.getParameter("avgTime") + "");
 		frameCountLabel.setText("  Frame Count: " + params.getParameter("frameCount"));
 	}
 	
