@@ -80,10 +80,8 @@ public class Client extends NetworkNode {
 		log.newLine("Creating new client.");
 		fractal = null;
 		jobs = new LinkedList<Job>();
-		log.newLine("Connecting to server at " + ipAdress + ".");
 		
 		initializeServer();
-		log.newLine("Succesfully connected to server at " + ipAdress + ".");
 		doJob();
 	}
 	
@@ -106,7 +104,7 @@ public class Client extends NetworkNode {
 			server = new SocketWrapper(temp.accept(), log);
 			temp.close();
 			log.newLine("Connected to server at " + server.getInetAdress());
-			
+			ipAdress = server.getInet().getHostAddress();
 			server.addNoConnectionListener(new NoConnectionListener() {
 				public void response(Exception e) {
 					log.newLine("Disconnected from server. Shutting down.");
@@ -191,8 +189,7 @@ public class Client extends NetworkNode {
 		Parameters params = j.getParameters();
 		fractal.setZoom(params.getParameter("zoom", Double.class));
 		fractal.setLocation(params.getParameter("location", util.Point.class));
-		int[][] pixels = new int[fractal.getScreenResolution().width][fractal.getScreenResolution().height];
-		fractal.render(pixels);
+		int[][] pixels = fractal.render();
 		j.setImage(pixels);
 		server.sendMessage(j);
 	}

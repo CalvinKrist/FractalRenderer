@@ -16,11 +16,10 @@ public class ClientTest {
 		Log log = new Log();
 		log.setPrintStream(System.out);
 		log.setLogLevel(Log.LEVEL_LOG);
-		log.setPrintLevel(Log.LEVEL_ERROR);
+		log.setPrintLevel(Log.LEVEL_LOG);
 		Client c = new Client();
-		c.init(log); 
 		
-		/*Thread t = new Thread(()-> {
+		Thread t = new Thread(()-> {
 			JFrame f = new JFrame();
 			JTextArea text = new JTextArea(20, 25);
 			JScrollPane scroll = new JScrollPane(text);
@@ -36,7 +35,9 @@ public class ClientTest {
 				text.setText(log.getLog());
 			}
 		});
-		t.start();*/
+		t.start();
+		
+		c.init(log); 
 	}
 
 }
