@@ -114,7 +114,7 @@ public abstract class Layer implements Serializable {
 	/**
 	 * The opacity of this layer. 1 = perfectly visible, 0 = invisible
 	 */
-	protected double opacity = 1.0;
+	private double opacity = 1.0;
 	
 	/**
 	 * Whether or not the layer is visible.
@@ -377,8 +377,15 @@ public abstract class Layer implements Serializable {
 	public double getOpacity() {
 		return opacity;
 	}
+	
+	/**
+	 * Used to change the opacity of the layer
+	 * @param opacity the new opacity of the layer
+	 */
+	public void setOpacity(double opacity) {
+		this.opacity = opacity;
+	}
 
-	//TODO: test error message
 	/**
 	 * This static method must be called at startup of the application if any
 	 * Layers are to be used. It looks at the specified directory for all custom

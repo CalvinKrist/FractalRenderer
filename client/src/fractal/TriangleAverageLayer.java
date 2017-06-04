@@ -16,9 +16,12 @@ import util.Vector2;
  * @author Calvin
  *
  */
-@SuppressWarnings("serial")
 public class TriangleAverageLayer extends Layer {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7937980458959852619L;
 	private long bailoutSquared;
 	private double magnitude, tweenval;
 	private double realIterations;
