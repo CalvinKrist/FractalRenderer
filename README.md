@@ -97,10 +97,8 @@ Creating new layer types:
 DAVID JOBS
 Add editable parameters to parameters section
 Make GUI even on all screen sizes
-Change the color picker and opacity picker menus to JavaFX
 Add layer movement controlls
 Make a tooltip in the layer editor display the description for each layer type
-GUI method of changing log options
 
 
 CALVIN JOBS
@@ -111,7 +109,6 @@ NO-ONE JOBS
 Fix glitch where app continues running after menu's closed
 Document code properly
 Generate JavaDocs
-Create user manual
 Do project writeup
 
 

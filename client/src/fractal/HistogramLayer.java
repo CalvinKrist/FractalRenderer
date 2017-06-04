@@ -124,10 +124,6 @@ public class HistogramLayer extends Layer {
 			pixels[(int) (info.get(i)[1])][(int) (info.get(i)[2])] = palette.colorAt(hue);
 		}
 	}
-
-	protected void calculateMaxBailout(double rWidth, double rHeight) {
-		
-	}
 	
 	protected void calculateIterations(double rWidth, double rHeight) {
 		maxIterations = 10000;
