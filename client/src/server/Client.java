@@ -74,18 +74,25 @@ public class Client extends NetworkNode {
 	 * Connects to the server and initializes anything that needs to be initialized.
 	 * @param log The log the client and all the objects it creates will use to log and print information.
 	 */
+<<<<<<< HEAD
 	public void init(Log log, String ip) {
 		System.out.println("creaing");
+=======
+	public void init(Log log) {
+>>>>>>> 2acf1e3af47a63aa9305e513c14cac6418ec0db5
 		this.log = log;
 		log.blankLine();
 		log.newLine("Creating new client.");
 		fractal = null;
 		jobs = new LinkedList<Job>();
-		log.newLine("Connecting to server at " + ipAdress + ".");
 		
+<<<<<<< HEAD
 		initializeServer(ip);
 		log.newLine("Succesfully connected to server at " + ipAdress + ".");
 		System.out.println("success");
+=======
+		initializeServer();
+>>>>>>> 2acf1e3af47a63aa9305e513c14cac6418ec0db5
 		doJob();
 	}
 	
@@ -98,7 +105,7 @@ public class Client extends NetworkNode {
 		try {
 			server = new SocketWrapper(new Socket(ip, Constants.PORT), log);
 			log.newLine("Connected to server at " + server.getInetAdress());
-			
+			ipAdress = server.getInet().getHostAddress();
 			server.addNoConnectionListener(new NoConnectionListener() {
 				public void response(Exception e) {
 					log.newLine("Disconnected from server. Shutting down.");
@@ -183,8 +190,7 @@ public class Client extends NetworkNode {
 		Parameters params = j.getParameters();
 		fractal.setZoom(params.getParameter("zoom", Double.class));
 		fractal.setLocation(params.getParameter("location", util.Point.class));
-		int[][] pixels = new int[fractal.getScreenResolution().width][fractal.getScreenResolution().height];
-		fractal.render(pixels);
+		int[][] pixels = fractal.render();
 		j.setImage(pixels);
 		server.sendMessage(j);
 	}
