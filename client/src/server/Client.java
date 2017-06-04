@@ -73,7 +73,6 @@ public class Client extends NetworkNode {
 	 * @param log The log the client and all the objects it creates will use to log and print information.
 	 */
 	public void init(Log log) {
-		System.out.println("creaing");
 		this.log = log;
 		log.blankLine();
 		log.newLine("Creating new client.");
@@ -83,7 +82,6 @@ public class Client extends NetworkNode {
 		
 		initializeServer();
 		log.newLine("Succesfully connected to server at " + ipAdress + ".");
-		System.out.println("success");
 		doJob();
 	}
 	
