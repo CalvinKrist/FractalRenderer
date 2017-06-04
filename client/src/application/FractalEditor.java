@@ -96,7 +96,7 @@ public class FractalEditor extends Scene {
 		// initializing stuff
 		Layer.initializeFractalRegistry();
 		File fractalDirectory = new File(Constants.FRACTAL_FILEPATH);
-		if(!fractalDirectory.exists()) {
+		if (!fractalDirectory.exists()) {
 			fractalDirectory.mkdirs();
 			try {
 				fractalDirectory.createNewFile();
@@ -170,54 +170,52 @@ public class FractalEditor extends Scene {
 			parameters.getRoot().setExpanded(true);
 			parameters.setShowRoot(false);
 			parameters.setEditable(true);
-			//TODO if need click for params
-			/**parameters.setOnMouseClicked(new EventHandler<MouseEvent>(){
-
-				@Override
-				public void handle(MouseEvent event) {
-					// TODO Auto-generated method stub
-					if(event.getClickCount()==2){
-						System.out.println("boop");
-						updateParams();
-					}
-				}
-				
-			});*/
-			parameters.setCellFactory(new Callback<TreeView, TreeCell<MetaParam>>(){
+			// TODO if need click for params
+			/**
+			 * parameters.setOnMouseClicked(new EventHandler<MouseEvent>(){
+			 * 
+			 * @Override public void handle(MouseEvent event) { // TODO
+			 *           Auto-generated method stub
+			 *           if(event.getClickCount()==2){
+			 *           System.out.println("boop"); updateParams(); } }
+			 * 
+			 *           });
+			 */
+			parameters.setCellFactory(new Callback<TreeView, TreeCell<MetaParam>>() {
 
 				@Override
 				public TreeCell call(TreeView param) {
-					// TODO Auto-generated method stub
-					StringConverter s = new StringConverter(){
+
+					StringConverter s = new StringConverter() {
 
 						@Override
 						public String toString(Object object) {
-							// TODO Auto-generated method stub
+
 							return object.toString();
 						}
 
 						@Override
 						public Object fromString(String string) {
-							// TODO Auto-generated method stub
-							return new MetaParam(string.substring(0,string.indexOf(": ")),string.substring(string.indexOf(": ")+2));
+							System.out.println("u are not a total failure");
+							return new MetaParam(string.substring(0, string.indexOf(": ")),
+									string.substring(string.indexOf(": ") + 2));
 						}
-						
+
 					};
 					return new TextFieldTreeCell<MetaParam>(s) {
 						@Override
-						public void updateItem(MetaParam item, boolean empty){
+						public void updateItem(MetaParam item, boolean empty) {
 							super.updateItem(item, empty);
 						}
-							
+
 					};
 				}
 			});
-			
 
 			layers.setRoot(new TreeItem());
 			layers.getRoot().setExpanded(true);
 			layers.setShowRoot(false);
-			//layers.setEditable(true);
+			// layers.setEditable(true);
 
 			// Use a custom callback to determine the style of the tree item
 			layers.setCellFactory(new Callback<TreeView, TreeCell>() {
@@ -262,8 +260,8 @@ public class FractalEditor extends Scene {
 			layers.setOnMouseClicked(new EventHandler<MouseEvent>() {
 				@Override
 				public void handle(MouseEvent mouseEvent) {
-					if(mouseEvent.getClickCount() == 1){
-						if(layers.getSelectionModel().getSelectedItem()!=add){
+					if (mouseEvent.getClickCount() == 1) {
+						if (layers.getSelectionModel().getSelectedItem() != add) {
 							updateParams();
 						}
 					}
@@ -274,8 +272,9 @@ public class FractalEditor extends Scene {
 							fractal.addLayer("HistogramLayer");
 							updateFractalImage();
 						} else {
-							((TreeItem) layers.getSelectionModel().getSelectedItem()).setValue(GradientMenus
-									.displayLayerMenu((TreeItem<MetaLayer>) layers.getSelectionModel().getSelectedItem()));
+							((TreeItem) layers.getSelectionModel().getSelectedItem())
+									.setValue(GradientMenus.displayLayerMenu(
+											(TreeItem<MetaLayer>) layers.getSelectionModel().getSelectedItem()));
 							MetaLayer meta = ((MetaLayer) ((TreeItem) layers.getSelectionModel().getSelectedItem())
 									.getValue());
 							int index = layers.getRoot().getChildren().size() - 2 - layers.getRoot().getChildren()
@@ -303,17 +302,19 @@ public class FractalEditor extends Scene {
 
 			layers.getRoot().getChildren().addAll(item, add);
 			{// TODO I DONT KNOW WHY THIS ISNT WORKING IUEAWBIUBFAI
-				/**
-				 * layers.getRoot().addEventHandler(layers.getRoot().childrenModificationEvent(),e
-				 * -> { for(Object i :((TreeItem)e.getSource()).getChildren()){
-				 * if(i!=add)
-				 * if(((MetaLayer)((TreeItem)(i)).getValue()).isDelete()){
-				 * layers.getSelectionModel().select(i);
-				 * layers.getSelectionModel().clearSelection(); } } });
-				 */
+
+				layers.getRoot().addEventHandler(layers.getRoot().childrenModificationEvent(), e -> {
+					for (Object i : ((TreeItem) e.getSource()).getChildren()) {
+						if (i != add)
+							if (((MetaLayer) ((TreeItem) (i)).getValue()).isDelete()) {
+								layers.getRoot().getChildren().remove(i);
+								layers.layout();
+							}
+					}
+				});
+
 			}
 		}
-
 
 		{// This is the menu stuff
 			Menu network = new Menu("Network");
@@ -351,7 +352,8 @@ public class FractalEditor extends Scene {
 				display.updateNetworkView(this.network.getChildren(), this.network.getUncompletedJobs());
 			});
 			endNet.setOnAction(e -> {
-				//TODO: kill won't stop network without getting a response from all clients
+				// TODO: kill won't stop network without getting a response from
+				// all clients
 				this.network.kill();
 				viewNet.setDisable(true);
 				endNet.setDisable(true);
@@ -433,7 +435,6 @@ public class FractalEditor extends Scene {
 		render.minHeightProperty().bind(trees.minHeightProperty().subtract(fractalView.fitHeightProperty()));
 		fractalEditor.setContent(gradient);
 		fractalEditor.minHeight(200);
-		
 
 	}
 
@@ -454,11 +455,10 @@ public class FractalEditor extends Scene {
 	}
 
 	private Layer getSelectedLayer() {
-		int index = layers.getRoot().getChildren().size() - 2 - layers.getRoot().getChildren()
-				.indexOf(layers.getSelectionModel().getSelectedItem());
+		int index = layers.getRoot().getChildren().size() - 2
+				- layers.getRoot().getChildren().indexOf(layers.getSelectionModel().getSelectedItem());
 		return fractal.getLayers().get(index);
 	}
-
 
 	private int incrementLayers() {
 		return layerIndex++;
@@ -479,12 +479,13 @@ public class FractalEditor extends Scene {
 	public Server getServer() {
 		return network;
 	}
-	
-	private void updateParams(){
-		while(!parameters.getRoot().getChildren().isEmpty())
+
+	private void updateParams() {
+		while (!parameters.getRoot().getChildren().isEmpty())
 			parameters.getRoot().getChildren().remove(0);
-		for(String i : getSelectedLayer().getParameters().keySet()){
-			parameters.getRoot().getChildren().add(new TreeItem( new MetaParam(i,getSelectedLayer().getParameters().getParameter(i))));
+		for (String i : getSelectedLayer().getParameters().keySet()) {
+			parameters.getRoot().getChildren()
+					.add(new TreeItem(new MetaParam(i, getSelectedLayer().getParameters().getParameter(i))));
 
 		}
 	}
