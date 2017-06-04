@@ -62,7 +62,8 @@ public class OpacityBox {
 
         GridPane.setConstraints(b, 2, 2);
         grid.getChildren().add(b);
-
+        
+        //TODO 
         window.setOnCloseRequest(e -> {
 
         });
