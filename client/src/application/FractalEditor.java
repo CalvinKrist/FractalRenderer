@@ -17,6 +17,7 @@ import fractal.RenderManager;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.embed.swing.SwingNode;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -112,11 +113,10 @@ public class FractalEditor extends Scene {
 		VBox trees = new VBox();
 		trees.minHeightProperty().bind(bp.minHeightProperty().subtract(menu.minHeightProperty()));
 		trees.minWidthProperty().bind(bp.minWidthProperty().divide(6));
-		// bp.setPadding(new Insets(5));
+		trees.setAlignment(Pos.CENTER);
 
 		Button render = new Button("Update");
 		render.minWidthProperty().bind(trees.minWidthProperty());
-		render.minHeightProperty().bind(trees.minHeightProperty().divide(6));
 
 		fractalView = new ImageView();
 		fractalView.setOnMouseClicked(e -> {
@@ -314,7 +314,6 @@ public class FractalEditor extends Scene {
 			}
 		}
 
-		fractalEditor.setOnMouseEntered(e -> gradient.repaint());
 
 		{// This is the menu stuff
 			Menu network = new Menu("Network");
@@ -431,8 +430,10 @@ public class FractalEditor extends Scene {
 
 		bp.minWidthProperty().bind(this.widthProperty());
 		bp.minHeightProperty().bind(this.heightProperty());
+		render.minHeightProperty().bind(trees.minHeightProperty().subtract(fractalView.fitHeightProperty()));
 		fractalEditor.setContent(gradient);
 		fractalEditor.minHeight(200);
+		
 
 	}
 
