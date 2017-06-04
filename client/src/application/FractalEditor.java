@@ -7,7 +7,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -23,6 +24,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.CheckBoxTreeItem.TreeModificationEvent;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -38,9 +40,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
-import menus.AlertMenu;
 import menus.Display;
-import menus.ExpandableMenu;
 import menus.ExportImageTool;
 import menus.NetworkCreationTool;
 import menus.RegisterLayerTool;
@@ -52,7 +52,6 @@ import util.Point;
 /**
  * @author David
  */
-@SuppressWarnings({ "rawtypes", "unchecked", "static-access", "restriction" })
 public class FractalEditor extends Scene {
 
 	private BorderPane bp;
@@ -85,12 +84,13 @@ public class FractalEditor extends Scene {
 
 	/**
 	 * Initializes the menus and fractal
-	 *
+	 * 
 	 * @author David
 	 *
 	 * @throws FileNotFoundException
 	 * @throws AWTException
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked", "static-access" })
 	public void initialize() throws FileNotFoundException, AWTException {
 		// initializing stuff
 		Layer.initializeFractalRegistry();
@@ -100,7 +100,7 @@ public class FractalEditor extends Scene {
 			try {
 				fractalDirectory.createNewFile();
 			} catch (IOException e1) {
-				log.addError(e1);
+				e1.printStackTrace();
 			}
 		}
 		fractal = new RenderManager();
@@ -112,6 +112,7 @@ public class FractalEditor extends Scene {
 		VBox trees = new VBox();
 		trees.minHeightProperty().bind(bp.minHeightProperty().subtract(menu.minHeightProperty()));
 		trees.minWidthProperty().bind(bp.minWidthProperty().divide(6));
+		// bp.setPadding(new Insets(5));
 
 		Button render = new Button("Update");
 		render.minWidthProperty().bind(trees.minWidthProperty());
@@ -145,7 +146,7 @@ public class FractalEditor extends Scene {
 				}
 		});
 		fractalView.setOnScroll(e -> {
-			double zoom = e.getDeltaY() > 0 ? 1 / .8 : .8;
+			double zoom = e.getDeltaY() > 0 ? 1 / .9 : .9;
 			this.fractal.setZoom(this.fractal.getZoom() * zoom);
 			this.updateFractalImage();
 		});
@@ -159,6 +160,8 @@ public class FractalEditor extends Scene {
 
 		{// Fitting gradientEditor to full screen
 			Dimension p = new Dimension((int) (Toolkit.getDefaultToolkit().getScreenSize().width * 0.75), 200);
+			System.out.println("Gradient Dimensions: " + p);
+
 			gradient = new Window(p, 50, this.fractal.getLayers().get(0));
 		}
 
@@ -175,7 +178,7 @@ public class FractalEditor extends Scene {
 			layers.setEditable(true);
 			/**
 			 * layers.setCellFactory(new Callback<TreeView,CheckBoxTreeCell>(){
-			 *
+			 * 
 			 * @Override public CheckBoxTreeCell call(TreeView p) { return new
 			 *           CheckBoxTreeCell(); } });
 			 */
@@ -206,7 +209,7 @@ public class FractalEditor extends Scene {
 									plusView.setFitWidth(16);
 									setGraphic(plusView);
 								} catch (IOException e) {
-									log.addError(e);
+									e.printStackTrace();
 								}
 							}
 						}
@@ -250,7 +253,7 @@ public class FractalEditor extends Scene {
 							int index = layers.getRoot().getChildren().size() - 2 - layers.getRoot().getChildren()
 									.indexOf(layers.getSelectionModel().getSelectedItem());
 							Layer l = fractal.getLayers().get(index);
-							if (!meta.getType().equals(l.getClass().getSimpleName())) {
+							if (meta.getType() != l.getClass().getSimpleName()) {
 								Layer newLayer = Layer.getLayerByType(meta.getType());
 								newLayer.init(new Palette(), index + 1);
 								fractal.getLayers().set(index, newLayer);
@@ -260,12 +263,29 @@ public class FractalEditor extends Scene {
 							updateFractalImage();
 						}
 					} else if (mouseEvent.getClickCount() == 1 && layers.getSelectionModel().getSelectedItem() != add) {
-						Layer l = getSelectedLayer();
+						int index = layers.getRoot().getChildren().size() - 2
+								- layers.getRoot().getChildren().indexOf(layers.getSelectionModel().getSelectedItem());
+						Layer l = fractal.getLayers().get(index);
 						gradient.updateLayer(l);
 					}
 				}
 			});
-			
+			/*
+			 * layers.getSelectionModel().selectedItemProperty().addListener((
+			 * ObservableValue observable, Object oldValue, Object newValue)-> {
+			 * if(newValue != add) { int index =
+			 * layers.getRoot().getChildren().size() - 2 -
+			 * layers.getRoot().getChildren().indexOf(newValue); Layer l =
+			 * fractal.getLayers().get(index); gradient.updateLayer(l); } });
+			 */
+			/**
+			 * layers.getRoot().addEventHandler(layers.getRoot().childrenModificationEvent(),
+			 * e -> { for(Object i:layers.getRoot().getChildren()){ if(i!=add)
+			 * ((TreeItem)(i)).addEventHandler(CheckBoxTreeItem.checkBoxSelectionChangedEvent(),
+			 * e2 -> { if(((CheckBoxTreeItem)e2.getSource()).isSelected())
+			 * ((TreeItem)e2.getSource()).setValue(LayerBox.display((TreeItem)e2.getSource()));
+			 * }); } });
+			 */
 			layers.getRoot().getChildren().addAll(item, add);
 			{// TODO I DONT KNOW WHY THIS ISNT WORKING IUEAWBIUBFAI
 				/**
@@ -291,7 +311,6 @@ public class FractalEditor extends Scene {
 			MenuItem viewNetLog = new MenuItem("View Network Log");
 			MenuItem viewNet = new MenuItem("View Network");
 			MenuItem endNet = new MenuItem("Close Network");
-			MenuItem saveLog = new MenuItem("Save Network Log");
 
 			newNet.setOnAction(e -> {
 				NetworkCreationTool createNet = new NetworkCreationTool();
@@ -305,7 +324,6 @@ public class FractalEditor extends Scene {
 					viewNet.setDisable(false);
 					endNet.setDisable(false);
 					newNet.setDisable(true);
-					saveLog.setDisable(false);
 					viewNetLog.setDisable(false);
 					alert.showAndWait();
 				}
@@ -313,7 +331,6 @@ public class FractalEditor extends Scene {
 			viewNet.setDisable(true);
 			endNet.setDisable(true);
 			viewNetLog.setDisable(true);
-			saveLog.setDisable(true);
 			viewNet.setOnAction(e -> {
 				Display display = new Display(this.network);
 
@@ -321,6 +338,7 @@ public class FractalEditor extends Scene {
 				display.updateNetworkView(this.network.getChildren(), this.network.getUncompletedJobs());
 			});
 			endNet.setOnAction(e -> {
+				//TODO: kill won't stop network without getting a response from all clients
 				this.network.kill();
 				viewNet.setDisable(true);
 				endNet.setDisable(true);
@@ -328,28 +346,17 @@ public class FractalEditor extends Scene {
 				newNet.setDisable(false);
 			});
 			viewNetLog.setOnAction(e -> {
-				ExpandableMenu.displayInformation(null, "Network Log:", log.getLog());
-			});
-			saveLog.setOnAction(e-> {
-				FileChooser c = new FileChooser();
-				c.setTitle("Save Log");
-				FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Text Files (*.txt)", "*.txt");
-				c.getExtensionFilters().add(filter);
-				File f = c.showSaveDialog(null);
-				try {
-					PrintWriter w = new PrintWriter(f);
-					w.write(log.getLog());
-					w.close();
-				} catch (IOException e1) {
-					AlertMenu m = new AlertMenu("Failed to Save Log", "Please try again.");
-					log.addError(e1);
-				}
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle("Network Log");
+				alert.setHeaderText(null);
+				alert.setContentText(this.network.getLog().getLog());
+
+				alert.showAndWait();
 			});
 
-			network.getItems().addAll(newNet, saveLog, viewNetLog, viewNet, endNet);
+			network.getItems().addAll(newNet, viewNet, viewNetLog, endNet);
 
 			MenuItem newFract = new MenuItem("New Fractal");
-			//TODO: fix layer system when new fractal is created
 			newFract.setOnAction(e -> {
 				this.fractal = new RenderManager();
 				gradient.updateLayer(this.fractal.getLayers().get(0));
@@ -390,8 +397,12 @@ public class FractalEditor extends Scene {
 				register.registerLayer();
 				Layer.registerLayer(register.getFile());
 			});
+			MenuItem changeLog = new MenuItem("Edit Log Options");
+			changeLog.setOnAction(e -> {
+				// TODO: two dropdown menu stuff with tooltips
+			});
 
-			system.getItems().addAll(newLayer);
+			system.getItems().addAll(newLayer, changeLog);
 
 			menu.getMenus().addAll(fractal);
 			menu.getMenus().addAll(network);
@@ -430,12 +441,6 @@ public class FractalEditor extends Scene {
 				});
 		return i;
 	}
-	
-	private Layer getSelectedLayer() {
-		int index = layers.getRoot().getChildren().size() - 2 - layers.getRoot().getChildren()
-				.indexOf(layers.getSelectionModel().getSelectedItem());
-		return fractal.getLayers().get(index);
-	}
 
 	private int incrementLayers() {
 		return layerIndex++;
@@ -443,7 +448,7 @@ public class FractalEditor extends Scene {
 
 	/**
 	 * Updates the fractal display if it has been changed
-	 *
+	 * 
 	 * @author Calvin
 	 */
 	public void updateFractalImage() {
@@ -452,7 +457,7 @@ public class FractalEditor extends Scene {
 		fractalView.setImage(SwingFXUtils.toFXImage(this.fractal.getImage(), null));
 		bp.layout();
 	}
-
+	
 	public Server getServer() {
 		return network;
 	}

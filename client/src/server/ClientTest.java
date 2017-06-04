@@ -14,7 +14,7 @@ public class ClientTest {
 		Layer.initializeFractalRegistry();
 		Log log = new Log();
 		log.setPrintStream(System.out);
-		log.setLogLevel(Log.LEVEL_ERROR);
+		log.setLogLevel(Log.LEVEL_LOG);
 		log.setPrintLevel(Log.LEVEL_ERROR);
 		Client c = new Client();
 		c.init(log); 
