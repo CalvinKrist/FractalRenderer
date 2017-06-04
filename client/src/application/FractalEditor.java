@@ -280,7 +280,13 @@ public class FractalEditor extends Scene {
 							int index = layers.getRoot().getChildren().size() - 2 - layers.getRoot().getChildren()
 									.indexOf(layers.getSelectionModel().getSelectedItem());
 							Layer l = fractal.getLayers().get(index);
-							if (!meta.getType().equals(l.getClass().getSimpleName())) {
+							if(meta.isDelete()) {
+								fractal.getLayers().remove(index);
+								updateFractalImage();
+								layers.getRoot().getChildren().remove(layers.getSelectionModel().getSelectedItem());
+								return;
+							}
+							else if (!meta.getType().equals(l.getClass().getSimpleName())) {
 								Layer newLayer = Layer.getLayerByType(meta.getType());
 								newLayer.init(new Palette(), index + 1);
 								l = newLayer;
@@ -303,15 +309,6 @@ public class FractalEditor extends Scene {
 			layers.getRoot().getChildren().addAll(item, add);
 			{// TODO I DONT KNOW WHY THIS ISNT WORKING IUEAWBIUBFAI
 
-				layers.getRoot().addEventHandler(layers.getRoot().childrenModificationEvent(), e -> {
-					for (Object i : ((TreeItem) e.getSource()).getChildren()) {
-						if (i != add)
-							if (((MetaLayer) ((TreeItem) (i)).getValue()).isDelete()) {
-								layers.getRoot().getChildren().remove(i);
-								layers.layout();
-							}
-					}
-				});
 
 			}
 		}

@@ -103,6 +103,7 @@ public class Client extends NetworkNode {
 			ServerSocket temp = new ServerSocket(Constants.PORT);
 			server = new SocketWrapper(temp.accept(), log);
 			temp.close();
+			socket.close();
 			log.newLine("Connected to server at " + server.getInetAdress());
 			ipAdress = server.getInet().getHostAddress();
 			server.addNoConnectionListener(new NoConnectionListener() {
