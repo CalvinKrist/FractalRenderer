@@ -16,6 +16,10 @@ import util.Parameters;
 public class Job implements Serializable {
 	
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8695628289122490725L;
+	/**
 	 * format of type_zoom
 	 */
 	private String jobId;
