@@ -168,8 +168,12 @@ public class RenderManager implements Serializable {
 		for(int l = 0; l < layers.size(); l++)
 			for(int i = 0; i < pixels.length; i++)
 				for(int k = 0; k < pixels[i].length; k++) {
-					double weight = layers.get(l)[i][k].getAlpha() / 255.0;
-					pixels[i][k] = (int)(layers.get(l)[i][k].getRGB() * weight + pixels[i][k] * (1 - weight));
+					double w = layers.get(l)[i][k].getAlpha() / 255.0;
+					Color c = new Color(pixels[i][k]);
+					Color c2 = layers.get(l)[i][k];
+					double w2 = 1 - w;
+					Color nC = new Color((int)(c.getRed() * w2 + c2.getRed() * w), (int)(c.getGreen() * w2 + c2.getGreen() * w), (int)(c.getBlue() * w2 + c2.getBlue() * w));
+					pixels[i][k] = nC.getRGB();
 				}
 	}
 

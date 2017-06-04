@@ -297,12 +297,7 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 		repaint();
 		if (selectedButton == null) {
 			if (bgButton.isClicked(p)) {
-				// TODO: create a color menu for the inside part of the fractal
-				// and store the color like this: bgButton.setData(newColor);
-				// this.repaint();
-				Platform.runLater(() -> {
-					ColorBox.display(bgButton);
-				});
+				GradientMenus.displayColorMenus(bgButton, this);
 			} else if (saveButton.isClicked(p)) {
 				Platform.runLater(() -> {
 					TextInputDialog dialog = new TextInputDialog("");
@@ -323,7 +318,16 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 					public void run() {
 						FileChooser chooser = new FileChooser();
 						chooser.setTitle("Open Palette");
-						chooser.setInitialDirectory(new File("fractals/palettes"));
+						File f1 = new File("fractals/palettes");
+						if(!f1.exists()) {
+							f1.mkdirs();
+							try {
+								f1.createNewFile();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+						chooser.setInitialDirectory(f1);
 						FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Palettes (*.palette)",
 								"*.palette");
 						chooser.getExtensionFilters().add(filter);
@@ -346,15 +350,11 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 		} else {
 			if (selectedButton.isSquareClicked(p)) {
 				if (selectedButton.isDown()) {
-
-					// TODO: create a opacity menu for the selected button and
-					// store the value like this:
-					// selectedButton.setData(newValue); this.repaint();
-					// NOTE: the value should be between 0 and 1.0
+					Platform.runLater(() -> {
+						selectedButton.setData(GradientMenus.displayOpacityMenu(selectedButton, this));
+					});
 				} else {
-					// TODO: create a color menu for the selected button and
-					// store the color like this:
-					// selectedButton.setData(newColor); this.repaint();
+					GradientMenus.displayColorMenus(selectedButton, this);
 				}
 			}
 		}
