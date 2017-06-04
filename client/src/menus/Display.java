@@ -100,7 +100,7 @@ public class Display extends JPanel implements Runnable {
 		this.add(left, BorderLayout.WEST);
 
 		view = new NetworkView(server);
-		this.add(view, BorderLayout.CENTER);
+		//this.add(view, BorderLayout.CENTER);
 
 		this.add(menus(), BorderLayout.NORTH);
 		t = new Thread(this);
@@ -134,7 +134,6 @@ public class Display extends JPanel implements Runnable {
 						String dir = fileChooser.getSelectedFile().getPath();
 						if (!dir.substring(dir.lastIndexOf(".") + 1).equals("txt"))
 							dir = dir.substring(0, dir.lastIndexOf(".")) + ".txt";
-						System.out.println("\n\n" + dir + "\n\n");
 						try {
 							PrintWriter out = new PrintWriter(dir);
 							Scanner s = new Scanner(textArea.getText());
@@ -362,7 +361,6 @@ public class Display extends JPanel implements Runnable {
 
 			@Override
 			public void windowClosing(WindowEvent e) {
-				System.out.println("closing");
 				running = false;
 				server.setDisplay(null);
 			}

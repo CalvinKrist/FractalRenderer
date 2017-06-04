@@ -18,6 +18,8 @@ import javax.tools.SimpleJavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import menus.ExpandableMenu;
+
 /**
  * This class was copied from the location below and was created by david, the author of the article.
  * This class is used to dynamically compile any .java classes in the directory for custom layer types.
@@ -45,12 +47,14 @@ public class DynamicCompiler {
 	 */
 	public static class MyDiagnosticListener implements DiagnosticListener<JavaFileObject> {
 		public void report(Diagnostic<? extends JavaFileObject> diagnostic) {
-			System.out.println("Line Number->" + diagnostic.getLineNumber());
-            System.out.println("code->" + diagnostic.getCode());
-            System.out.println("Message->"
-                               + diagnostic.getMessage(Locale.ENGLISH));
-            System.out.println("Source->" + diagnostic.getSource());
-            System.out.println(" ");
+			String display = "";
+			display += "Line Number->" + diagnostic.getLineNumber() + "\r\n";
+			display += "code->" + diagnostic.getCode() + "\r\n";
+			display += "Message->"
+                    + diagnostic.getMessage(Locale.ENGLISH) + "\r\n";
+			display += "Source->" + diagnostic.getSource() + "\r\n";
+			
+			ExpandableMenu.displayAlert("Failed to compile custom layer.", "Diagnostic information:", display);
 		}
 	}
 
