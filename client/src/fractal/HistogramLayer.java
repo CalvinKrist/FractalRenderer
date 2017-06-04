@@ -15,9 +15,13 @@ import util.Parameters;
  * @author Calvin
  *
  */
-@SuppressWarnings("serial")
 public class HistogramLayer extends Layer {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6444733438837306009L;
+
 	/**
 	 * Creates default bailout and maxIterations values for the layer to use. It also assigns this layer a description
 	 * so that users can understand what it does in the layer editor.

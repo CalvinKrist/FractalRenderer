@@ -143,6 +143,7 @@ public class RenderManager implements Serializable {
 			this.layers = o.layers;
 			this.location = o.location;
 			this.zoom = o.zoom;
+			System.out.println(o.zoom);
 			this.screenResolution = o.screenResolution;
 			this.realResolution = o.realResolution;
 			this.name = o.name;

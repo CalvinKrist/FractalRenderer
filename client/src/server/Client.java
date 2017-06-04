@@ -11,6 +11,8 @@ import java.net.Socket;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
+import javafx.application.Platform;
+import javax.swing.SwingUtilities;
 
 import com.sun.javafx.scene.paint.GradientUtils.Point;
 
@@ -147,7 +149,9 @@ public class Client extends NetworkNode {
 		} catch (Exception e) {
 			log.addError(e);
 			log.newLine("Server not available. Shutting down.");
-			AlertMenu alert = new AlertMenu("Server not Available", "Shutting down. Please try again.");
+			/*Platform.runLater(()-> {
+				AlertMenu alert = new AlertMenu("Server not Available", "Shutting down. Please try again.");
+			}); */
 			saveLog();
 			System.exit(0);
 		}	
