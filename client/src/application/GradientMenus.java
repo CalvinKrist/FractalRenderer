@@ -178,12 +178,24 @@ public class GradientMenus {
 
 	public static MetaLayer displayLayerMenu(TreeItem<MetaLayer> t) {
         Stage window = new Stage();
+        Slider opacityLevel = new Slider(0,1,(Double)t.getValue().getOpacity());
+		Label opacityCaption = new Label("Opacity Level:");
+		Label opacityValue = new Label(Double.toString(opacityLevel.getValue()));
+		opacityValue.setText(String.format("%.2f", opacityLevel.getValue()));
+		
+		opacityLevel.valueProperty().addListener(new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number> ov,
+                Number old_val, Number new_val) {
+            		DecimalFormat df = new DecimalFormat("0.00");
+                    opacityValue.setText((df.format(opacityLevel.getValue())));
+            }
+        });
 
         //Block events to other windows
         window.initModality(Modality.APPLICATION_MODAL);
         window.setTitle("Edit Layer");
         window.setMinWidth(250);
-        window.setMinHeight(200);
+        window.setMinHeight(210);
 
         VBox layout = new VBox(10);
 
@@ -210,8 +222,18 @@ public class GradientMenus {
         push.setWidth(50);
 
         hbox.getChildren().addAll(push,closeButton,spacer,delete);
+        
+        HBox opacityBox = new HBox();
+        opacityBox.maxWidthProperty().bind(window.minWidthProperty().multiply(.75));
+        opacityLevel.maxWidthProperty().bind(window.minWidthProperty().multiply(.75));
+        Canvas opacitySpacer = new Canvas();
+        opacitySpacer.setWidth(10);
+        opacityBox.getChildren().addAll(opacityCaption,opacitySpacer,opacityValue);
 
-        layout.getChildren().addAll(name,nameIn,type,typeIn,hbox);
+        Canvas vspace = new Canvas();
+        vspace.setHeight(10);
+        
+        layout.getChildren().addAll(name,nameIn,type,typeIn,opacityBox,opacityLevel,hbox,vspace);
         layout.setAlignment(Pos.CENTER);
 
         if(((MetaLayer)t.getValue()).getName()!=null)
@@ -224,8 +246,9 @@ public class GradientMenus {
         window.setScene(scene);
         window.showAndWait();
         if(delete.isSelected())
-        	return new MetaLayer("DELETE","DELETE",true);
-		return new MetaLayer(nameIn.getText(),typeIn.getSelectionModel().getSelectedItem().toString());
+        	return new MetaLayer("DELETE","DELETE",0,true);
+        System.out.println(opacityLevel.getValue());
+		return new MetaLayer(nameIn.getText(),typeIn.getSelectionModel().getSelectedItem().toString(),opacityLevel.getValue());
     }
 
 }

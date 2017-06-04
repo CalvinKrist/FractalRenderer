@@ -3,18 +3,27 @@ package application;
 public class MetaLayer {
 	private String name, type;
 	private boolean delete;
-	private int opacity;
+	private double opacity;
+
+	public MetaLayer(String name, String type, double opacity) {
+		this.name = name;
+		this.type = type;
+		this.opacity = opacity;
+		delete = false;
+	}
+
+	public MetaLayer(String name, String type, double opacity, boolean delete) {
+		this.name = name;
+		this.type = type;
+		this.opacity = 1;
+		this.delete = delete;
+	}
 
 	public MetaLayer(String name, String type) {
 		this.name = name;
 		this.type = type;
-		delete = false;
-	}
-
-	public MetaLayer(String name, String type, boolean delete) {
-		this.name = name;
-		this.type = type;
-		this.delete = delete;
+		this.opacity = 1;
+		this.delete = false;
 	}
 
 	public boolean isDelete() {
@@ -45,13 +54,12 @@ public class MetaLayer {
 		return getName();
 	}
 
-	public int getOpacity() {
+	public double getOpacity() {
 		return opacity;
 	}
 
-	public void setOpacity(int opacity) {
+	public void setOpacity(double opacity) {
 		this.opacity = opacity;
 	}
-
 
 }
