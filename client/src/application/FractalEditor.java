@@ -216,24 +216,9 @@ public class FractalEditor extends Scene {
 
 			TreeItem add = new TreeItem();
 
-			/**
-			 * try{ BufferedImage image = ImageIO.read(new
-			 * File("textures\\plusButton.jpg")); Image plusImage =
-			 * SwingFXUtils.toFXImage(image, null); ImageView plusView = new
-			 * ImageView(plusImage); plusView.setFitWidth(16);
-			 * plusView.setFitHeight(16); add.setGraphic(plusView);
-			 * }catch(Exception e){ e.printStackTrace(); }
-			 */
 			layerIndex = 1;
 			CheckBoxTreeItem item = getNewTreeItem();
-			/**
-			 * add.addEventHandler(CheckBoxTreeItem.checkBoxSelectionChangedEvent(),
-			 * e -> { if(((CheckBoxTreeItem)(e.getSource())).isSelected()){
-			 * ((CheckBoxTreeItem)(e.getSource())).getParent().getChildren().add(0,
-			 * new CheckBoxTreeItem(new
-			 * MetaLayer("Layer"+incrementLayers(),null)));
-			 * ((CheckBoxTreeItem)(e.getSource())).setSelected(false); }});
-			 */
+
 			layers.setOnMouseClicked(new EventHandler<MouseEvent>() {
 				@Override
 				public void handle(MouseEvent mouseEvent) {
@@ -243,8 +228,8 @@ public class FractalEditor extends Scene {
 							layers.getRoot().getChildren().add(0, i);
 							fractal.addLayer("HistogramLayer");
 						} else {
-							((TreeItem) layers.getSelectionModel().getSelectedItem()).setValue(LayerBox
-									.display((TreeItem<MetaLayer>) layers.getSelectionModel().getSelectedItem()));
+							((TreeItem) layers.getSelectionModel().getSelectedItem()).setValue(GradientMenus
+									.displayLayerMenu((TreeItem<MetaLayer>) layers.getSelectionModel().getSelectedItem()));
 							MetaLayer meta = ((MetaLayer) ((TreeItem) layers.getSelectionModel().getSelectedItem())
 									.getValue());
 							int index = layers.getRoot().getChildren().size() - 2 - layers.getRoot().getChildren()
@@ -265,7 +250,7 @@ public class FractalEditor extends Scene {
 					}
 				}
 			});
-			
+
 			layers.getRoot().getChildren().addAll(item, add);
 			{// TODO I DONT KNOW WHY THIS ISNT WORKING IUEAWBIUBFAI
 				/**
@@ -279,7 +264,6 @@ public class FractalEditor extends Scene {
 			}
 		}
 
-		// Trying to get this to work
 		fractalEditor.setOnMouseEntered(e -> gradient.repaint());
 
 		{// This is the menu stuff
@@ -430,7 +414,7 @@ public class FractalEditor extends Scene {
 				});
 		return i;
 	}
-	
+
 	private Layer getSelectedLayer() {
 		int index = layers.getRoot().getChildren().size() - 2 - layers.getRoot().getChildren()
 				.indexOf(layers.getSelectionModel().getSelectedItem());
