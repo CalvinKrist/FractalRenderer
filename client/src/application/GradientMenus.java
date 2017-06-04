@@ -247,7 +247,6 @@ public class GradientMenus {
         window.showAndWait();
         if(delete.isSelected())
         	return new MetaLayer("DELETE","DELETE",0,true);
-        System.out.println(opacityLevel.getValue());
 		return new MetaLayer(nameIn.getText(),typeIn.getSelectionModel().getSelectedItem().toString(),opacityLevel.getValue());
     }
 

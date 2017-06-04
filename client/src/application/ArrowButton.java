@@ -213,6 +213,8 @@ public class ArrowButton<E extends Serializable> implements Serializable {
 	 * @param data can be used to set custom data for the button to store.
 	 */
 	public void setData(E data) {
+		if(data instanceof Color)
+			squareColor = (Color)data;
 		this.data = data;
 	}
 

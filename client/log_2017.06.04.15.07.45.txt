@@ -1,0 +1,13 @@
+
+
+2017.06.04.15.07.45: Creating new client.
+2017.06.04.15.07.45: Connecting to server at null.
+2017.06.04.15.07.45: java.lang.NullPointerException: null address || null buffer
+	at java.net.DualStackPlainDatagramSocketImpl.send(Unknown Source)
+	at java.net.DatagramSocket.send(Unknown Source)
+	at server.Client.initializeServer(Client.java:105)
+	at server.Client.init(Client.java:86)
+	at server.ClientTest.main(ClientTest.java:21)
+
+
+2017.06.04.15.07.45: Server not available. Shutting down.

@@ -143,6 +143,7 @@ public class RenderManager implements Serializable {
 			this.layers = o.layers;
 			this.location = o.location;
 			this.zoom = o.zoom;
+			System.out.println(o.zoom);
 			this.screenResolution = o.screenResolution;
 			this.realResolution = o.realResolution;
 			this.name = o.name;
@@ -162,8 +163,10 @@ public class RenderManager implements Serializable {
 		ArrayList<Color[][]> layers = new ArrayList<Color[][]>();
 		for(Layer l : this.layers) {
 			Color[][] cols = l.render();
-			if(cols != null)
+			if(cols != null) {
+				//System.out.println(l.getOpacity());
 				layers.add(cols);
+			}
 		}
 		for(int l = 0; l < layers.size(); l++)
 			for(int i = 0; i < pixels.length; i++)

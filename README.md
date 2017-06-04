@@ -97,27 +97,18 @@ Creating new layer types:
 DAVID JOBS
 Add editable parameters to parameters section
 Make GUI even on all screen sizes
-Change the color picker and opacity picker menus to JavaFX
 Add layer movement controlls
 Make a tooltip in the layer editor display the description for each layer type
-GUI method of changing log options
 
 
 CALVIN JOBS
-Fix network display
-Integrate the log messages across the application and create error pop-ups when helpful to the user
-Allow server to request log of each client through the NetworkView
-Print dynamic compiling diagnostic information to a window
 Add anti-alliasing and super sampling to rendering
-Add a save log option to the system window
-Make our program, upon first install, edit PATH to set jdk to default instead of jre, and if jdk doesn't exist, download it
 
 
 NO-ONE JOBS
 Fix glitch where app continues running after menu's closed
 Document code properly
 Generate JavaDocs
-Create user manual
 Do project writeup
 
 

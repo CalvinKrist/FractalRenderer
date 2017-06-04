@@ -230,6 +230,7 @@ public class FractalEditor extends Scene {
 							CheckBoxTreeItem i = getNewTreeItem();
 							layers.getRoot().getChildren().add(0, i);
 							fractal.addLayer("HistogramLayer");
+							updateFractalImage();
 						} else {
 							((TreeItem) layers.getSelectionModel().getSelectedItem()).setValue(GradientMenus
 									.displayLayerMenu((TreeItem<MetaLayer>) layers.getSelectionModel().getSelectedItem()));
@@ -238,12 +239,14 @@ public class FractalEditor extends Scene {
 							int index = layers.getRoot().getChildren().size() - 2 - layers.getRoot().getChildren()
 									.indexOf(layers.getSelectionModel().getSelectedItem());
 							Layer l = fractal.getLayers().get(index);
-							if (meta.getType() != l.getClass().getSimpleName()) {
+							if (!meta.getType().equals(l.getClass().getSimpleName())) {
 								Layer newLayer = Layer.getLayerByType(meta.getType());
 								newLayer.init(new Palette(), index + 1);
+								l = newLayer;
 								fractal.getLayers().set(index, newLayer);
 								fractal.update();
 							}
+							l.setOpacity(meta.getOpacity());
 							fractal.getLayers().get(index).setName(meta.getName());
 							updateFractalImage();
 						}
@@ -366,12 +369,8 @@ public class FractalEditor extends Scene {
 				register.registerLayer();
 				Layer.registerLayer(register.getFile());
 			});
-			MenuItem changeLog = new MenuItem("Edit Log Options");
-			changeLog.setOnAction(e -> {
-				// TODO: two dropdown menu stuff with tooltips
-			});
 
-			system.getItems().addAll(newLayer, changeLog);
+			system.getItems().addAll(newLayer);
 
 			menu.getMenus().addAll(fractal);
 			menu.getMenus().addAll(network);

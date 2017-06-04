@@ -15,9 +15,13 @@ import util.Parameters;
  * @author Calvin
  *
  */
-@SuppressWarnings("serial")
 public class HistogramLayer extends Layer {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6444733438837306009L;
+
 	/**
 	 * Creates default bailout and maxIterations values for the layer to use. It also assigns this layer a description
 	 * so that users can understand what it does in the layer editor.
@@ -123,10 +127,6 @@ public class HistogramLayer extends Layer {
 			double hue = (double)i / info.size();
 			pixels[(int) (info.get(i)[1])][(int) (info.get(i)[2])] = palette.colorAt(hue);
 		}
-	}
-
-	protected void calculateMaxBailout(double rWidth, double rHeight) {
-		
 	}
 	
 	protected void calculateIterations(double rWidth, double rHeight) {
