@@ -243,6 +243,7 @@ public class Server extends NetworkNode {
 
 	public void kill() {
 		adder.running = false;
+		adder.stop();
 		for(SocketWrapper w: children)
 			w.close();
 	}

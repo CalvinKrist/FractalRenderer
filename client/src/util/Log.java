@@ -71,7 +71,7 @@ public class Log {
 	 */
 	public void newLine(String s) {
 		if(logLevel >= Log.LEVEL_LOG) 
-			logFile += "\n" + getTimeStamp() + s;
+			logFile += "\r\n" + getTimeStamp() + s;
 		if(printLevel >= Log.LEVEL_LOG && stream != null) 
 			stream.println(getTimeStamp() + s);
 
@@ -83,7 +83,7 @@ public class Log {
 	 */
 	public void blankLine() {
 		if(logLevel >= Log.LEVEL_LOG) 
-			logFile += "\n";
+			logFile += "\r\n";
 		if(printLevel >= Log.LEVEL_LOG && stream != null)
 			stream.println();
 	}
@@ -98,9 +98,9 @@ public class Log {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw, true);
 			e.printStackTrace(pw);
-			logFile += "\n";
+			logFile += "\r\n";
 			logFile += getTimeStamp() + sw.getBuffer().toString();
-			logFile += "\n";
+			logFile += "\r\n";
 		}
 		if(printLevel >= Log.LEVEL_ERROR) {
 			StringWriter sw = new StringWriter();
@@ -120,7 +120,11 @@ public class Log {
 		return logFile;
 	}
 	
-	private String getTimeStamp() {
+	/**
+	 * Used to get a time stamp as a string in the format of yyyy.MM.dd.HH.mm.ss
+	 * @return a time stamp as a string in the format of yyyy.MM.dd.HH.mm.ss
+	 */
+	public static String getTimeStamp() {
 		return new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()) + ": ";
 	}
 	

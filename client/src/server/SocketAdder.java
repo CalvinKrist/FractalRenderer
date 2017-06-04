@@ -39,7 +39,6 @@ public class SocketAdder extends Thread {
 				sock.receive(packet);
 
 				// TODO: only create socket if the data matches a certain string
-				System.out.println(new String(packet.getData()));
 
 				Socket s = new Socket(packet.getAddress().getHostAddress(), Constants.PORT);
 

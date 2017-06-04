@@ -132,6 +132,9 @@ public class SocketWrapper extends Thread {
 	
 	public void close() {
 		running = false;
+		try {
+			objOut.writeObject("closing");
+ 		} catch(Exception e) {}
 	}
 	
 }

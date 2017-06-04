@@ -2,6 +2,7 @@ package server;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -125,6 +126,13 @@ public class Client extends NetworkNode {
 							server.sendMessage("removed.");
 							log.blankLine();
 							log.newLine("Removed by server.");
+							saveLog();
+							System.exit(0);
+						} if(j.equals("closing")) {
+							server.sendMessage("closed");
+							log.blankLine();
+							log.newLine("Server closed.");
+							saveLog();
 							System.exit(0);
 						}
 					}
@@ -140,6 +148,7 @@ public class Client extends NetworkNode {
 			log.addError(e);
 			log.newLine("Server not available. Shutting down.");
 			AlertMenu alert = new AlertMenu("Server not Available", "Shutting down. Please try again.");
+			saveLog();
 			System.exit(0);
 		}	
 	}
@@ -219,6 +228,19 @@ public class Client extends NetworkNode {
 	public void kill() {
 		running = false;
 		server.close();
+	}
+	
+	private void saveLog() {
+		try {
+			String timeStamp = log.getTimeStamp();
+			timeStamp = timeStamp.substring(0, timeStamp.indexOf(":"));
+			File f = new File("log_" + timeStamp + ".txt");
+			PrintWriter w = new PrintWriter(f);
+			w.write(log.getLog());
+			w.close();
+		} catch(IOException e) {
+			
+		}
 	}
 
 }
