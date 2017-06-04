@@ -74,7 +74,7 @@ public class Client extends NetworkNode {
 	 * Connects to the server and initializes anything that needs to be initialized.
 	 * @param log The log the client and all the objects it creates will use to log and print information.
 	 */
-	public void init(Log log) {
+	public void init(Log log, String ip) {
 		System.out.println("creaing");
 		this.log = log;
 		log.blankLine();
@@ -83,7 +83,7 @@ public class Client extends NetworkNode {
 		jobs = new LinkedList<Job>();
 		log.newLine("Connecting to server at " + ipAdress + ".");
 		
-		initializeServer();
+		initializeServer(ip);
 		log.newLine("Succesfully connected to server at " + ipAdress + ".");
 		System.out.println("success");
 		doJob();
@@ -94,20 +94,9 @@ public class Client extends NetworkNode {
 	 * then waiting for the server to connect to it using conventional Sockets. Creates the various listeners
 	 * for the SocketWrapper as well.
 	 */
-	private void initializeServer() {
+	private void initializeServer(String ip) {
 		try {
-			
-			DatagramSocket socket = new DatagramSocket();
-			socket.setBroadcast(true);
-			byte[] message = "JOIN_REQUEST".getBytes();
-			
-			DatagramPacket packet = new DatagramPacket(message, message.length, Utils.getBroadcastAddress(), Constants.BROADCAST_PORT);
-			socket.send(packet);
-			log.newLine("IPAddress broadcast.");
-			ServerSocket temp = new ServerSocket(Constants.PORT);
-			server = new SocketWrapper(temp.accept(), log);
-			temp.close();
-			socket.close();
+			server = new SocketWrapper(new Socket(ip, Constants.PORT), log);
 			log.newLine("Connected to server at " + server.getInetAdress());
 			
 			server.addNoConnectionListener(new NoConnectionListener() {
