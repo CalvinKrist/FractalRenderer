@@ -7,8 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Serializable;
 
 import javax.imageio.ImageIO;
 
@@ -24,7 +23,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.CheckBoxTreeItem.TreeModificationEvent;
-import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -32,6 +30,7 @@ import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.CheckBoxTreeCell;
+import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -40,6 +39,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
+import javafx.util.StringConverter;
 import menus.Display;
 import menus.ExportImageTool;
 import menus.NetworkCreationTool;
@@ -59,7 +59,7 @@ public class FractalEditor extends Scene {
 
 	private RenderManager fractal;
 	private ImageView fractalView;
-	private TreeView layers;
+	private TreeView layers, parameters;
 	private int layerIndex;
 	private boolean zoom = false;
 	private Server network;
@@ -107,7 +107,7 @@ public class FractalEditor extends Scene {
 
 		MenuBar menu = new MenuBar();
 		SwingNode fractalEditor = new SwingNode();
-		TreeView parameters = new TreeView();
+		parameters = new TreeView();
 		layers = new TreeView();
 		VBox trees = new VBox();
 		trees.minHeightProperty().bind(bp.minHeightProperty().subtract(menu.minHeightProperty()));
@@ -166,22 +166,59 @@ public class FractalEditor extends Scene {
 		}
 
 		{// Tree Stuff
-			parameters.setRoot(new TreeItem("params"));
+			parameters.setRoot(new TreeItem());
 			parameters.getRoot().setExpanded(true);
+			parameters.setShowRoot(false);
+			parameters.setEditable(true);
+			//TODO if need click for params
+			/**parameters.setOnMouseClicked(new EventHandler<MouseEvent>(){
 
-			TreeItem xPos = new TreeItem();
-			parameters.getRoot().getChildren().addAll(xPos);
+				@Override
+				public void handle(MouseEvent event) {
+					// TODO Auto-generated method stub
+					if(event.getClickCount()==2){
+						System.out.println("boop");
+						updateParams();
+					}
+				}
+				
+			});*/
+			parameters.setCellFactory(new Callback<TreeView, TreeCell<MetaParam>>(){
+
+				@Override
+				public TreeCell call(TreeView param) {
+					// TODO Auto-generated method stub
+					StringConverter s = new StringConverter(){
+
+						@Override
+						public String toString(Object object) {
+							// TODO Auto-generated method stub
+							return object.toString();
+						}
+
+						@Override
+						public Object fromString(String string) {
+							// TODO Auto-generated method stub
+							return new MetaParam(string.substring(0,string.indexOf(": ")),string.substring(string.indexOf(": ")+2));
+						}
+						
+					};
+					return new TextFieldTreeCell<MetaParam>(s) {
+						@Override
+						public void updateItem(MetaParam item, boolean empty){
+							super.updateItem(item, empty);
+						}
+							
+					};
+				}
+			});
+			
 
 			layers.setRoot(new TreeItem());
 			layers.getRoot().setExpanded(true);
 			layers.setShowRoot(false);
-			layers.setEditable(true);
-			/**
-			 * layers.setCellFactory(new Callback<TreeView,CheckBoxTreeCell>(){
-			 *
-			 * @Override public CheckBoxTreeCell call(TreeView p) { return new
-			 *           CheckBoxTreeCell(); } });
-			 */
+			//layers.setEditable(true);
+
 			// Use a custom callback to determine the style of the tree item
 			layers.setCellFactory(new Callback<TreeView, TreeCell>() {
 				@Override
@@ -225,6 +262,11 @@ public class FractalEditor extends Scene {
 			layers.setOnMouseClicked(new EventHandler<MouseEvent>() {
 				@Override
 				public void handle(MouseEvent mouseEvent) {
+					if(mouseEvent.getClickCount() == 1){
+						if(layers.getSelectionModel().getSelectedItem()!=add){
+							updateParams();
+						}
+					}
 					if (mouseEvent.getClickCount() == 2) {
 						if (layers.getSelectionModel().getSelectedItem() == add) {
 							CheckBoxTreeItem i = getNewTreeItem();
@@ -437,5 +479,13 @@ public class FractalEditor extends Scene {
 	public Server getServer() {
 		return network;
 	}
+	
+	private void updateParams(){
+		while(!parameters.getRoot().getChildren().isEmpty())
+			parameters.getRoot().getChildren().remove(0);
+		for(String i : getSelectedLayer().getParameters().keySet()){
+			parameters.getRoot().getChildren().add(new TreeItem( new MetaParam(i,getSelectedLayer().getParameters().getParameter(i))));
 
+		}
+	}
 }
