@@ -182,7 +182,7 @@ public class GradientMenus {
 		Label opacityCaption = new Label("Opacity Level:");
 		Label opacityValue = new Label(Double.toString(opacityLevel.getValue()));
 		opacityValue.setText(String.format("%.2f", opacityLevel.getValue()));
-		
+
 		opacityLevel.valueProperty().addListener(new ChangeListener<Number>() {
             public void changed(ObservableValue<? extends Number> ov,
                 Number old_val, Number new_val) {
@@ -222,7 +222,7 @@ public class GradientMenus {
         push.setWidth(50);
 
         hbox.getChildren().addAll(push,closeButton,spacer,delete);
-        
+
         HBox opacityBox = new HBox();
         opacityBox.maxWidthProperty().bind(window.minWidthProperty().multiply(.75));
         opacityLevel.maxWidthProperty().bind(window.minWidthProperty().multiply(.75));
@@ -232,7 +232,7 @@ public class GradientMenus {
 
         Canvas vspace = new Canvas();
         vspace.setHeight(10);
-        
+
         layout.getChildren().addAll(name,nameIn,type,typeIn,opacityBox,opacityLevel,hbox,vspace);
         layout.setAlignment(Pos.CENTER);
 
@@ -246,7 +246,7 @@ public class GradientMenus {
         window.setScene(scene);
         window.showAndWait();
         if(delete.isSelected())
-        	return new MetaLayer("DELETE","DELETE",0,true);
+        	return new MetaLayer(nameIn.getText(),typeIn.getSelectionModel().getSelectedItem().toString(),opacityLevel.getValue(),true);
 		return new MetaLayer(nameIn.getText(),typeIn.getSelectionModel().getSelectedItem().toString(),opacityLevel.getValue());
     }
 
