@@ -366,12 +366,8 @@ public class FractalEditor extends Scene {
 				register.registerLayer();
 				Layer.registerLayer(register.getFile());
 			});
-			MenuItem changeLog = new MenuItem("Edit Log Options");
-			changeLog.setOnAction(e -> {
-				// TODO: two dropdown menu stuff with tooltips
-			});
 
-			system.getItems().addAll(newLayer, changeLog);
+			system.getItems().addAll(newLayer);
 
 			menu.getMenus().addAll(fractal);
 			menu.getMenus().addAll(network);

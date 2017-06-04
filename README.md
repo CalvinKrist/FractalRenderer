@@ -104,13 +104,7 @@ GUI method of changing log options
 
 
 CALVIN JOBS
-Fix network display
-Integrate the log messages across the application and create error pop-ups when helpful to the user
-Allow server to request log of each client through the NetworkView
-Print dynamic compiling diagnostic information to a window
 Add anti-alliasing and super sampling to rendering
-Add a save log option to the system window
-Make our program, upon first install, edit PATH to set jdk to default instead of jre, and if jdk doesn't exist, download it
 
 
 NO-ONE JOBS
