@@ -88,5 +88,10 @@ public class Job implements Serializable {
 	public int[][] getImage() {
 		return image;
 	}
+	
+	@Override
+	public int hashCode() {
+		return jobId.hashCode();
+	}
 
 }

@@ -100,7 +100,7 @@ public class Display extends JPanel implements Runnable {
 		this.add(left, BorderLayout.WEST);
 
 		view = new NetworkView(server);
-		this.add(view, BorderLayout.CENTER);
+		//this.add(view, BorderLayout.CENTER);
 
 		this.add(menus(), BorderLayout.NORTH);
 		t = new Thread(this);
@@ -405,6 +405,7 @@ public class Display extends JPanel implements Runnable {
 		if(!bailout.isFocusOwner())
 			bailout.setText(params.getParameter("bailout") + "");
 		numUsersLabel.setText("  User Count: " + params.getParameter("userCount"));
+		avgRenderTimeLabel.setText("  Average Render Time: " + params.getParameter("avgTime") + "");
 		frameCountLabel.setText("  Frame Count: " + params.getParameter("frameCount"));
 	}
 	
