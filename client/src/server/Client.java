@@ -97,7 +97,7 @@ public class Client extends NetworkNode {
 			socket.setBroadcast(true);
 			byte[] message = "JOIN_REQUEST".getBytes();
 			
-			DatagramPacket packet = new DatagramPacket(message, message.length, Utils.getBroadcastAddress(), Constants.BROADCAST_PORT);
+			DatagramPacket packet = new DatagramPacket(message, message.length, Utils.getBroadcastAddress(), 7777);
 			socket.send(packet);
 			log.newLine("IPAddress broadcast.");
 			ServerSocket temp = new ServerSocket(Constants.PORT);
