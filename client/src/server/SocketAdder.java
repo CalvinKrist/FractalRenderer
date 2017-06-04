@@ -31,22 +31,14 @@ public class SocketAdder extends Thread {
 	@Override
 	public void run() {
 		try {
-			DatagramSocket sock = new DatagramSocket(Constants.BROADCAST_PORT, InetAddress.getByName("0.0.0.0"));
-			sock.setBroadcast(true);
+			ServerSocket socket = new ServerSocket(Constants.PORT);
 			while (running) {
-				byte[] buffer = new byte[15000];
-				DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-				sock.receive(packet);
-
-				// TODO: only create socket if the data matches a certain string
-
-				Socket s = new Socket(packet.getAddress().getHostAddress(), Constants.PORT);
+				SocketWrapper w = new SocketWrapper(socket.accept(), server.getLog());
 
 				server.getLog().blankLine();
-				server.getLog().newLine("New connection from " + s.getInetAddress().getHostAddress());
+				server.getLog().newLine("New connection from " + w.getInet().getHostAddress());
 				server.getLog().blankLine();
 				synchronized (children) {
-					SocketWrapper w = new SocketWrapper(s, server.getLog());
 					w.addNoConnectionListener(new NoConnectionListener() {
 						public void response(Exception e) {
 							children.remove(w);

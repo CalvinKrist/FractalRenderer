@@ -19,6 +19,11 @@ public class ClientTest {
 		log.setPrintLevel(Log.LEVEL_LOG);
 		Client c = new Client();
 		
+<<<<<<< HEAD
+		String ip = JOptionPane.showInputDialog("IP Address");
+		
+=======
+>>>>>>> 2acf1e3af47a63aa9305e513c14cac6418ec0db5
 		Thread t = new Thread(()-> {
 			JFrame f = new JFrame();
 			JTextArea text = new JTextArea(20, 25);
@@ -37,7 +42,12 @@ public class ClientTest {
 		});
 		t.start();
 		
+<<<<<<< HEAD
+		c.init(log, ip); 
+		
+=======
 		c.init(log); 
+>>>>>>> 2acf1e3af47a63aa9305e513c14cac6418ec0db5
 	}
 
 }
