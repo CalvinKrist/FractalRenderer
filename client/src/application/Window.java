@@ -293,6 +293,8 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	 * event.
 	 */
 	public void mouseClicked(MouseEvent e) {
+		for(ArrowButton b: palette.getOpacityList())
+			System.out.println(b.getData());
 		Point p = e.getPoint();
 		repaint();
 		if (selectedButton == null) {

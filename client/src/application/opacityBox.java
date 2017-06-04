@@ -21,7 +21,7 @@ public class opacityBox {
 	public static double display(ArrowButton button){
 		//TODO this isn't working correctly
 		opacityLevel.setValue((Double)button.getData());
-		System.out.println(button.getData());
+		//System.out.println(button.getData());
 
 		Stage window  = new Stage();
 		window.setTitle("Opacity Picker");
@@ -46,8 +46,8 @@ public class opacityBox {
         opacityLevel.valueProperty().addListener(new ChangeListener<Number>() {
             public void changed(ObservableValue<? extends Number> ov,
                 Number old_val, Number new_val) {
-                    System.out.println(new_val.doubleValue());
-                    opacityValue.setText(String.format("%.2f", new_val));
+                   //System.out.println(new_val.doubleValue());
+                   button.setData(new_val.doubleValue());
             }
         });
 
