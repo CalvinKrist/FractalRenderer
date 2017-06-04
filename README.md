@@ -1,6 +1,15 @@
 # DistributedFractalNetwork
 Fractal Editing and Distributed Rendering
 
+Program  Requirements:
+	-At least Java 8
+	-A jdk if one wants to use custom layers. Otherwise, a jre will do
+	-A decent computer (4gb ram recomended, intel cpu gen 5+)
+
+How to install:
+	-Place the .jar in a new folder. Launch the jar.
+	-The jar will create all the folders it needs within the folder you placed it. Do not delete these. The program is now ready for use.
+
 Navigating the fractal:
 	-click around on the fractal to move the viewport
 	-Click ',' to zoom in and '.' to zoom out
@@ -40,7 +49,8 @@ Creating new layer types:
 	-If you wish to create and use your own, custom layer types, you are free to do so. There are two ways to add them to the program. 
 	-The easiest is to place the .java file in the 'custom' folder or, if you have a .class file, place that in the 'custom/fractal' folder. Upon startup, any layer files located in these folders will be added to the registry and made usable.
 	-Alternatively, if you have the .java file, you can use the 'New Layer Type' menu to import it into the application without restarting it. This layer type will be removed if the application is retarted unless the .java file is in the 'custom' folder.
-	-The actual programming if the layer file is more complicated. Start by downloading the source code for this application. Then, create a new class that extends Layer. From there, you must implement a number of abstract methods in order for the layer to work. For more information on what needs to be implements and what the methods do, refer to the Layer documentation and the HistogramLayer and TriangleAverageLayer source code.
+	-IMPORTANT: Adding custom layers to the application is done through dynamic rendering with the Reflections API. This will ONLY work if the application is run through a jdk. If it is run with a jre, your custm layers will not be added.
+-The actual programming if the layer file is more complicated. Start by downloading the source code for this application. Then, create a new class that extends Layer. From there, you must implement a number of abstract methods in order for the layer to work. For more information on what needs to be implements and what the methods do, refer to the Layer documentation and the HistogramLayer and TriangleAverageLayer source code.
 DAVID JOBS
 Add editable parameters to parameters section
 Make GUI even on all screen sizes
