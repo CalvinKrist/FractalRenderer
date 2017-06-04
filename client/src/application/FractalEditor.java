@@ -252,7 +252,7 @@ public class FractalEditor extends Scene {
 							int index = layers.getRoot().getChildren().size() - 2 - layers.getRoot().getChildren()
 									.indexOf(layers.getSelectionModel().getSelectedItem());
 							Layer l = fractal.getLayers().get(index);
-							if (meta.getType() != l.getClass().getSimpleName()) {
+							if (!meta.getType().equals(l.getClass().getSimpleName())) {
 								Layer newLayer = Layer.getLayerByType(meta.getType());
 								newLayer.init(new Palette(), index + 1);
 								fractal.getLayers().set(index, newLayer);
@@ -340,6 +340,7 @@ public class FractalEditor extends Scene {
 			network.getItems().addAll(newNet, viewNet, viewNetLog, endNet);
 
 			MenuItem newFract = new MenuItem("New Fractal");
+			//TODO: fix layer system when new fractal is created
 			newFract.setOnAction(e -> {
 				this.fractal = new RenderManager();
 				gradient.updateLayer(this.fractal.getLayers().get(0));

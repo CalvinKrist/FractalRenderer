@@ -293,16 +293,11 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 	 * event.
 	 */
 	public void mouseClicked(MouseEvent e) {
-		for(ArrowButton b: palette.getOpacityList())
-			System.out.println(b.getData());
 		Point p = e.getPoint();
 		repaint();
 		if (selectedButton == null) {
 			if (bgButton.isClicked(p)) {
-				// TODO: create a color menu for the inside part of the fractal
-				// and store the color like this: bgButton.setData(newColor);
-				// this.repaint();
-
+				GradientMenus.displayColorMenus(bgButton, this);
 			} else if (saveButton.isClicked(p)) {
 				Platform.runLater(() -> {
 					TextInputDialog dialog = new TextInputDialog("");
@@ -355,19 +350,11 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 		} else {
 			if (selectedButton.isSquareClicked(p)) {
 				if (selectedButton.isDown()) {
-
-					// TODO: create a opacity menu for the selected button and
-					// store the value like this:
-					// selectedButton.setData(newValue); this.repaint();
-					// NOTE: the value should be between 0 and 1.0
 					Platform.runLater(() -> {
-						selectedButton.setData(OpacityBox.display(selectedButton));
-						this.repaint();
+						selectedButton.setData(GradientMenus.displayOpacityMenu(selectedButton, this));
 					});
 				} else {
-					// TODO: create a color menu for the selected button and
-					// store the color like this:
-					// selectedButton.setData(newColor); this.repaint();
+					GradientMenus.displayColorMenus(selectedButton, this);
 				}
 			}
 		}
