@@ -359,7 +359,9 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 			if (selectedButton.isSquareClicked(p)) {
 				if (selectedButton.isDown()) {
 					Platform.runLater(() -> {
-						selectedButton.setData(GradientMenus.displayOpacityMenu(selectedButton, this));
+						double newVal = GradientMenus.displayOpacityMenu(selectedButton, this);
+						selectedButton.setData(newVal);
+						repaint();
 					});
 				} else {
 					GradientMenus.displayColorMenus(selectedButton, this);
