@@ -7,7 +7,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -35,6 +36,7 @@ import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -173,12 +175,12 @@ public class FractalEditor extends Scene {
 			// TODO if need click for params
 			/**
 			 * parameters.setOnMouseClicked(new EventHandler<MouseEvent>(){
-			 * 
+			 *
 			 * @Override public void handle(MouseEvent event) { // TODO
 			 *           Auto-generated method stub
 			 *           if(event.getClickCount()==2){
 			 *           System.out.println("boop"); updateParams(); } }
-			 * 
+			 *
 			 *           });
 			 */
 			parameters.setCellFactory(new Callback<TreeView, TreeCell<MetaParam>>() {
@@ -247,6 +249,15 @@ public class FractalEditor extends Scene {
 									e.printStackTrace();
 								}
 							}
+							setOnDragDetected(new EventHandler<MouseEvent>() {
+								@Override
+								public void handle(MouseEvent mouseEvent) {
+									System.out.println("wofenh");
+									layers.getRoot().getChildren().remove(mouseEvent.getSource());
+									layers.layout();
+								}
+							});
+
 						}
 					};
 				}
@@ -280,13 +291,12 @@ public class FractalEditor extends Scene {
 							int index = layers.getRoot().getChildren().size() - 2 - layers.getRoot().getChildren()
 									.indexOf(layers.getSelectionModel().getSelectedItem());
 							Layer l = fractal.getLayers().get(index);
-							if(meta.isDelete()) {
+							if (meta.isDelete()) {
 								fractal.getLayers().remove(index);
 								updateFractalImage();
 								layers.getRoot().getChildren().remove(layers.getSelectionModel().getSelectedItem());
 								return;
-							}
-							else if (!meta.getType().equals(l.getClass().getSimpleName())) {
+							} else if (!meta.getType().equals(l.getClass().getSimpleName())) {
 								Layer newLayer = Layer.getLayerByType(meta.getType());
 								newLayer.init(new Palette(), index + 1);
 								l = newLayer;
@@ -305,12 +315,18 @@ public class FractalEditor extends Scene {
 					}
 				}
 			});
+			//TODO LAYER UP LAYER DOWN
+			layers.addEventFilter(KeyEvent.KEY_RELEASED, e -> {
+				if(e.getCode()==KeyCode.RIGHT){
+					moveUp((TreeItem) layers.getSelectionModel().getSelectedItem());
+				}
+				if(e.getCode()==KeyCode.LEFT){
+
+				}
+			});
 
 			layers.getRoot().getChildren().addAll(item, add);
-			{// TODO I DONT KNOW WHY THIS ISNT WORKING IUEAWBIUBFAI
 
-
-			}
 		}
 
 		{// This is the menu stuff
@@ -485,5 +501,24 @@ public class FractalEditor extends Scene {
 					.add(new TreeItem(new MetaParam(i, getSelectedLayer().getParameters().getParameter(i))));
 
 		}
+	}
+	static void moveUp(TreeItem item) {
+		System.out.println("moveUp");
+	    if (item.getParent() instanceof TreeItem) {
+	        TreeItem parent = item.getParent();
+	        List<TreeItem> list = new ArrayList<TreeItem>();
+	        Object prev = null;
+	        for (Object child : parent.getChildren()) {
+	            if (child == item) {
+	                list.add((TreeItem)child);
+	            } else {
+	                if (prev != null) list.add((TreeItem)prev);
+	                prev = child;
+	            }
+	        }
+	        if (prev != null) list.add((TreeItem)prev);
+	        parent.getChildren().clear();
+	        parent.getChildren().addAll(list);
+	    }
 	}
 }

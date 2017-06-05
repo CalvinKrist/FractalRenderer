@@ -40,6 +40,7 @@ public class ClientTest {
 		t.start();
 
 		c.init(log, ip); 
+
 	}
 
 }

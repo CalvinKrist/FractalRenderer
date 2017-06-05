@@ -74,25 +74,15 @@ public class Client extends NetworkNode {
 	 * Connects to the server and initializes anything that needs to be initialized.
 	 * @param log The log the client and all the objects it creates will use to log and print information.
 	 */
-<<<<<<< HEAD
 	public void init(Log log, String ip) {
-		System.out.println("creaing");
-=======
-	public void init(Log log) {
->>>>>>> 2acf1e3af47a63aa9305e513c14cac6418ec0db5
 		this.log = log;
 		log.blankLine();
 		log.newLine("Creating new client.");
 		fractal = null;
 		jobs = new LinkedList<Job>();
 		
-<<<<<<< HEAD
 		initializeServer(ip);
 		log.newLine("Succesfully connected to server at " + ipAdress + ".");
-		System.out.println("success");
-=======
-		initializeServer();
->>>>>>> 2acf1e3af47a63aa9305e513c14cac6418ec0db5
 		doJob();
 	}
 	
