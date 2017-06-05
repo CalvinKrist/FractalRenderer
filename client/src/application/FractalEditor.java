@@ -40,6 +40,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
@@ -121,6 +122,7 @@ public class FractalEditor extends Scene {
 		trees.setAlignment(Pos.CENTER);
 
 		Button render = new Button("Update");
+		render.setFont(new Font("Ariel", 24));
 		render.minWidthProperty().bind(trees.minWidthProperty());
 
 		fractalView = new ImageView();
@@ -214,6 +216,7 @@ public class FractalEditor extends Scene {
 								params.put(key, value);
 							}
 							getSelectedLayer().setParameters(params);
+							updateFractalImage();
 							return new MetaParam(string.substring(0, string.indexOf(": ")),
 									string.substring(string.indexOf(": ") + 2));
 						}
