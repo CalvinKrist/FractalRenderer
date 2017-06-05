@@ -293,6 +293,7 @@ public class FractalEditor extends Scene {
 							Layer l = fractal.getLayers().get(index);
 							if (meta.isDelete()) {
 								fractal.getLayers().remove(index);
+								updateFractalImage();
 								layers.getRoot().getChildren().remove(layers.getSelectionModel().getSelectedItem());
 								return;
 							} else if (!meta.getType().equals(l.getClass().getSimpleName())) {

@@ -74,18 +74,15 @@ public class Client extends NetworkNode {
 	 * Connects to the server and initializes anything that needs to be initialized.
 	 * @param log The log the client and all the objects it creates will use to log and print information.
 	 */
-	public void init(Log log) {
-		System.out.println("creaing");
+	public void init(Log log, String ip) {
 		this.log = log;
 		log.blankLine();
 		log.newLine("Creating new client.");
 		fractal = null;
 		jobs = new LinkedList<Job>();
-		log.newLine("Connecting to server at " + ipAdress + ".");
 		
-		initializeServer();
+		initializeServer(ip);
 		log.newLine("Succesfully connected to server at " + ipAdress + ".");
-		System.out.println("success");
 		doJob();
 	}
 	
@@ -94,21 +91,11 @@ public class Client extends NetworkNode {
 	 * then waiting for the server to connect to it using conventional Sockets. Creates the various listeners
 	 * for the SocketWrapper as well.
 	 */
-	private void initializeServer() {
+	private void initializeServer(String ip) {
 		try {
-			
-			DatagramSocket socket = new DatagramSocket();
-			socket.setBroadcast(true);
-			byte[] message = "JOIN_REQUEST".getBytes();
-			
-			DatagramPacket packet = new DatagramPacket(message, message.length, Utils.getBroadcastAddress(), Constants.BROADCAST_PORT);
-			socket.send(packet);
-			log.newLine("IPAddress broadcast.");
-			ServerSocket temp = new ServerSocket(Constants.PORT);
-			server = new SocketWrapper(temp.accept(), log);
-			temp.close();
+			server = new SocketWrapper(new Socket(ip, Constants.PORT), log);
 			log.newLine("Connected to server at " + server.getInetAdress());
-			
+			ipAdress = server.getInet().getHostAddress();
 			server.addNoConnectionListener(new NoConnectionListener() {
 				public void response(Exception e) {
 					log.newLine("Disconnected from server. Shutting down.");
@@ -193,8 +180,7 @@ public class Client extends NetworkNode {
 		Parameters params = j.getParameters();
 		fractal.setZoom(params.getParameter("zoom", Double.class));
 		fractal.setLocation(params.getParameter("location", util.Point.class));
-		int[][] pixels = new int[fractal.getScreenResolution().width][fractal.getScreenResolution().height];
-		fractal.render(pixels);
+		int[][] pixels = fractal.render();
 		j.setImage(pixels);
 		server.sendMessage(j);
 	}
