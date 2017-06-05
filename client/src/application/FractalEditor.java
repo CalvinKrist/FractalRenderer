@@ -280,7 +280,8 @@ public class FractalEditor extends Scene {
 					};
 				}
 			});
-
+			
+			
 			TreeItem add = new TreeItem();
 
 			layerIndex = 1;
@@ -293,13 +294,16 @@ public class FractalEditor extends Scene {
 						if (layers.getSelectionModel().getSelectedItem() != add) {
 							updateParams();
 						}
-					}
-					if (mouseEvent.getClickCount() == 2) {
 						if (layers.getSelectionModel().getSelectedItem() == add) {
 							CheckBoxTreeItem i = getNewTreeItem();
 							layers.getRoot().getChildren().add(0, i);
 							fractal.addLayer("HistogramLayer");
 							updateFractalImage();
+						}
+					}
+					if (mouseEvent.getClickCount() == 2) {
+						if (layers.getSelectionModel().getSelectedItem() == add) {
+							
 						} else {
 							((TreeItem) layers.getSelectionModel().getSelectedItem())
 									.setValue(GradientMenus.displayLayerMenu(
@@ -467,6 +471,7 @@ public class FractalEditor extends Scene {
 		fractalEditor.setContent(gradient);
 		fractalEditor.minHeight(200);
 
+		updateParams(0);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -521,8 +526,18 @@ public class FractalEditor extends Scene {
 		for (String i : getSelectedLayer().getParameters().keySet()) {
 			parameters.getRoot().getChildren()
 					.add(new TreeItem(new MetaParam(i, getSelectedLayer().getParameters().getParameter(i))));
+			}
 
 		}
+		private void updateParams(int waste) {
+			while (!parameters.getRoot().getChildren().isEmpty())
+				parameters.getRoot().getChildren().remove(0);
+			layers.getSelectionModel().select(1);
+			for (String i : getSelectedLayer().getParameters().keySet()) {
+				parameters.getRoot().getChildren()
+						.add(new TreeItem(new MetaParam(i, getSelectedLayer().getParameters().getParameter(i))));
+
+			}
 	}
 
 	static void moveUp(TreeItem item) {
@@ -544,6 +559,11 @@ public class FractalEditor extends Scene {
 				list.add((TreeItem) prev);
 			parent.getChildren().clear();
 			parent.getChildren().addAll(list);
+		}
+	}
+	public void deleteLayers(){
+		while(layers.getRoot().getChildren().size()>1){
+			layers.getRoot().getChildren().remove(0);
 		}
 	}
 }
