@@ -12,7 +12,7 @@ Program  Requirements:
 
 How to install:
 
-	-Place the .jar in a new folder. Launch the jar.
+	-Place the .jar in a new folder along with the textures folder. Launch the jar.
 
 	-The jar will create all the folders it needs within the folder you placed it. Do not delete these. The program is now ready for use.
 
@@ -32,7 +32,7 @@ Editing the fractal:
 
 	-To edit the type of layer, the name of the layer, and the opacity of the layer, double click the layer.
 
-	-To change the order in which layers are rendered, drag the layers around. Layers on top are rendered on top.
+	-To change the order in which layers are rendered, use the the left and the right arrow keys while selecting a fractal.
 
 	-When a layer is selected, its gradient will be displayed below the fractal. Arrow buttons on the bottom of the gradient represent color data points, and arrow buttons on top of the gradient represent opacity data points.
 
@@ -41,6 +41,8 @@ Editing the fractal:
 	-The colored, square rectangle to the right of the gradient is the color the inside of the fractal will be colord. It can be modified by clicking the square.
 
 	-The two buttons below the square represent ways to save and load in palettes. By default, palettes are saved as a part of the fractal, but if you create one that you especially love and wish to use later save it to the palettes folder. You can then load it in to other fractals!
+
+	-When a layer is selected, layer-based parameters that can be edited will show up in the upper right hand corner of the screen. Double click those parameters to edit them.	
 
 
 Menus:
