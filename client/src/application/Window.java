@@ -271,6 +271,7 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 
 		this.layer = newLayer;
 		this.palette = layer.getPalette();
+		this.bgButton.setData(layer.getPalette().getBackground());
 		for (ArrowButton b : palette.getColorList()) {
 			b.setLocation(new Point((int) ((double) b.getX() / palette.size * gradientRect.width) + gradientRect.x,
 					colorButtonHeight));
