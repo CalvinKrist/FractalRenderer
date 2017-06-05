@@ -106,13 +106,16 @@ public class Server extends NetworkNode {
 	 * @param sender the SocketWrapper that revieved the message (or, from the perspective of the server, the client that sent the message)
 	 */
 	public void handleMessage(Object o, SocketWrapper sender) {
+		System.out.println(uncompletedJobs.size() + ", " + this.unnasignedJobs.size());
+		for(SocketWrapper w: children)
+			System.out.println(uncompletedJobs.get(w).size());
 		if (o instanceof Job) {
-			uncompletedJobs.get(sender).remove((Job) o);
+			uncompletedJobs.get(sender).poll();
 			int[][] pixels = ((Job) (o)).getImage();
 			BufferedImage img = new BufferedImage(pixels.length, pixels[0].length, BufferedImage.TYPE_INT_RGB);
 			RenderManager.setPixels(img, pixels);
 			double zoom = (1 / parameters.getParameter("radius", Double.class));
-			File dir = new File(directory + zoom + ".png");
+			File dir = new File(directory + ((Job)o).getId() + ".png");
 			dir.mkdirs();
 			frameCount++;
 			try {
@@ -171,7 +174,7 @@ public class Server extends NetworkNode {
 		params.put("zoom", 1 / parameters.getParameter("radius", Double.class));
 		params.put("location", parameters.getParameter("location"));
 		Parameters p = new Parameters(params);
-		Job b = new Job("render_" + parameters.getParameter("radius") + "_", p);
+		Job b = new Job("render_" + frameCount + "_", p);
 		unnasignedJobs.add(b);
 		parameters.put("radius", parameters.getParameter("radius", Double.class) * 1 / zoomSpeed);
 	}
