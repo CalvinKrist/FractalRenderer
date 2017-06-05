@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.LinkedList;
@@ -93,7 +94,10 @@ public class Client extends NetworkNode {
 	 */
 	private void initializeServer(String ip) {
 		try {
-			server = new SocketWrapper(new Socket(ip, Constants.PORT), log);
+			Socket s = new Socket();
+			s.connect(new InetSocketAddress(ip, Constants.PORT), 5000);
+			s.setSoTimeout(5000);
+			server = new SocketWrapper(s, log);
 			log.newLine("Connected to server at " + server.getInetAdress());
 			ipAdress = server.getInet().getHostAddress();
 			server.addNoConnectionListener(new NoConnectionListener() {
@@ -135,12 +139,9 @@ public class Client extends NetworkNode {
 			}
 		} catch (Exception e) {
 			log.addError(e);
-			log.newLine("Server not available. Shutting down.");
-			/*Platform.runLater(()-> {
-				AlertMenu alert = new AlertMenu("Server not Available", "Shutting down. Please try again.");
-			}); */
-			saveLog();
-			System.exit(0);
+			log.blankLine();
+			log.newLine("Server not available. Trying again.");
+			initializeServer(ip);
 		}	
 	}
 
