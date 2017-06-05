@@ -74,25 +74,15 @@ public class Client extends NetworkNode {
 	 * Connects to the server and initializes anything that needs to be initialized.
 	 * @param log The log the client and all the objects it creates will use to log and print information.
 	 */
-<<<<<<< HEAD
 	public void init(Log log, String ip) {
-		System.out.println("creaing");
-=======
-	public void init(Log log) {
->>>>>>> 2acf1e3af47a63aa9305e513c14cac6418ec0db5
 		this.log = log;
 		log.blankLine();
 		log.newLine("Creating new client.");
 		fractal = null;
 		jobs = new LinkedList<Job>();
 		
-<<<<<<< HEAD
 		initializeServer(ip);
 		log.newLine("Succesfully connected to server at " + ipAdress + ".");
-		System.out.println("success");
-=======
-		initializeServer();
->>>>>>> 2acf1e3af47a63aa9305e513c14cac6418ec0db5
 		doJob();
 	}
 	
@@ -103,22 +93,7 @@ public class Client extends NetworkNode {
 	 */
 	private void initializeServer(String ip) {
 		try {
-<<<<<<< HEAD
-			
-			DatagramSocket socket = new DatagramSocket();
-			socket.setBroadcast(true);
-			byte[] message = "JOIN_REQUEST".getBytes();
-			
-			DatagramPacket packet = new DatagramPacket(message, message.length, Utils.getBroadcastAddress(), 7777);
-			socket.send(packet);
-			log.newLine("IPAddress broadcast.");
-			ServerSocket temp = new ServerSocket(Constants.PORT);
-			server = new SocketWrapper(temp.accept(), log);
-			temp.close();
-			socket.close();
-=======
 			server = new SocketWrapper(new Socket(ip, Constants.PORT), log);
->>>>>>> cba90631060f5ba069c11ac612cba9fc6832ce57
 			log.newLine("Connected to server at " + server.getInetAdress());
 			ipAdress = server.getInet().getHostAddress();
 			server.addNoConnectionListener(new NoConnectionListener() {
