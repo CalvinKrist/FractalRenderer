@@ -300,6 +300,7 @@ public class FractalEditor extends Scene {
 							CheckBoxTreeItem i = getNewTreeItem();
 							layers.getRoot().getChildren().add(0, i);
 							fractal.addLayer("HistogramLayer");
+							fractal.getLayers().get(fractal.getLayers().size() - 1).setName("Layer " + layerIndex);
 							updateFractalImage();
 						}
 					}
@@ -412,6 +413,10 @@ public class FractalEditor extends Scene {
 			newFract.setOnAction(e -> {
 				this.fractal = new RenderManager();
 				gradient.updateLayer(this.fractal.getLayers().get(0));
+				deleteLayers();
+				CheckBoxTreeItem i = getNewTreeItem();
+				layers.getRoot().getChildren().add(0, i);
+				this.fractal.addLayer("HistogramLayer");
 				this.updateFractalImage();
 			});
 			MenuItem openFract = new MenuItem("Open Fractal");
@@ -426,6 +431,16 @@ public class FractalEditor extends Scene {
 				this.fractal = new RenderManager(f);
 				gradient.updateLayer(this.fractal.getLayers().get(0));
 				
+				deleteLayers();
+				for(int k = 0; k < this.fractal.getLayers().size(); k++) {
+					Layer l = this.fractal.getLayers().get(k);
+					CheckBoxTreeItem i = getNewTreeItem();
+					MetaLayer meta = (MetaLayer)(i.getValue());
+					meta.setName(l.getName());
+					meta.setOpacity(l.getOpacity());
+					meta.setType(l.getClass().getSimpleName());
+					layers.getRoot().getChildren().add(0, i);
+				}
 				this.updateFractalImage();
 			});
 			MenuItem saveFract = new MenuItem("Save Fractal");
