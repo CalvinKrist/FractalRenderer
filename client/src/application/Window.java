@@ -20,6 +20,7 @@ import fractal.Palette;
 import javafx.application.Platform;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser;
+import util.Constants;
 
 /**
  * A swing based menu to modify and display a color palette
@@ -148,6 +149,11 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 		bgButton.draw(g);
 		saveButton.draw(g);
 		loadButton.draw(g);
+		
+		g.setColor(Color.black);
+		g.setFont(Constants.mediumFont);
+		g.drawString("Opacity", gradientRect.width / 2 + gradientRect.x, 19);
+		g.drawString("Color", gradientRect.width / 2 + gradientRect.x+ 10, gradientRect.height + gradientRect.y + 28);
 	}
 
 	/**
@@ -271,6 +277,7 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 
 		this.layer = newLayer;
 		this.palette = layer.getPalette();
+		this.bgButton.setData(layer.getPalette().getBackground());
 		for (ArrowButton b : palette.getColorList()) {
 			b.setLocation(new Point((int) ((double) b.getX() / palette.size * gradientRect.width) + gradientRect.x,
 					colorButtonHeight));
@@ -334,6 +341,7 @@ public class Window extends JPanel implements MouseListener, MouseMotionListener
 						File f = chooser.showOpenDialog(null);
 						if(f != null) {
 							palette = new Palette(f.getPath(), false);
+							bgButton.setData(palette.getBackground());
 							repaint();
 							layer.setColorPalette(palette);
 						}

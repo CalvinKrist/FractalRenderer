@@ -40,6 +40,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
@@ -50,6 +51,7 @@ import menus.RegisterLayerTool;
 import server.Server;
 import util.Constants;
 import util.Log;
+import util.Parameters;
 import util.Point;
 
 /**
@@ -67,6 +69,7 @@ public class FractalEditor extends Scene {
 	private boolean zoom = false;
 	private Server network;
 	private Log log;
+	private Layer selectedLayer;
 
 	/**
 	 * @author David This instantiates the Fractal Editor scene
@@ -107,6 +110,7 @@ public class FractalEditor extends Scene {
 			}
 		}
 		fractal = new RenderManager();
+		selectedLayer = fractal.getLayers().get(0);
 
 		MenuBar menu = new MenuBar();
 		SwingNode fractalEditor = new SwingNode();
@@ -118,6 +122,7 @@ public class FractalEditor extends Scene {
 		trees.setAlignment(Pos.CENTER);
 
 		Button render = new Button("Update");
+		render.setFont(new Font("Ariel", 24));
 		render.minWidthProperty().bind(trees.minWidthProperty());
 
 		fractalView = new ImageView();
@@ -187,7 +192,6 @@ public class FractalEditor extends Scene {
 
 				@Override
 				public TreeCell call(TreeView param) {
-
 					StringConverter s = new StringConverter() {
 
 						@Override
@@ -198,7 +202,21 @@ public class FractalEditor extends Scene {
 
 						@Override
 						public Object fromString(String string) {
-							System.out.println("u are not a total failure");
+							int index = string.indexOf(":");
+							if(!string.substring(index + 1, index + 2).equals(" "))
+								string = string.substring(0, index + 1) + " " + string.substring(index + 1);
+							Parameters params = new Parameters();
+							for (Object o : parameters.getRoot().getChildren()) {
+								TreeItem i = (TreeItem) o;
+								String msg = i.getValue().toString();
+								if(param.getSelectionModel().getSelectedItem().equals(o))
+									msg = string;
+								String key = msg.substring(0, msg.indexOf(":"));
+								String value = msg.substring(msg.indexOf(":") + 2);
+								params.put(key, value);
+							}
+							getSelectedLayer().setParameters(params);
+							updateFractalImage();
 							return new MetaParam(string.substring(0, string.indexOf(": ")),
 									string.substring(string.indexOf(": ") + 2));
 						}
@@ -315,12 +333,12 @@ public class FractalEditor extends Scene {
 					}
 				}
 			});
-			//TODO LAYER UP LAYER DOWN
+			// TODO LAYER UP LAYER DOWN
 			layers.addEventFilter(KeyEvent.KEY_RELEASED, e -> {
-				if(e.getCode()==KeyCode.RIGHT){
+				if (e.getCode() == KeyCode.RIGHT) {
 					moveUp((TreeItem) layers.getSelectionModel().getSelectedItem());
 				}
-				if(e.getCode()==KeyCode.LEFT){
+				if (e.getCode() == KeyCode.LEFT) {
 
 				}
 			});
@@ -468,9 +486,13 @@ public class FractalEditor extends Scene {
 	}
 
 	private Layer getSelectedLayer() {
-		int index = layers.getRoot().getChildren().size() - 2
-				- layers.getRoot().getChildren().indexOf(layers.getSelectionModel().getSelectedItem());
-		return fractal.getLayers().get(index);
+		try {
+			int index = layers.getRoot().getChildren().size() - 2
+					- layers.getRoot().getChildren().indexOf(layers.getSelectionModel().getSelectedItem());
+			selectedLayer = fractal.getLayers().get(index);
+		} finally {
+			return selectedLayer;
+		}
 	}
 
 	private int incrementLayers() {
@@ -502,23 +524,26 @@ public class FractalEditor extends Scene {
 
 		}
 	}
+
 	static void moveUp(TreeItem item) {
 		System.out.println("moveUp");
-	    if (item.getParent() instanceof TreeItem) {
-	        TreeItem parent = item.getParent();
-	        List<TreeItem> list = new ArrayList<TreeItem>();
-	        Object prev = null;
-	        for (Object child : parent.getChildren()) {
-	            if (child == item) {
-	                list.add((TreeItem)child);
-	            } else {
-	                if (prev != null) list.add((TreeItem)prev);
-	                prev = child;
-	            }
-	        }
-	        if (prev != null) list.add((TreeItem)prev);
-	        parent.getChildren().clear();
-	        parent.getChildren().addAll(list);
-	    }
+		if (item.getParent() instanceof TreeItem) {
+			TreeItem parent = item.getParent();
+			List<TreeItem> list = new ArrayList<TreeItem>();
+			Object prev = null;
+			for (Object child : parent.getChildren()) {
+				if (child == item) {
+					list.add((TreeItem) child);
+				} else {
+					if (prev != null)
+						list.add((TreeItem) prev);
+					prev = child;
+				}
+			}
+			if (prev != null)
+				list.add((TreeItem) prev);
+			parent.getChildren().clear();
+			parent.getChildren().addAll(list);
+		}
 	}
 }
