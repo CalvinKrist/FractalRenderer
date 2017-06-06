@@ -323,7 +323,7 @@ public class FractalEditor extends Scene {
 								return;
 							} else if (!meta.getType().equals(l.getClass().getSimpleName())) {
 								Layer newLayer = Layer.getLayerByType(meta.getType());
-								newLayer.init(new Palette(), index + 1);
+								newLayer.init(l.getPalette(), index + 1);
 								l = newLayer;
 								fractal.getLayers().set(index, newLayer);
 								fractal.update();
@@ -343,12 +343,17 @@ public class FractalEditor extends Scene {
 			// TODO LAYER UP LAYER DOWN
 			layers.addEventFilter(KeyEvent.KEY_RELEASED, e -> {
 				if (e.getCode() == KeyCode.RIGHT) {
+					int index =  this.fractal.getLayers().indexOf(getSelectedLayer());
 					moveUp((TreeItem) layers.getSelectionModel().getSelectedItem());
+					if(index < this.fractal.getNumLayers() - 1)
+						this.fractal.getLayers().add(index + 1, this.fractal.getLayers().remove(index));
 				}
 
 				if(e.getCode()==KeyCode.LEFT){
 					moveDown((TreeItem) layers.getSelectionModel().getSelectedItem());
-
+					int index =  this.fractal.getLayers().indexOf(getSelectedLayer());
+					if(index > 0)
+						this.fractal.getLayers().add(index - 1, this.fractal.getLayers().remove(index));
 				}
 			});
 
@@ -523,6 +528,11 @@ public class FractalEditor extends Scene {
 		} finally {
 			return selectedLayer;
 		}
+	}
+	
+	private int getSelectedLayerIndex() {
+		return layers.getRoot().getChildren().size() - 2
+				- layers.getRoot().getChildren().indexOf(layers.getSelectionModel().getSelectedItem());
 	}
 
 	private int incrementLayers() {
