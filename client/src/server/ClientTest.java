@@ -20,7 +20,7 @@ public class ClientTest {
 		Client c = new Client();
 		
 		String ip = JOptionPane.showInputDialog("IP Address");
-		
+
 		Thread t = new Thread(()-> {
 			JFrame f = new JFrame();
 			JTextArea text = new JTextArea(20, 25);
@@ -38,7 +38,7 @@ public class ClientTest {
 			}
 		});
 		t.start();
-		
+
 		c.init(log, ip); 
 
 	}

@@ -131,7 +131,7 @@ public class NetworkCreationTool {
 		grid.setPadding(new Insets(20, 150, 10, 10));
 
 		TextField zoomField = new TextField(".25");
-		TextField zoomSpeedField = new TextField("1.1");
+		TextField zoomSpeedField = new TextField("1.05");
 
 		grid.add(new Label("Zoom Level:"), 0, 0);
 		grid.add(zoomField, 1, 0);
@@ -192,7 +192,7 @@ public class NetworkCreationTool {
 		grid.setVgap(10);
 		grid.setPadding(new Insets(20, 150, 10, 10));
 
-		TextField widthField = new TextField("1600");
+		TextField widthField = new TextField("1920");
 		widthField.textProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -201,7 +201,7 @@ public class NetworkCreationTool {
 				}
 			}
 		});
-		TextField heightField = new TextField("1600");
+		TextField heightField = new TextField("1080");
 		heightField.textProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {

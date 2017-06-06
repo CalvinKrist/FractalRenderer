@@ -12,7 +12,7 @@ public class Constants {
 	/**
 	 * The port that most of the network communications occur on
 	 */
-	public static final int PORT = 6664;
+	public static final int PORT = 80;
 	/**
 	 * The port used by the Client and Server to listen to broadcasts. This is used to that
 	 * a server can find clients at an unknown ipAddress.

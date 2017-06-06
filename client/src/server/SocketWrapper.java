@@ -72,6 +72,7 @@ public class SocketWrapper extends Thread {
 		try {
 			objOut.writeObject(m);
 			objOut.flush();
+			objOut.reset();
 			if(m instanceof DataTag && ((DataTag)m).getId().equals("log"))
 				log.newLine("Log sent to " + inetAdress);
 			else

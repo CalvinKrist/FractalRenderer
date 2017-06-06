@@ -43,6 +43,7 @@ public class GradientMenus {
 		opacityValue.setText(String.format("%.2f", opacityLevel.getValue()));
 		double prevVal = (double) button.getData();
 
+
 		Stage window  = new Stage();
 		window.setTitle("Opacity Picker");
 		window.setMinWidth(450);
@@ -83,6 +84,15 @@ public class GradientMenus {
         b.setOnAction(e -> {
         	window.close();
         });
+        Button d = new Button("Delete");
+        d.setOnAction(e -> {
+        	gradient.getPalette().getOpacityList().remove(button);
+        	gradient.repaint();
+        	window.close();
+        	
+        });
+        GridPane.setConstraints(d,3,2);
+        grid.getChildren().add(d);
 
         GridPane.setConstraints(b, 2, 2);
         grid.getChildren().add(b);
@@ -108,11 +118,20 @@ public class GradientMenus {
 		panel.setLayout(new BorderLayout());
 		panel.add(p, BorderLayout.CENTER);
 
+		JButton delete = new JButton("Delete");
+		delete.addActionListener(e-> {
+			window.getPalette().getColorList().remove(button);
+			f.dispose();
+			window.repaint();
+		});
 		JButton submit = new JButton("Submit");
 		submit.addActionListener(e-> {
 			f.dispose();
 		});
-		panel.add(submit, BorderLayout.SOUTH);
+		JPanel temp = new JPanel();
+		temp.add(submit);
+		temp.add(delete);
+		panel.add(temp, BorderLayout.SOUTH);
 
 		p.getSelectionModel().addChangeListener(e-> {
 			button.setData(p.getColor());
@@ -249,5 +268,4 @@ public class GradientMenus {
         	return new MetaLayer(nameIn.getText(),typeIn.getSelectionModel().getSelectedItem().toString(),opacityLevel.getValue(),true);
 		return new MetaLayer(nameIn.getText(),typeIn.getSelectionModel().getSelectedItem().toString(),opacityLevel.getValue());
     }
-
 }
