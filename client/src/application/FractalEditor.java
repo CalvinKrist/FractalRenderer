@@ -321,7 +321,7 @@ public class FractalEditor extends Scene {
 					moveUp((TreeItem) layers.getSelectionModel().getSelectedItem());
 				}
 				if(e.getCode()==KeyCode.LEFT){
-
+					moveDown((TreeItem) layers.getSelectionModel().getSelectedItem());
 				}
 			});
 
@@ -503,6 +503,7 @@ public class FractalEditor extends Scene {
 		}
 	}
 	static void moveUp(TreeItem item) {
+		//TODO move layers up
 		System.out.println("moveUp");
 	    if (item.getParent() instanceof TreeItem) {
 	        TreeItem parent = item.getParent();
@@ -520,5 +521,27 @@ public class FractalEditor extends Scene {
 	        parent.getChildren().clear();
 	        parent.getChildren().addAll(list);
 	    }
+	}
+	public static void moveDown(TreeItem item){
+		//TODO move layers down
+		System.out.println("moveDown");
+		if(item.nextSibling() !=null && item.nextSibling().getValue()!=null) {
+			TreeItem parent = item.getParent();
+			List<TreeItem> list = new ArrayList<TreeItem>();
+			boolean skip = false;
+			for(Object child : parent.getChildren()){
+				if(child == item) {
+					list.add(((TreeItem)child).nextSibling());
+					list.add((TreeItem)child);
+					skip = true;
+				} else {
+					if(!skip)
+					list.add((TreeItem)child);
+					skip = false;
+				}
+			}
+			parent.getChildren().clear();
+			parent.getChildren().addAll(list);
+		}
 	}
 }
