@@ -411,12 +411,13 @@ public class FractalEditor extends Scene {
 
 			MenuItem newFract = new MenuItem("New Fractal");
 			newFract.setOnAction(e -> {
+				layerIndex = 1;
 				this.fractal = new RenderManager();
 				gradient.updateLayer(this.fractal.getLayers().get(0));
+				System.out.println(this.fractal.getLayers().get(0));
 				deleteLayers();
 				CheckBoxTreeItem i = getNewTreeItem();
 				layers.getRoot().getChildren().add(0, i);
-				this.fractal.addLayer("HistogramLayer");
 				this.updateFractalImage();
 			});
 			MenuItem openFract = new MenuItem("Open Fractal");
