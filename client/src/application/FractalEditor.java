@@ -282,8 +282,8 @@ public class FractalEditor extends Scene {
 					};
 				}
 			});
-			
-			
+
+
 			TreeItem add = new TreeItem();
 
 			layerIndex = 1;
@@ -306,7 +306,7 @@ public class FractalEditor extends Scene {
 					}
 					if (mouseEvent.getClickCount() == 2) {
 						if (layers.getSelectionModel().getSelectedItem() == add) {
-							
+
 						} else {
 							((TreeItem) layers.getSelectionModel().getSelectedItem())
 									.setValue(GradientMenus.displayLayerMenu(
@@ -345,7 +345,9 @@ public class FractalEditor extends Scene {
 				if (e.getCode() == KeyCode.RIGHT) {
 					moveUp((TreeItem) layers.getSelectionModel().getSelectedItem());
 				}
-				if (e.getCode() == KeyCode.LEFT) {
+
+				if(e.getCode()==KeyCode.LEFT){
+					moveDown((TreeItem) layers.getSelectionModel().getSelectedItem());
 
 				}
 			});
@@ -431,7 +433,7 @@ public class FractalEditor extends Scene {
 				File f = chooser.showOpenDialog(null);
 				this.fractal = new RenderManager(f);
 				gradient.updateLayer(this.fractal.getLayers().get(0));
-				
+
 				deleteLayers();
 				for(int k = 0; k < this.fractal.getLayers().size(); k++) {
 					Layer l = this.fractal.getLayers().get(k);
@@ -564,6 +566,7 @@ public class FractalEditor extends Scene {
 	}
 
 	static void moveUp(TreeItem item) {
+		//TODO move layers up
 		System.out.println("moveUp");
 		if (item.getParent() instanceof TreeItem) {
 			TreeItem parent = item.getParent();
@@ -591,9 +594,9 @@ public class FractalEditor extends Scene {
 		}
 	}
 
-	
+
 	private static String getHelpText() {
-		return "Navigating the fractal:\r\n" + 
+		return "Navigating the fractal:\r\n" +
 
 	"-click around on the fractal to move the viewport\r\n" +
 
@@ -603,7 +606,7 @@ public class FractalEditor extends Scene {
 "Editing the fractal:\r\n" +
 
 	"-The fractal consists of a series of layers that are rendered in a certain order. There are different types of layers and each can have a different gradient.\r\n"
-	+ "-To add a new layer, double click the '+' button.\r\n" + 
+	+ "-To add a new layer, double click the '+' button.\r\n" +
 
 	"-To edit the type of layer, the name of the layer, and the opacity of the layer, double click the layer.\r\n" +
 
@@ -641,7 +644,7 @@ public class FractalEditor extends Scene {
 	"-'Close Network', under the 'Network' menu, will shut down the network.\r\n" +
 
 	"-'New Layer Type', under the 'System' menu, will alow the user to register a new layer type while the application is still running. The layer could also be registered by placing it in the 'custom' folder and restarting the application.\r\n" +
-	
+
 	"-'Edit Log Options', under the 'System' menu, will alow the user to modify the log options. There are two main categories: log and print. Log controls what is saved to the log file, while print controls what is printed to the cmd (if it is used to run the application). LEVEL_ERROR prints only errors, LEVEL_LOg prints everything, and LEVEL_NONE prints nothing.\r\n\r\n" +
 
 
@@ -670,5 +673,27 @@ public class FractalEditor extends Scene {
 
 	"-The actual programming of the layer file is more complicated. Start by downloading the source code for this application. Then, create a new class that extends Layer. From there, you must implement a number of abstract methods in order for the layer to work. For more information on what needs to be implements and what the methods do, refer to the Layer documentation and the HistogramLayer and TriangleAverageLayer source code.";
 
+	}
+	public static void moveDown(TreeItem item){
+		//TODO move layers down
+		System.out.println("moveDown");
+		if(item.nextSibling() !=null && item.nextSibling().getValue()!=null) {
+			TreeItem parent = item.getParent();
+			List<TreeItem> list = new ArrayList<TreeItem>();
+			boolean skip = false;
+			for(Object child : parent.getChildren()){
+				if(child == item) {
+					list.add(((TreeItem)child).nextSibling());
+					list.add((TreeItem)child);
+					skip = true;
+				} else {
+					if(!skip)
+					list.add((TreeItem)child);
+					skip = false;
+				}
+			}
+			parent.getChildren().clear();
+			parent.getChildren().addAll(list);
+		}
 	}
 }
