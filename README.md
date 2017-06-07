@@ -80,7 +80,9 @@ Running a Network:
 
 	-The images rendered by the clients will save to the directory selected during the Network creation process. You can compile those images into a video however you want.
 
-	-You can close the network when you are done by either using the 'Close Network' option in the menus or by closing the fractal editor. The client computers do not need to only render the fractals: feel free to use them while they render.
+	-You can close the network when you are done by either using the 'Close Network' option in the menus or by closing the fractal editor. The client computers do not need to only render the fractals: feel free to use them while they render. **NOTE: DOES NOT WORK PROPERLY. NETWORK MUST BE CLOSED BY RESTARTING THE APPLICATION.**
+
+	-If there is an issue with the client and it crashes, it will save a log file in the directory that the jar is placed in.
 
 
 Creating new layer types:

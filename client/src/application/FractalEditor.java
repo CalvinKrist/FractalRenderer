@@ -57,6 +57,8 @@ import util.Parameters;
 import util.Point;
 
 /**
+ * Constructs the GUI and manages its interaction with the fractal. This class contains most of the upper level logic for the
+ * application
  * @author David
  */
 public class FractalEditor extends Scene {
@@ -74,7 +76,8 @@ public class FractalEditor extends Scene {
 	private Layer selectedLayer;
 
 	/**
-	 * @author David This instantiates the Fractal Editor scene
+	 * This instantiates the Fractal Editor scene
+	 * @author David
 	 *
 	 * @param x
 	 *            width
@@ -91,7 +94,7 @@ public class FractalEditor extends Scene {
 	}
 
 	/**
-	 * Initializes the menus and fractal
+	 * Initializes the menus and fractal. Creates most of the listeners and gui logic.
 	 *
 	 * @author David
 	 *
@@ -205,13 +208,13 @@ public class FractalEditor extends Scene {
 						@Override
 						public Object fromString(String string) {
 							int index = string.indexOf(":");
-							if(!string.substring(index + 1, index + 2).equals(" "))
+							if (!string.substring(index + 1, index + 2).equals(" "))
 								string = string.substring(0, index + 1) + " " + string.substring(index + 1);
 							Parameters params = new Parameters();
 							for (Object o : parameters.getRoot().getChildren()) {
 								TreeItem i = (TreeItem) o;
 								String msg = i.getValue().toString();
-								if(param.getSelectionModel().getSelectedItem().equals(o))
+								if (param.getSelectionModel().getSelectedItem().equals(o))
 									msg = string;
 								String key = msg.substring(0, msg.indexOf(":"));
 								String value = msg.substring(msg.indexOf(":") + 2);
@@ -283,7 +286,6 @@ public class FractalEditor extends Scene {
 				}
 			});
 
-
 			TreeItem add = new TreeItem();
 
 			layerIndex = 1;
@@ -327,6 +329,7 @@ public class FractalEditor extends Scene {
 								l = newLayer;
 								fractal.getLayers().set(index, newLayer);
 								fractal.update();
+								updateParams();
 							}
 							l.setOpacity(meta.getOpacity());
 							fractal.getLayers().get(index).setName(meta.getName());
@@ -343,16 +346,16 @@ public class FractalEditor extends Scene {
 			// TODO LAYER UP LAYER DOWN
 			layers.addEventFilter(KeyEvent.KEY_RELEASED, e -> {
 				if (e.getCode() == KeyCode.RIGHT) {
-					int index =  this.fractal.getLayers().indexOf(getSelectedLayer());
+					int index = this.fractal.getLayers().indexOf(getSelectedLayer());
 					moveUp((TreeItem) layers.getSelectionModel().getSelectedItem());
-					if(index < this.fractal.getNumLayers() - 1)
+					if (index < this.fractal.getNumLayers() - 1)
 						this.fractal.getLayers().add(index + 1, this.fractal.getLayers().remove(index));
 				}
 
-				if(e.getCode()==KeyCode.LEFT){
+				if (e.getCode() == KeyCode.LEFT) {
 					moveDown((TreeItem) layers.getSelectionModel().getSelectedItem());
-					int index =  this.fractal.getLayers().indexOf(getSelectedLayer());
-					if(index > 0)
+					int index = this.fractal.getLayers().indexOf(getSelectedLayer());
+					if (index > 0)
 						this.fractal.getLayers().add(index - 1, this.fractal.getLayers().remove(index));
 				}
 			});
@@ -440,10 +443,10 @@ public class FractalEditor extends Scene {
 				gradient.updateLayer(this.fractal.getLayers().get(0));
 
 				deleteLayers();
-				for(int k = 0; k < this.fractal.getLayers().size(); k++) {
+				for (int k = 0; k < this.fractal.getLayers().size(); k++) {
 					Layer l = this.fractal.getLayers().get(k);
 					CheckBoxTreeItem i = getNewTreeItem();
-					MetaLayer meta = (MetaLayer)(i.getValue());
+					MetaLayer meta = (MetaLayer) (i.getValue());
 					meta.setName(l.getName());
 					meta.setOpacity(l.getOpacity());
 					meta.setType(l.getClass().getSimpleName());
@@ -474,7 +477,7 @@ public class FractalEditor extends Scene {
 				Layer.registerLayer(register.getFile());
 			});
 			MenuItem help = new MenuItem("Help");
-			help.setOnAction(e-> {
+			help.setOnAction(e -> {
 				ExpandableMenu.displayInformation("Help", "Instructions:", getHelpText());
 			});
 
@@ -529,7 +532,7 @@ public class FractalEditor extends Scene {
 			return selectedLayer;
 		}
 	}
-	
+
 	private int getSelectedLayerIndex() {
 		return layers.getRoot().getChildren().size() - 2
 				- layers.getRoot().getChildren().indexOf(layers.getSelectionModel().getSelectedItem());
@@ -551,6 +554,10 @@ public class FractalEditor extends Scene {
 		bp.layout();
 	}
 
+	/**
+	 * Used to get the current network
+	 * @return the current network
+	 */
 	public Server getServer() {
 		return network;
 	}
@@ -561,22 +568,23 @@ public class FractalEditor extends Scene {
 		for (String i : getSelectedLayer().getParameters().keySet()) {
 			parameters.getRoot().getChildren()
 					.add(new TreeItem(new MetaParam(i, getSelectedLayer().getParameters().getParameter(i))));
-			}
-
 		}
-		private void updateParams(int waste) {
-			while (!parameters.getRoot().getChildren().isEmpty())
-				parameters.getRoot().getChildren().remove(0);
-			layers.getSelectionModel().select(1);
-			for (String i : getSelectedLayer().getParameters().keySet()) {
-				parameters.getRoot().getChildren()
-						.add(new TreeItem(new MetaParam(i, getSelectedLayer().getParameters().getParameter(i))));
 
-			}
 	}
 
-	static void moveUp(TreeItem item) {
-		//TODO move layers up
+	private void updateParams(int waste) {
+		while (!parameters.getRoot().getChildren().isEmpty())
+			parameters.getRoot().getChildren().remove(0);
+		layers.getSelectionModel().select(1);
+		for (String i : getSelectedLayer().getParameters().keySet()) {
+			parameters.getRoot().getChildren()
+					.add(new TreeItem(new MetaParam(i, getSelectedLayer().getParameters().getParameter(i))));
+
+		}
+	}
+
+	private static void moveUp(TreeItem item) {
+		// TODO move layers up
 		System.out.println("moveUp");
 		if (item.getParent() instanceof TreeItem) {
 			TreeItem parent = item.getParent();
@@ -598,107 +606,132 @@ public class FractalEditor extends Scene {
 		}
 	}
 
-	public void deleteLayers(){
-		while(layers.getRoot().getChildren().size()>1){
+	/**
+	 * Used to delete all the layers except the add button from the layer view
+	 */
+	public void deleteLayers() {
+		while (layers.getRoot().getChildren().size() > 1) {
 			layers.getRoot().getChildren().remove(0);
 		}
 	}
 
-
 	private static String getHelpText() {
 		return "Navigating the fractal:\r\n" +
 
-	"-click around on the fractal to move the viewport\r\n" +
+				"-click around on the fractal to move the viewport\r\n" +
 
-	"-Click ',' to zoom in and '.' to zoom out\r\n\r\n" +
+				"-Click ',' to zoom in and '.' to zoom out\r\n\r\n" +
 
+				"Editing the fractal:\r\n" +
 
-"Editing the fractal:\r\n" +
+				"-The fractal consists of a series of layers that are rendered in a certain order. There are different types of layers and each can have a different gradient.\r\n"
+				+ "-To add a new layer, double click the '+' button.\r\n" +
 
-	"-The fractal consists of a series of layers that are rendered in a certain order. There are different types of layers and each can have a different gradient.\r\n"
-	+ "-To add a new layer, double click the '+' button.\r\n" +
+				"-To edit the type of layer, the name of the layer, and the opacity of the layer, double click the layer.\r\n"
+				+
 
-	"-To edit the type of layer, the name of the layer, and the opacity of the layer, double click the layer.\r\n" +
+				"-To change the order in which layers are rendered, use the the left and the right arrow keys while selecting a fractal.\r\n"
+				+
 
-	"-To change the order in which layers are rendered, use the the left and the right arrow keys while selecting a fractal.\r\n" +
+				"-When a layer is selected, its gradient will be displayed below the fractal. Arrow buttons on the bottom of the gradient represent color data points, and arrow buttons on top of the gradient represent opacity data points.\r\n"
+				+
 
-	"-When a layer is selected, its gradient will be displayed below the fractal. Arrow buttons on the bottom of the gradient represent color data points, and arrow buttons on top of the gradient represent opacity data points.\r\n" +
+				"-New points can be added by clicking above or below the gradient. The data of each of the points can be edited by clicking the points.\r\n"
+				+
 
-	"-New points can be added by clicking above or below the gradient. The data of each of the points can be edited by clicking the points.\r\n" +
+				"-The colored, square rectangle to the right of the gradient is the color the inside of the fractal will be colord. It can be modified by clicking the square.\r\n"
+				+
 
-	"-The colored, square rectangle to the right of the gradient is the color the inside of the fractal will be colord. It can be modified by clicking the square.\r\n" +
+				"-The two buttons below the square represent ways to save and load in palettes. By default, palettes are saved as a part of the fractal, but if you create one that you especially love and wish to use later save it to the palettes folder. You can then load it in to other fractals!\r\n"
+				+
 
-	"-The two buttons below the square represent ways to save and load in palettes. By default, palettes are saved as a part of the fractal, but if you create one that you especially love and wish to use later save it to the palettes folder. You can then load it in to other fractals!\r\n" +
+				"-When a layer is selected, layer-based parameters that can be edited will show up in the upper right hand corner of the screen. Double click those parameters to edit them.\r\n\r\n"
+				+
 
-	"-When a layer is selected, layer-based parameters that can be edited will show up in the upper right hand corner of the screen. Double click those parameters to edit them.\r\n\r\n" +
+				"Menus:" +
 
+				"-'New Fractal', under the 'Frctal' menu, will open up a new, default fractal. All changes made to the previous fractal will be lost, so save first.\r\n"
+				+
 
-"Menus:" +
+				"-'Open Fractal', under the 'Fractal' menu, will open a dialog alowing the user to open up a previously saved fractal. Opening this fractal will result in all changes to the old one being lost.\r\n"
+				+
 
-	"-'New Fractal', under the 'Frctal' menu, will open up a new, default fractal. All changes made to the previous fractal will be lost, so save first.\r\n" +
+				"-'Save Fractal', under the 'Fractal' menu, will save the fractal. If the fractal has never been saved before, it will open a dialog alowing the user to name the fracral and choose a file location. Otherwise, it will save to the file location.\r\n"
+				+
 
-	"-'Open Fractal', under the 'Fractal' menu, will open a dialog alowing the user to open up a previously saved fractal. Opening this fractal will result in all changes to the old one being lost.\r\n" +
+				"-'Save Fractal As', under the 'Fractal' menu, will save the fractal as a new file. It will not change the name of file location of the fractal. This is useful for version control.\r\n"
+				+
 
-	"-'Save Fractal', under the 'Fractal' menu, will save the fractal. If the fractal has never been saved before, it will open a dialog alowing the user to name the fracral and choose a file location. Otherwise, it will save to the file location.\r\n" +
+				"-'Export Fractal', under the 'Fractal' menu, will alow the user to export the fractal as a .png or a .jpg image to a specified file location. The user can also choose a resolution for the saved image.\r\n"
+				+
 
-	"-'Save Fractal As', under the 'Fractal' menu, will save the fractal as a new file. It will not change the name of file location of the fractal. This is useful for version control.\r\n" +
+				"-'Create New Network', under the 'Network' menu, opens up a series of dialogs helping the user set up a network for use in a distributed zoom. The user chooses a fractal to zoom in on and sets parameters. The user can only choose from fractals stored in the 'fractals' folder.\r\n"
+				+
 
-	"-'Export Fractal', under the 'Fractal' menu, will alow the user to export the fractal as a .png or a .jpg image to a specified file location. The user can also choose a resolution for the saved image.\r\n" +
+				"-'View Network' will, under the 'Network' menu, will, if a network has been started, alow the user to visualy view the network. It will display statistics about the network, alow the user to modify the parameters, and give the user some basic control over all computers connected to the distributed network. There are more menus at the top of the Network View as well.\r\n"
+				+
 
-	"-'Create New Network', under the 'Network' menu, opens up a series of dialogs helping the user set up a network for use in a distributed zoom. The user chooses a fractal to zoom in on and sets parameters. The user can only choose from fractals stored in the 'fractals' folder.\r\n" +
+				"-'View Network Log', under the 'Network' menu, alows the user to view the log of the network, assuming a network has been started. The Network log can also be viewed through the 'Network View'.\r\n"
+				+
 
-	"-'View Network' will, under the 'Network' menu, will, if a network has been started, alow the user to visualy view the network. It will display statistics about the network, alow the user to modify the parameters, and give the user some basic control over all computers connected to the distributed network. There are more menus at the top of the Network View as well.\r\n" +
+				"-'Close Network', under the 'Network' menu, will shut down the network.\r\n" +
 
-	"-'View Network Log', under the 'Network' menu, alows the user to view the log of the network, assuming a network has been started. The Network log can also be viewed through the 'Network View'.\r\n" +
+				"-'New Layer Type', under the 'System' menu, will alow the user to register a new layer type while the application is still running. The layer could also be registered by placing it in the 'custom' folder and restarting the application.\r\n"
+				+
 
-	"-'Close Network', under the 'Network' menu, will shut down the network.\r\n" +
+				"-'Edit Log Options', under the 'System' menu, will alow the user to modify the log options. There are two main categories: log and print. Log controls what is saved to the log file, while print controls what is printed to the cmd (if it is used to run the application). LEVEL_ERROR prints only errors, LEVEL_LOg prints everything, and LEVEL_NONE prints nothing.\r\n\r\n"
+				+
 
-	"-'New Layer Type', under the 'System' menu, will alow the user to register a new layer type while the application is still running. The layer could also be registered by placing it in the 'custom' folder and restarting the application.\r\n" +
+				"Running a Network:" +
 
-	"-'Edit Log Options', under the 'System' menu, will alow the user to modify the log options. There are two main categories: log and print. Log controls what is saved to the log file, while print controls what is printed to the cmd (if it is used to run the application). LEVEL_ERROR prints only errors, LEVEL_LOg prints everything, and LEVEL_NONE prints nothing.\r\n\r\n" +
+				"-First, there must be a fractal file saved in the 'fractals' folder. You will be able to choose between all fractals in that folder for the network to zoom in on\r\n"
+				+
 
+				"-Next, follow the menus that will help set up the network by clicking the 'Create New Network' menu option. After that is up and running, you can view the network by clicking 'View Network'. You can also view the network log either through the fractal editor menus or through the Network View menus.\r\n"
+				+
 
-"Running a Network:" +
+				"-To connect clients to the network, run the 'Client' application. The clients must be on the local network. If there are issues, ensure that ports 6664 and 8888 are open and that your router allows for UDP broadcasts. \r\n"
+				+
 
-	"-First, there must be a fractal file saved in the 'fractals' folder. You will be able to choose between all fractals in that folder for the network to zoom in on\r\n" +
+				"-The images rendered by the clients will save to the directory selected during the Network creation process. You can compile those images into a video however you want.\r\n"
+				+
 
-	"-Next, follow the menus that will help set up the network by clicking the 'Create New Network' menu option. After that is up and running, you can view the network by clicking 'View Network'. You can also view the network log either through the fractal editor menus or through the Network View menus.\r\n" +
+				"-You can close the network when you are done by either using the 'Close Network' option in the menus or by closing the fractal editor. The client computers do not need to only render the fractals: feel free to use them while they render.\r\n\r\n"
+				+
 
-	"-To connect clients to the network, run the 'Client' application. The clients must be on the local network. If there are issues, ensure that ports 6664 and 8888 are open and that your router allows for UDP broadcasts. \r\n" +
+				"Creating new layer types:" +
 
-	"-The images rendered by the clients will save to the directory selected during the Network creation process. You can compile those images into a video however you want.\r\n" +
+				"-If you wish to create and use your own, custom layer types, you are free to do so. There are two ways to add them to the program.\r\n"
+				+
 
-	"-You can close the network when you are done by either using the 'Close Network' option in the menus or by closing the fractal editor. The client computers do not need to only render the fractals: feel free to use them while they render.\r\n\r\n" +
+				"-The easiest is to place the .java file in the 'custom' folder or, if you have a .class file, place that in the 'custom/fractal' folder. Upon startup, any layer files located in these folders will be added to the registry and made usable.\r\n"
+				+
 
+				"-Alternatively, if you have the .java file, you can use the 'New Layer Type' menu to import it into the application without restarting it. This layer type will be removed if the application is retarted unless the .java file is in the 'custom' folder.\r\n"
+				+
 
-"Creating new layer types:" +
+				"-IMPORTANT: Adding custom layers to the application is done through dynamic rendering with the Reflections API. This will ONLY work if the application is run through a jdk. If it is run with a jre, your custm layers will not be added.\r\n"
+				+
 
-	"-If you wish to create and use your own, custom layer types, you are free to do so. There are two ways to add them to the program.\r\n" +
-
-	"-The easiest is to place the .java file in the 'custom' folder or, if you have a .class file, place that in the 'custom/fractal' folder. Upon startup, any layer files located in these folders will be added to the registry and made usable.\r\n" +
-
-	"-Alternatively, if you have the .java file, you can use the 'New Layer Type' menu to import it into the application without restarting it. This layer type will be removed if the application is retarted unless the .java file is in the 'custom' folder.\r\n" +
-
-	"-IMPORTANT: Adding custom layers to the application is done through dynamic rendering with the Reflections API. This will ONLY work if the application is run through a jdk. If it is run with a jre, your custm layers will not be added.\r\n" +
-
-	"-The actual programming of the layer file is more complicated. Start by downloading the source code for this application. Then, create a new class that extends Layer. From there, you must implement a number of abstract methods in order for the layer to work. For more information on what needs to be implements and what the methods do, refer to the Layer documentation and the HistogramLayer and TriangleAverageLayer source code.";
+				"-The actual programming of the layer file is more complicated. Start by downloading the source code for this application. Then, create a new class that extends Layer. From there, you must implement a number of abstract methods in order for the layer to work. For more information on what needs to be implements and what the methods do, refer to the Layer documentation and the HistogramLayer and TriangleAverageLayer source code.";
 
 	}
-	public static void moveDown(TreeItem item){
-		//TODO move layers down
+
+	private static void moveDown(TreeItem item) {
+		// TODO move layers down
 		System.out.println("moveDown");
-		if(item.nextSibling() !=null && item.nextSibling().getValue()!=null) {
+		if (item.nextSibling() != null && item.nextSibling().getValue() != null) {
 			TreeItem parent = item.getParent();
 			List<TreeItem> list = new ArrayList<TreeItem>();
 			boolean skip = false;
-			for(Object child : parent.getChildren()){
-				if(child == item) {
-					list.add(((TreeItem)child).nextSibling());
-					list.add((TreeItem)child);
+			for (Object child : parent.getChildren()) {
+				if (child == item) {
+					list.add(((TreeItem) child).nextSibling());
+					list.add((TreeItem) child);
 					skip = true;
 				} else {
-					if(!skip)
-					list.add((TreeItem)child);
+					if (!skip)
+						list.add((TreeItem) child);
 					skip = false;
 				}
 			}

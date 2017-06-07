@@ -32,9 +32,19 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+/**
+ * This class contains the various menus used to modify the color and opacity data of the palette
+ * @author Calvin and David
+ *
+ */
 public class GradientMenus {
 
-
+	/**
+	 * Creates an opacity display menu and allows the user to edit the opacity data
+	 * @param button the button whose opacity data is being modified
+	 * @param gradient the gradient who called this method
+	 * @return the new opacity value
+	 */
 	public static double displayOpacityMenu(ArrowButton button, Window gradient) {
 		//TODO this isn't working correctly
 		Slider opacityLevel = new Slider(0,1,(Double)button.getData());
@@ -108,6 +118,11 @@ public class GradientMenus {
         return opacityLevel.getValue();
 	}
 
+	/**
+	 * Used to display a menu for modifying the color of a color point
+	 * @param button the button whose color data is being modified
+	 * @param window the window that called this method
+	 */
 	public static void displayColorMenus(ArrowButton<Color> button, Window window) {
 		Color prev = button.getData();
 
@@ -155,6 +170,11 @@ public class GradientMenus {
 		});
 	}
 
+	/**
+	 * Used to display a menu for modifying the color of a color point
+	 * @param button the button whose color data is being modified
+	 * @param window the window that called this method
+	 */
 	public static void displayColorMenus(SquareButton button, Window window) {
 		Color prev = button.getData();
 
@@ -195,6 +215,11 @@ public class GradientMenus {
 		});
 	}
 
+	/**
+	 * Used to display the opacity editor that controls the opacity of a whole layer.
+	 * @param t the tree item that connects to a layer whose opacity is being modified
+	 * @return a new metalayer containing the layer's metadata
+	 */
 	public static MetaLayer displayLayerMenu(TreeItem<MetaLayer> t) {
         Stage window = new Stage();
         Slider opacityLevel = new Slider(0,1,(Double)t.getValue().getOpacity());
