@@ -63,7 +63,7 @@ import util.Point;
  * Constructs the GUI and manages its interaction with the fractal. This class contains most of the upper level logic for the
  * application
 =======
- * This class manages the interactions between the user, the GUI, and the fractal. 
+ * This class manages the interactions between the user, the GUI, and the fractal.
 >>>>>>> 8fd03cf3eae5b677ea3de040bb081ca0f6cbadf8
  * @author David
  */
@@ -91,7 +91,7 @@ public class FractalEditor extends Scene {
 	 *
 =======
 	 * This method instantiates the Fractal Editor scene
-	 * @author David 
+	 * @author David
 >>>>>>> 8fd03cf3eae5b677ea3de040bb081ca0f6cbadf8
 	 * @param x
 	 *            width
@@ -544,6 +544,10 @@ public class FractalEditor extends Scene {
 		return i;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	private Layer getSelectedLayer() {
 		try {
 			int index = layers.getRoot().getChildren().size() - 2
@@ -554,11 +558,19 @@ public class FractalEditor extends Scene {
 		}
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	private int getSelectedLayerIndex() {
 		return layers.getRoot().getChildren().size() - 2
 				- layers.getRoot().getChildren().indexOf(layers.getSelectionModel().getSelectedItem());
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	private int incrementLayers() {
 		return layerIndex++;
 	}
@@ -598,6 +610,9 @@ public class FractalEditor extends Scene {
 
 	}
 
+	/*
+	 *
+	 */
 	private void updateParams(int waste) {
 		while (!parameters.getRoot().getChildren().isEmpty())
 			parameters.getRoot().getChildren().remove(0);
@@ -609,6 +624,10 @@ public class FractalEditor extends Scene {
 		}
 	}
 
+	/**
+	 *
+	 * @param item
+	 */
 	private static void moveUp(TreeItem item) {
 		// TODO move layers up
 		System.out.println("moveUp");
@@ -642,6 +661,10 @@ public class FractalEditor extends Scene {
 		layerIndex = 1;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	private static String getHelpText() {
 		return "Navigating the fractal:\r\n" +
 
@@ -744,6 +767,10 @@ public class FractalEditor extends Scene {
 
 	}
 
+	/**
+	 *
+	 * @param item
+	 */
 	private static void moveDown(TreeItem item) {
 		// TODO move layers down
 		System.out.println("moveDown");

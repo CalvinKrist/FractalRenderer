@@ -1,12 +1,16 @@
-		package application;
+package application;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
 import util.Log;
 
-
+/**
+ *
+ * @author David, Calvin
+ *
+ */
 public class Main extends Application {
-	@Override	
+	@Override
 	public void start(Stage primaryStage) {
 		try {
 			Log log = new Log();
@@ -27,9 +31,9 @@ public class Main extends Application {
 		        scene.gradient.repaint();
 		        primaryStage.minWidthProperty().bind(scene.heightProperty().multiply(2));
 		        primaryStage.minHeightProperty().bind(scene.widthProperty().divide(2));
-		        
+
 		        scene.updateFractalImage();
-		        
+
 		        Thread t = null;
 				t = new Thread(()-> {
 					try {
@@ -40,7 +44,7 @@ public class Main extends Application {
 					}
 				});
 				t.start();
-		        
+
 		/*	BorderPane root = new BorderPane();
 			Scene scene = new Scene(root,400,400);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
