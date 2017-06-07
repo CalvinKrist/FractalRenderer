@@ -108,12 +108,8 @@ public class FractalEditor extends Scene {
 	}
 
 	/**
-<<<<<<< HEAD
-	 * Initializes the menus and fractal. Creates most of the listeners and gui logic.
-=======
-	 * Initializes the menus and fractal. Adds the various action listeners to all the GUI components. Construcs most of the
+	 * Initializes the menus and fractal. Adds the various action listeners to all the GUI components. Constructs most of the
 	 * GUI logic
->>>>>>> 8fd03cf3eae5b677ea3de040bb081ca0f6cbadf8
 	 *
 	 * @author David
 	 *
@@ -576,13 +572,8 @@ public class FractalEditor extends Scene {
 	}
 
 	/**
-<<<<<<< HEAD
 	 * Used to get the current network
 	 * @return the current network
-=======
-	 * Used to get the network running in the background
-	 * @return the network running in the background
->>>>>>> 8fd03cf3eae5b677ea3de040bb081ca0f6cbadf8
 	 */
 	public Server getServer() {
 		return network;

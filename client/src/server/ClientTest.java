@@ -24,7 +24,7 @@ public class ClientTest {
 		log.setPrintLevel(Log.LEVEL_LOG);
 		Client c = new Client();
 		System.out.println("display");
-		//String ip = JOptionPane.showInputDialog("IP Address");
+		String ip = JOptionPane.showInputDialog("IP Address");
 
 		Thread t = null;
 		t = new Thread(()-> {
@@ -51,8 +51,7 @@ public class ClientTest {
 			}
 		});
 		t.start();
-		System.out.println("starting");
-		c.init(log, "192.168.1.4"); 
+		c.init(log, ip); 
 
 	}
 
