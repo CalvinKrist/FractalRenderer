@@ -6,10 +6,9 @@ import util.Log;
 
 
 public class Main extends Application {
-	@Override
+	@Override	
 	public void start(Stage primaryStage) {
 		try {
-			
 			Log log = new Log();
 			log.setLogLevel(Log.LEVEL_LOG);
 			log.setPrintLevel(Log.LEVEL_LOG);

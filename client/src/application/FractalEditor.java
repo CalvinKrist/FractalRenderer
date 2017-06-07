@@ -39,6 +39,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -57,11 +59,15 @@ import util.Parameters;
 import util.Point;
 
 /**
+ * This class manages the interactions between the user, the GUI, and the fractal. 
  * @author David
  */
 public class FractalEditor extends Scene {
 
 	private BorderPane bp;
+	/**
+	 * This Window is the palette editor shown at the bottom of the screen
+	 */
 	public Window gradient;
 
 	private RenderManager fractal;
@@ -74,8 +80,8 @@ public class FractalEditor extends Scene {
 	private Layer selectedLayer;
 
 	/**
-	 * @author David This instantiates the Fractal Editor scene
-	 *
+	 * This method instantiates the Fractal Editor scene
+	 * @author David 
 	 * @param x
 	 *            width
 	 * @param y
@@ -91,7 +97,8 @@ public class FractalEditor extends Scene {
 	}
 
 	/**
-	 * Initializes the menus and fractal
+	 * Initializes the menus and fractal. Adds the various action listeners to all the GUI components. Construcs most of the
+	 * GUI logic
 	 *
 	 * @author David
 	 *
@@ -124,7 +131,8 @@ public class FractalEditor extends Scene {
 		trees.setAlignment(Pos.CENTER);
 
 		Button render = new Button("Update");
-		render.setFont(new Font("Ariel", 24));
+		render.setFont(new Font("Ariel", 36));
+		//TODO: change color of update button
 		render.minWidthProperty().bind(trees.minWidthProperty());
 
 		fractalView = new ImageView();
@@ -538,6 +546,10 @@ public class FractalEditor extends Scene {
 		bp.layout();
 	}
 
+	/**
+	 * Used to get the network running in the background
+	 * @return the network running in the background
+	 */
 	public Server getServer() {
 		return network;
 	}
@@ -584,10 +596,14 @@ public class FractalEditor extends Scene {
 		}
 	}
 
+	/**
+	 * Deletes all the layers from the Layer Editor menu and resets the layer index to 1
+	 */
 	public void deleteLayers(){
 		while(layers.getRoot().getChildren().size()>1){
 			layers.getRoot().getChildren().remove(0);
 		}
+		layerIndex = 1;
 	}
 
 	

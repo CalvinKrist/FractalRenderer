@@ -82,6 +82,8 @@ Running a Network:
 
 	-You can close the network when you are done by either using the 'Close Network' option in the menus or by closing the fractal editor. The client computers do not need to only render the fractals: feel free to use them while they render.
 
+	-If your clients are having issues connecting to the network, make sure the firewall has an exception over port 6664 and that you are trying to connect to the IPv4 address of the server computer.	
+
 
 Creating new layer types:
 

@@ -11,15 +11,15 @@ import util.Log;
 public class ClientTest {
 
 	public static void main(String[] args) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, IOException {
-		
+		System.out.println("client test");
 		Layer.initializeFractalRegistry();
 		Log log = new Log();
 		log.setPrintStream(System.out);
 		log.setLogLevel(Log.LEVEL_LOG);
 		log.setPrintLevel(Log.LEVEL_LOG);
 		Client c = new Client();
-		
-		String ip = JOptionPane.showInputDialog("IP Address");
+		System.out.println("display");
+		//String ip = JOptionPane.showInputDialog("IP Address");
 
 		Thread t = new Thread(()-> {
 			JFrame f = new JFrame();
@@ -38,8 +38,8 @@ public class ClientTest {
 			}
 		});
 		t.start();
-
-		c.init(log, ip); 
+		System.out.println("starting");
+		c.init(log, "192.168.1.4"); 
 
 	}
 
