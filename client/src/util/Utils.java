@@ -67,9 +67,9 @@ public class Utils {
 	}
 	//TODO Document
 	/**
-	 *
-	 * @param c
-	 * @return
+	 *Used to convert java.awt Color to a JavaFX color
+	 * @param c the java.awt color
+	 * @return a new JafaFX color
 	 */
 	public static javafx.scene.paint.Color convertColortoFX(java.awt.Color color) {
 		java.awt.Color awtColor = color;
@@ -83,9 +83,9 @@ public class Utils {
 	}
 	//TODO Document
 	/**
-	 *
-	 * @param color
-	 * @return
+	 *Used to convert a JavaFX color to a java.awt color
+	 * @param color the JavaFX color
+	 * @return the java.awt color
 	 */
 	public static java.awt.Color convertColortoAWT(javafx.scene.paint.Color color) {
 		javafx.scene.paint.Color fx = color;
