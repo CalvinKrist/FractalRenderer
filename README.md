@@ -84,6 +84,8 @@ Running a Network:
 
 	-If there is an issue with the client and it crashes, it will save a log file in the directory that the jar is placed in.
 
+	-If your clients are having issues connecting to the network, make sure the firewall has an exception over port 6664 and that you are trying to connect to the IPv4 address of the server computer.	
+
 
 Creating new layer types:
 
