@@ -59,6 +59,8 @@ public class Server extends NetworkNode {
 	private double zoomSpeed;
 	
 	private int frameCount = 0;
+	
+	private int jobCount = 1;
 
 	/**
 	 * Creates a server using the given fractal, the given zoom speed, and that will save images to the selected directory
@@ -174,7 +176,7 @@ public class Server extends NetworkNode {
 		params.put("zoom", 1 / parameters.getParameter("radius", Double.class));
 		params.put("location", parameters.getParameter("location"));
 		Parameters p = new Parameters(params);
-		Job b = new Job("render_" + frameCount + "_", p);
+		Job b = new Job("render_" + jobCount++ + "_", p);
 		unnasignedJobs.add(b);
 		parameters.put("radius", parameters.getParameter("radius", Double.class) * 1 / zoomSpeed);
 	}

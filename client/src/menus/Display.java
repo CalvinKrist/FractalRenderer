@@ -430,7 +430,7 @@ public class Display extends JPanel implements Runnable {
 			
 			Double speed = null;
 			try {
-				speed = Double.valueOf(zoomSpeed.getText().trim());
+				speed = 1 / Double.valueOf(zoomSpeed.getText().trim());
 			} catch(Exception e) {
 				AlertMenu alert = new AlertMenu("Invalid Input: Zoom speed not a double.", "Please try again.");
 				return;
