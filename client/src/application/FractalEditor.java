@@ -60,7 +60,14 @@ import util.Point;
 
 /**
  * Constructs the GUI and manages its interaction with the fractal. This class contains most of the upper level logic for the
+<<<<<<< HEAD
  * application. This class manages the interactions between the user, the GUI, and the fractal. 
+=======
+ * application
+=======
+ * This class manages the interactions between the user, the GUI, and the fractal.
+>>>>>>> 8fd03cf3eae5b677ea3de040bb081ca0f6cbadf8
+>>>>>>> eada197eba6f258eeae6a24cb51e418a83f3d7f4
  * @author David
  */
 public class FractalEditor extends Scene {
@@ -81,8 +88,24 @@ public class FractalEditor extends Scene {
 	private Layer selectedLayer;
 
 
+
 	/** This method instantiates the Fractal Editor scene
 	 * @author David 
+=======
+	/**
+<<<<<<< HEAD
+	 * This instantiates the Fractal Editor scene
+	 * @author David
+	 *
+=======
+	 * This method instantiates the Fractal Editor scene
+	 * @author David
+>>>>>>> 8fd03cf3eae5b677ea3de040bb081ca0f6cbadf8
+	 * @param x
+	 *            width
+	 * @param y
+	 *            height
+>>>>>>> eada197eba6f258eeae6a24cb51e418a83f3d7f4
 	 * @throws FileNotFoundException
 	 */
 	public FractalEditor(Log log) throws FileNotFoundException {
@@ -524,7 +547,11 @@ public class FractalEditor extends Scene {
 		return i;
 	}
 
-	//TODO: fix selected layer algorithm
+
+	/**
+	 *
+	 * @return
+	 */
 	private Layer getSelectedLayer() {
 		try {
 			int index = getSelectedLayerIndex();
@@ -534,11 +561,19 @@ public class FractalEditor extends Scene {
 		}
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	private int getSelectedLayerIndex() {
 		return layers.getRoot().getChildren().size() - 2
 				- layers.getRoot().getChildren().indexOf(layers.getSelectionModel().getSelectedItem());
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	private int incrementLayers() {
 		return layerIndex++;
 	}
@@ -573,6 +608,9 @@ public class FractalEditor extends Scene {
 
 	}
 
+	/*
+	 *
+	 */
 	private void updateParams(int waste) {
 		while (!parameters.getRoot().getChildren().isEmpty())
 			parameters.getRoot().getChildren().remove(0);
@@ -584,6 +622,10 @@ public class FractalEditor extends Scene {
 		}
 	}
 
+	/**
+	 *
+	 * @param item
+	 */
 	private static void moveUp(TreeItem item) {
 		// TODO move layers up
 		if (item.getParent() instanceof TreeItem) {
@@ -616,6 +658,10 @@ public class FractalEditor extends Scene {
 		layerIndex = 1;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	private static String getHelpText() {
 		return "Navigating the fractal:\r\n" +
 
@@ -718,6 +764,10 @@ public class FractalEditor extends Scene {
 
 	}
 
+	/**
+	 *
+	 * @param item
+	 */
 	private static void moveDown(TreeItem item) {
 		// TODO move layers down
 		if (item.nextSibling() != null && item.nextSibling().getValue() != null) {
