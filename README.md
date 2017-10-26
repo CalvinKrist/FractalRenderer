@@ -4,11 +4,11 @@ By Calvin Krist and David Smith
 
 ### Program  Requirements:
 
-··* At least Java 8.
+* At least Java 8.
 
-··* A jdk if one wants to use custom rendering layers. Otherwise, a jre will do.
+* A jdk if one wants to use custom rendering layers. Otherwise, a jre will do.
 
-··* A decent computer (4gb ram recomended, intel cpu gen 5+).
+* A decent computer (4gb ram recomended, intel cpu gen 5+).
 
 
 ### How to install:
@@ -20,9 +20,9 @@ By Calvin Krist and David Smith
 
 ### Navigating the fractal:
 
-··*click around on the fractal to move the viewport.
+* Click around on the fractal to move the viewport.
 
-··*Click ',' to zoom in and '.' to zoom out.
+* Click ',' to zoom in and '.' to zoom out.
 
 
 ### Editing the fractal:
@@ -214,8 +214,8 @@ Alright, now to implement the `getParameters` method. This method returns a Para
     @Override
     public Parameters getParameters() {
         Parameters props = new Parameters(new HashMap<String, Serializable>());
-	props.put("maxIterations", 100);
-	return props;
+        props.put("maxIterations", 100);
+        return props;
     }
 
 Now we need to make sure that, when the user changes the value, we update it. In the `setParameters` method, we will get the value from the Parameters object associated to the key "maxIterations" and set that to the rendering layer's maximum iteration count.
