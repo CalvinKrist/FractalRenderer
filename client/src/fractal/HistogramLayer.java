@@ -54,6 +54,7 @@ public class HistogramLayer extends Layer {
 		String bailout = params.getParameter("bailout", String.class);
 		try {
 			this.bailout = Integer.valueOf(bailout);
+			
 			autoBailout = false;
 		} catch(Exception e) {
 			autoBailout = true;
@@ -87,7 +88,6 @@ public class HistogramLayer extends Layer {
 			for (int k = 0; k < height; k++) {
 				double x = (i / (double)width) * rWidth * 2 - rWidth + xPos;
 				double y = (k / (double)height) * rHeight * 2 - rHeight - yPos;
-
 				double z = 0;
 				double zi = 0;
 				int iterations = 0;

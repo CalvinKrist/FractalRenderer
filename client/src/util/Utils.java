@@ -65,7 +65,7 @@ public class Utils {
 		return new Color(color1.getRed() + red, color1.getGreen() + green, color1.getBlue() + blue,
 				color1.getAlpha() + a);
 	}
-	//TODO Document
+	
 	/**
 	 *Used to convert java.awt Color to a JavaFX color
 	 * @param c the java.awt color
@@ -81,7 +81,7 @@ public class Utils {
 		javafx.scene.paint.Color fxColor = javafx.scene.paint.Color.rgb(r, g, b, opacity);
 		return fxColor;
 	}
-	//TODO Document
+	
 	/**
 	 *Used to convert a JavaFX color to a java.awt color
 	 * @param color the JavaFX color

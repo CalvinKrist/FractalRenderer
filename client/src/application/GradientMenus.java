@@ -45,6 +45,7 @@ public class GradientMenus {
 	 * @param gradient the gradient who called this method
 	 * @return the new opacity value
 	 */
+	@SuppressWarnings("restriction")
 	public static double displayOpacityMenu(ArrowButton button, Window gradient) {
 		//TODO this isn't working correctly
 		Slider opacityLevel = new Slider(0,1,(Double)button.getData());
@@ -220,6 +221,7 @@ public class GradientMenus {
 	 * @param t the tree item that connects to a layer whose opacity is being modified
 	 * @return a new metalayer containing the layer's metadata
 	 */
+	@SuppressWarnings("restriction")
 	public static MetaLayer displayLayerMenu(TreeItem<MetaLayer> t) {
         Stage window = new Stage();
         Slider opacityLevel = new Slider(0,1,(Double)t.getValue().getOpacity());

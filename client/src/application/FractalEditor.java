@@ -59,12 +59,8 @@ import util.Parameters;
 import util.Point;
 
 /**
-<<<<<<< HEAD
  * Constructs the GUI and manages its interaction with the fractal. This class contains most of the upper level logic for the
- * application
-=======
- * This class manages the interactions between the user, the GUI, and the fractal. 
->>>>>>> 8fd03cf3eae5b677ea3de040bb081ca0f6cbadf8
+ * application. This class manages the interactions between the user, the GUI, and the fractal. 
  * @author David
  */
 public class FractalEditor extends Scene {
@@ -84,19 +80,9 @@ public class FractalEditor extends Scene {
 	private Log log;
 	private Layer selectedLayer;
 
-	/**
-<<<<<<< HEAD
-	 * This instantiates the Fractal Editor scene
-	 * @author David
-	 *
-=======
-	 * This method instantiates the Fractal Editor scene
+
+	/** This method instantiates the Fractal Editor scene
 	 * @author David 
->>>>>>> 8fd03cf3eae5b677ea3de040bb081ca0f6cbadf8
-	 * @param x
-	 *            width
-	 * @param y
-	 *            height
 	 * @throws FileNotFoundException
 	 */
 	public FractalEditor(Log log) throws FileNotFoundException {
@@ -116,7 +102,7 @@ public class FractalEditor extends Scene {
 	 * @throws FileNotFoundException
 	 * @throws AWTException
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked", "static-access" })
+	@SuppressWarnings({ "rawtypes", "unchecked", "static-access", "restriction" })
 	public void initialize() throws FileNotFoundException, AWTException {
 		// initializing stuff
 		Layer.initializeFractalRegistry();
@@ -188,7 +174,6 @@ public class FractalEditor extends Scene {
 
 		{// Fitting gradientEditor to full screen
 			Dimension p = new Dimension((int) (Toolkit.getDefaultToolkit().getScreenSize().width * 0.75), 200);
-			System.out.println("Gradient Dimensions: " + p);
 
 			gradient = new Window(p, 50, this.fractal.getLayers().get(0));
 		}
@@ -236,6 +221,7 @@ public class FractalEditor extends Scene {
 								String value = msg.substring(msg.indexOf(":") + 2);
 								params.put(key, value);
 							}
+							System.out.println(getSelectedLayerIndex());
 							getSelectedLayer().setParameters(params);
 							updateFractalImage();
 							return new MetaParam(string.substring(0, string.indexOf(": ")),
@@ -291,7 +277,6 @@ public class FractalEditor extends Scene {
 							setOnDragDetected(new EventHandler<MouseEvent>() {
 								@Override
 								public void handle(MouseEvent mouseEvent) {
-									System.out.println("wofenh");
 									layers.getRoot().getChildren().remove(mouseEvent.getSource());
 									layers.layout();
 								}
@@ -380,7 +365,6 @@ public class FractalEditor extends Scene {
 			layers.getRoot().getChildren().addAll(item, add);
 
 		}
-
 		{// This is the menu stuff
 			Menu network = new Menu("Network");
 			Menu fractal = new Menu("Fractal");
@@ -441,7 +425,6 @@ public class FractalEditor extends Scene {
 				layerIndex = 1;
 				this.fractal = new RenderManager();
 				gradient.updateLayer(this.fractal.getLayers().get(0));
-				System.out.println(this.fractal.getLayers().get(0));
 				deleteLayers();
 				CheckBoxTreeItem i = getNewTreeItem();
 				layers.getRoot().getChildren().add(0, i);
@@ -522,6 +505,7 @@ public class FractalEditor extends Scene {
 		fractalEditor.minHeight(200);
 
 		updateParams(0);
+		layers.getSelectionModel().selectFirst();
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -540,10 +524,10 @@ public class FractalEditor extends Scene {
 		return i;
 	}
 
+	//TODO: fix selected layer algorithm
 	private Layer getSelectedLayer() {
 		try {
-			int index = layers.getRoot().getChildren().size() - 2
-					- layers.getRoot().getChildren().indexOf(layers.getSelectionModel().getSelectedItem());
+			int index = getSelectedLayerIndex();
 			selectedLayer = fractal.getLayers().get(index);
 		} finally {
 			return selectedLayer;
@@ -602,7 +586,6 @@ public class FractalEditor extends Scene {
 
 	private static void moveUp(TreeItem item) {
 		// TODO move layers up
-		System.out.println("moveUp");
 		if (item.getParent() instanceof TreeItem) {
 			TreeItem parent = item.getParent();
 			List<TreeItem> list = new ArrayList<TreeItem>();
@@ -737,7 +720,6 @@ public class FractalEditor extends Scene {
 
 	private static void moveDown(TreeItem item) {
 		// TODO move layers down
-		System.out.println("moveDown");
 		if (item.nextSibling() != null && item.nextSibling().getValue() != null) {
 			TreeItem parent = item.getParent();
 			List<TreeItem> list = new ArrayList<TreeItem>();

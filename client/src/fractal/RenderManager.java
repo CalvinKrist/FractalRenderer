@@ -164,10 +164,10 @@ public class RenderManager implements Serializable {
 		for(Layer l : this.layers) {
 			Color[][] cols = l.render();
 			if(cols != null) {
-				//System.out.println(l.getOpacity());
 				layers.add(cols);
 			}
 		}
+		System.out.println();
 		for(int l = 0; l < layers.size(); l++)
 			for(int i = 0; i < pixels.length; i++)
 				for(int k = 0; k < pixels[i].length; k++) {
@@ -226,6 +226,7 @@ public class RenderManager implements Serializable {
 	public BufferedImage getImage() {
 		BufferedImage img = new BufferedImage(screenResolution.width, screenResolution.height,
 				BufferedImage.TYPE_INT_ARGB);
+
 		int[][] pixels = render();
 		setPixels(img, pixels);
 		return img;
