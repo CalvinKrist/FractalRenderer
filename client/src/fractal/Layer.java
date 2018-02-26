@@ -457,6 +457,19 @@ public abstract class Layer implements Serializable {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * This static method can be called as an alternative to initializeFractalRegistry().
+	 * It will only initialize the default fractal layer types.
+	 */
+	public static void initializeDefaultFractalRegistry() {
+		while (fractalRegistry.size() != 0)
+			fractalRegistry.remove(0);
+
+		fractalRegistry.add(HistogramLayer.class);
+		fractalRegistry.add(TriangleAverageLayer.class);
+
+	}
 
 	/**
 	 * Returns a list of all valid layer types a user can choose from

@@ -83,11 +83,27 @@ public class HistogramLayer extends Layer {
 	 */
 	@Override
 	protected void render(Color[][] pixels, int width, int height, double rWidth, double rHeight, double xPos, double yPos) {
+		ArrayList<double[]> info = generateHistogram(pixels, width, height, rWidth, rHeight, xPos, yPos);
+		for (int i = 0; i < info.size(); i++) 
+			if ((int) (info.get(i)[3]) == maxIterations) {
+				pixels[(int) (info.get(i)[1])][(int) (info.get(i)[2])] = palette.getBackground();
+				info.remove(i--);
+			}
+		double inv_size = 1.0 / info.size();
+		for(int i = 0; i < info.size(); i++) {
+			double hue = i * inv_size;
+			pixels[(int) (info.get(i)[1])][(int) (info.get(i)[2])] = palette.colorAt(hue);
+		}
+	}
+	
+	private ArrayList<double[]> generateHistogram(Color[][] pixels, int width, int height, double rWidth, double rHeight, double xPos, double yPos) {
 		ArrayList<double[]> info = new ArrayList<double[]>(width * height);
+		double inv_width = 1.0 / width;
+		double inv_height = 1.0 / height;
 		for (int i = 0; i < width; i++)
 			for (int k = 0; k < height; k++) {
-				double x = (i / (double)width) * rWidth * 2 - rWidth + xPos;
-				double y = (k / (double)height) * rHeight * 2 - rHeight - yPos;
+				double x = (i * inv_width) * rWidth * 2 - rWidth + xPos;
+				double y = (k  * inv_height) * rHeight * 2 - rHeight - yPos;
 				double z = 0;
 				double zi = 0;
 				int iterations = 0;
@@ -101,7 +117,7 @@ public class HistogramLayer extends Layer {
 				}
 				double zSquared = zi * zi + z * z;
 
-				double logZ = Math.log(zSquared) / 2;
+				double logZ = Math.log(zSquared) * 0.5;
 				logZ = Math.abs(logZ);
 
 				double n = iterations - Math.log(logZ) / Math.log(2);
@@ -115,18 +131,12 @@ public class HistogramLayer extends Layer {
 			}
 		info.sort(new Comparator<double[]>() {
 			public int compare(double[] o1, double[] o2) {
-				return new Double(o1[0]).compareTo(new Double(o2[0]));
+				int i = o1[0] > o2[0] ? 1 : o1[0] == o2[0] ? 0 : -1;
+				return i;
+				//return new Double(o1[0]).compareTo(new Double(o2[0]));
 			}
 		});
-		for (int i = 0; i < info.size(); i++) 
-			if ((int) (info.get(i)[3]) == maxIterations) {
-				pixels[(int) (info.get(i)[1])][(int) (info.get(i)[2])] = palette.getBackground();
-				info.remove(i--);
-			}
-		for(int i = 0; i < info.size(); i++) {
-			double hue = (double)i / info.size();
-			pixels[(int) (info.get(i)[1])][(int) (info.get(i)[2])] = palette.colorAt(hue);
-		}
+		return info;
 	}
 	
 	protected void calculateIterations(double rWidth, double rHeight) {
