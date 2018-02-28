@@ -94,7 +94,7 @@ public class TriangleAverageLayer extends Layer {
 		int i;
 		ac = c.length();
 		il = 1.0 / Math.log(2);
-		lp = Math.log(Math.log(bailout) / 2);
+		lp = Math.log(Math.log(bailout) * 0.5);
 		
 		for(i = 0; i < maxIterations; i++) {
 			double x = (z.x * z.x - z.y * z.y) + c.x;
@@ -141,6 +141,8 @@ public class TriangleAverageLayer extends Layer {
 		yPos = -yPos;
 		data = new LinkedList<double[]>();
 		bounds.add(new MinMax());
+		double inv_width = 1.0 / width;
+		double inv_height = 1.0 / height;
 		for(int i = 0; i < width; i++) {
 			for(int k = 0; k < height; k++) {
 				sum = 0;
@@ -151,8 +153,8 @@ public class TriangleAverageLayer extends Layer {
 				lowbound = 0;
 				f = 0;
 				index = 0;
-				c.x = (i / (double)width) * rWidth * 2 - rWidth + xPos;
-				c.y = (k / (double)height) * rHeight * 2 - rHeight + yPos;
+				c.x = i * inv_width * rWidth * 2 - rWidth + xPos;
+				c.y = k * inv_height * rHeight * 2 - rHeight + yPos;
 				z.x = 0;
 				z.y = 0;
 				findColor(pixels, i, k);
@@ -173,11 +175,11 @@ public class TriangleAverageLayer extends Layer {
 			double prop2 = (d[1] - min) / (max - min);
 			if(prop1 >= 1)
 				prop1 = .9999999999;
-			if(prop1 < 0)
+			else if(prop1 < 0)
 				prop1 = 0;
 			if(prop2 >= 1)
 				prop2 = .9999999999;
-			if(prop2 < 0)
+			else if(prop2 < 0)
 				prop2 = 0;
 			pixels[(int)d[3]][(int)d[4]] = Utils.interpolateColors(palette.colorAt(prop1), palette.colorAt(prop2), d[2]);
 		}

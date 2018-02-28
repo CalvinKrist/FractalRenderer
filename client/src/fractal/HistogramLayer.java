@@ -83,31 +83,48 @@ public class HistogramLayer extends Layer {
 	 */
 	@Override
 	protected void render(Color[][] pixels, int width, int height, double rWidth, double rHeight, double xPos, double yPos) {
-		ArrayList<double[]> info = generateHistogram(pixels, width, height, rWidth, rHeight, xPos, yPos);
-		for (int i = 0; i < info.size(); i++) 
-			if ((int) (info.get(i)[3]) == maxIterations) {
-				pixels[(int) (info.get(i)[1])][(int) (info.get(i)[2])] = palette.getBackground();
-				info.remove(i--);
-			}
-		double inv_size = 1.0 / info.size();
+		ArrayList[] lists = generateHistogram(pixels, width, height, rWidth, rHeight, xPos, yPos);
+		ArrayList<double[]> info = lists[0];
+		ArrayList<int[]> max = lists[1];
+		
+		for (int[] pos : max) 
+			pixels[pos[0]][pos[1]] = palette.getBackground();
+		
+		double inverse_size = 1.0 / info.size();
 		for(int i = 0; i < info.size(); i++) {
-			double hue = i * inv_size;
+			double hue = i * inverse_size;
 			pixels[(int) (info.get(i)[1])][(int) (info.get(i)[2])] = palette.colorAt(hue);
 		}
 	}
 	
-	private ArrayList<double[]> generateHistogram(Color[][] pixels, int width, int height, double rWidth, double rHeight, double xPos, double yPos) {
-		ArrayList<double[]> info = new ArrayList<double[]>(width * height);
+	/***
+	 * This method runs the actual iterative Mandelbrot algorithm. Afterwards, it separates elements that reached max iterations
+	 * from those that didn't. It then sorts the non-max colors and returns the two lists in an array, where the non-max list is first
+	 * and the max list is second. 
+	 * @param pixels the array of pixel data the layer draws itself to
+	 * @param width the width of the image created in pixels
+	 * @param height the height of the image created in pixels
+	 * @param rWidth the width of the viewport being drawn in real coordinates
+	 * @param rHeight the height of the viewport being drawn in real coordinates
+	 * @param xPos the x position the viewport is centered on in real coordinates
+	 * @param yPos the y position the viewport is centered on in real coordinates
+	 * @return an array containing the list of max iteration data points and a list of other data points
+	 */
+	private ArrayList[] generateHistogram(Color[][] pixels, int width, int height, double rWidth, double rHeight, double xPos, double yPos) {
+		ArrayList<double[]> info = new ArrayList<double[]>(width * height / 2);
+		ArrayList<int[]> max = new ArrayList<int[]>(width * height / 4); //seperate the maximums from others for optimization purposes
 		double inv_width = 1.0 / width;
 		double inv_height = 1.0 / height;
 		for (int i = 0; i < width; i++)
 			for (int k = 0; k < height; k++) {
+				//Convert pixel coordinates to real world coordinates
 				double x = (i * inv_width) * rWidth * 2 - rWidth + xPos;
 				double y = (k  * inv_height) * rHeight * 2 - rHeight - yPos;
 				double z = 0;
 				double zi = 0;
 				int iterations = 0;
 
+				//run the actual iterative Mandelbrot algorithm
 				double newz;
 				for (iterations = 0; iterations < maxIterations
 						&& (z * z) + (zi * zi) < bailout * bailout; iterations++) {
@@ -115,28 +132,37 @@ public class HistogramLayer extends Layer {
 					zi = 2 * z * zi + y;
 					z = newz;
 				}
-				double zSquared = zi * zi + z * z;
-
-				double logZ = Math.log(zSquared) * 0.5;
-				logZ = Math.abs(logZ);
-
-				double n = iterations - Math.log(logZ) / Math.log(2);
-
-				double[] d = new double[4];
-				d[0] = n;
-				d[1] = (double) i;
-				d[2] = (double) k;
-				d[3] = iterations;
-				info.add(d);
+				
+				if(iterations == maxIterations) {
+					
+					int[] loc = new int[2];
+					loc[0] = i;
+					loc[1] = k;
+					max.add(loc);
+					
+				} else {
+					double zSquared = zi * zi + z * z;
+	
+					double logZ = Math.log(zSquared) * 0.5;
+					logZ = Math.abs(logZ);
+	
+					double n = iterations - Math.log(logZ) / Math.log(2);
+	
+					double[] d = new double[3];
+					d[0] = n;
+					d[1] = (double) i;
+					d[2] = (double) k;
+					info.add(d);
+				}
 			}
 		info.sort(new Comparator<double[]>() {
 			public int compare(double[] o1, double[] o2) {
 				int i = o1[0] > o2[0] ? 1 : o1[0] == o2[0] ? 0 : -1;
 				return i;
-				//return new Double(o1[0]).compareTo(new Double(o2[0]));
 			}
 		});
-		return info;
+		ArrayList[] lists = {info, max};
+		return lists;
 	}
 	
 	protected void calculateIterations(double rWidth, double rHeight) {
