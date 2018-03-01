@@ -15,7 +15,7 @@ import util.Parameters;
  * @author Calvin
  *
  */
-public class HistogramLayer extends Layer {
+public class Histogram extends Layer {
 	
 	/**
 	 * 
@@ -27,7 +27,7 @@ public class HistogramLayer extends Layer {
 	 * so that users can understand what it does in the layer editor.
 	 * Bailout = 1000, maxIterations = 400;
 	 */
-	public HistogramLayer() {
+	public Histogram() {
 		super();
 		bailout = 1000;
 		maxIterations = 400;

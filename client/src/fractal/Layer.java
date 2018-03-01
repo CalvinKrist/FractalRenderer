@@ -400,8 +400,10 @@ public abstract class Layer implements Serializable {
 		while (fractalRegistry.size() != 0)
 			fractalRegistry.remove(0);
 
-		fractalRegistry.add(HistogramLayer.class);
-		fractalRegistry.add(TriangleAverageLayer.class);
+		fractalRegistry.add(Histogram.class);
+		fractalRegistry.add(TriangleAverage.class);
+		fractalRegistry.add(SimpleBands.class);
+		fractalRegistry.add(EvenBands.class);
 
 		try {
 			File fractalFolder = new File(Constants.CUSTOM_FRACTAL_FILEPATH);
@@ -466,8 +468,8 @@ public abstract class Layer implements Serializable {
 		while (fractalRegistry.size() != 0)
 			fractalRegistry.remove(0);
 
-		fractalRegistry.add(HistogramLayer.class);
-		fractalRegistry.add(TriangleAverageLayer.class);
+		fractalRegistry.add(Histogram.class);
+		fractalRegistry.add(TriangleAverage.class);
 
 	}
 

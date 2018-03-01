@@ -16,7 +16,7 @@ import util.Vector2;
  * @author Calvin
  *
  */
-public class TriangleAverageLayer extends Layer {
+public class TriangleAverage extends Layer {
 
 	/**
 	 * 
@@ -43,7 +43,7 @@ public class TriangleAverageLayer extends Layer {
 	 * Initializes the layer with some basic values. AutoBailout and AutoMaxIterations are false, is creates a 
 	 * description, maxIterations is 1000, bailout is set to 10^4
 	 */
-	public TriangleAverageLayer() {
+	public TriangleAverage() {
 		super();
 		autoBailout = false;
 		autoMaxIterations = false;
