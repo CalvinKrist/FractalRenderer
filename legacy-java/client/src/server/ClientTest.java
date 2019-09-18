@@ -44,7 +44,7 @@ public class ClientTest {
 			while(true) {
 				text.setText(log.getLog());
 				try {
-					t.sleep(2000);
+					Thread.sleep(2000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

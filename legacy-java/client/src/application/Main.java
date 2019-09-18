@@ -39,7 +39,7 @@ public class Main extends Application {
 		        Thread t = null;
 				t = new Thread(()-> {
 					try {
-						t.sleep(200);
+						Thread.sleep(200);
 						scene.gradient.repaint();
 					} catch (InterruptedException e) {
 						e.printStackTrace();
