@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="b48620fc-4852-420c-9c95-61ca23331a06" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/R_User_Library.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/allclasses-frame.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/allclasses-noframe.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/application/ArrowButton.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/application/FractalEditor.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/application/GradientMenus.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/application/LayerCell.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/application/LayerItem.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/application/Main.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/application/MetaLayer.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/application/MetaParam.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/application/SquareButton.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/application/Window.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/application/class-use/ArrowButton.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/application/class-use/FractalEditor.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/application/class-use/GradientMenus.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/application/class-use/LayerCell.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/application/class-use/LayerItem.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/application/class-use/Main.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/application/class-use/MetaLayer.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/application/class-use/MetaParam.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/application/class-use/SquareButton.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/application/class-use/Window.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/application/package-frame.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/application/package-summary.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/application/package-tree.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/application/package-use.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/constant-values.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/deprecated-list.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/fractal/FractalChooserMenu.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/fractal/HistogramLayer.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/fractal/Layer.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/fractal/Palette.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/fractal/RenderManager.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/fractal/TriangleAverageLayer.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/fractal/class-use/FractalChooserMenu.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/fractal/class-use/HistogramLayer.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/fractal/class-use/Layer.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/fractal/class-use/Palette.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/fractal/class-use/RenderManager.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/fractal/class-use/TriangleAverageLayer.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/fractal/package-frame.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/fractal/package-summary.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/fractal/package-tree.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/fractal/package-use.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/help-doc.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/index-files/index-1.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/index-files/index-10.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/index-files/index-11.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/index-files/index-12.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/index-files/index-13.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/index-files/index-14.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/index-files/index-15.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/index-files/index-16.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/index-files/index-17.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/index-files/index-18.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/index-files/index-19.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/index-files/index-2.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/index-files/index-20.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/index-files/index-21.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/index-files/index-22.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/index-files/index-23.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/index-files/index-3.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/index-files/index-4.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/index-files/index-5.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/index-files/index-6.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/index-files/index-7.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/index-files/index-8.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/index-files/index-9.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/menus/AlertMenu.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/menus/Display.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/menus/ExpandableMenu.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/menus/ExportImageTool.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/menus/JobElement.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/menus/NetworkCreationTool.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/menus/NetworkElement.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/menus/NetworkView.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/menus/RegisterLayerTool.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/menus/RoundedButton.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/menus/XButton.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/menus/class-use/AlertMenu.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/menus/class-use/Display.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/menus/class-use/ExpandableMenu.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/menus/class-use/ExportImageTool.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/menus/class-use/JobElement.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/menus/class-use/NetworkCreationTool.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/menus/class-use/NetworkElement.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/menus/class-use/NetworkView.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/menus/class-use/RegisterLayerTool.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/menus/class-use/RoundedButton.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/menus/class-use/XButton.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/menus/package-frame.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/menus/package-summary.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/menus/package-tree.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/menus/package-use.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/overview-frame.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/overview-summary.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/overview-tree.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/package-list" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/script.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/serialized-form.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/server/Client.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/server/ClientTest.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/server/Job.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/server/MessageListener.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/server/NetworkNode.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/server/NoConnectionListener.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/server/Server.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/server/SocketAdder.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/server/SocketWrapper.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/server/class-use/Client.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/server/class-use/ClientTest.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/server/class-use/Job.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/server/class-use/MessageListener.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/server/class-use/NetworkNode.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/server/class-use/NoConnectionListener.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/server/class-use/Server.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/server/class-use/SocketAdder.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/server/class-use/SocketWrapper.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/server/package-frame.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/server/package-summary.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/server/package-tree.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/server/package-use.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/stylesheet.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/util/Constants.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/util/DataTag.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/util/DynamicCompiler.InMemoryJavaFileObject.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/util/DynamicCompiler.MyDiagnosticListener.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/util/DynamicCompiler.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/util/Log.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/util/MinMax.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/util/Parameters.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/util/Point.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/util/Utils.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/util/Vector2.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/util/class-use/Constants.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/util/class-use/DataTag.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/util/class-use/DynamicCompiler.InMemoryJavaFileObject.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/util/class-use/DynamicCompiler.MyDiagnosticListener.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/util/class-use/DynamicCompiler.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/util/class-use/Log.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/util/class-use/MinMax.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/util/class-use/Parameters.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/util/class-use/Point.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/util/class-use/Utils.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/util/class-use/Vector2.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/util/package-frame.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/util/package-summary.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/util/package-tree.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/legacy-java/client/doc/util/package-use.html" beforeDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file leaf-file-name="Main.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Main.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="210">
+              <caret line="20" column="16" lean-forward="true" selection-start-line="20" selection-start-column="16" selection-end-line="20" selection-end-column="16" />
+              <folding>
+                <element signature="e#0#70#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="gradient.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/gradient.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="85">
+              <caret line="5" column="14" selection-start-line="5" selection-start-column="6" selection-end-line="5" selection-end-column="14" />
+              <folding>
+                <element signature="e#0#10#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/gradient.py" />
+        <option value="$PROJECT_DIR$/Main.py" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="369" />
+    <option name="y" value="-17" />
+    <option name="width" value="1440" />
+    <option name="height" value="780" />
+  </component>
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="DistributedFractalNetwork" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DistributedFractalNetwork" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyIntegratedToolsModulesConfigurable" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="Main" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="DistributedFractalNetwork" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.Main" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b48620fc-4852-420c-9c95-61ca23331a06" name="Default" comment="" />
+      <created>1568834604111</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1568834604111</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="right" id="R Packages" />
+      <window_info anchor="right" id="R Graphics" />
+      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.12964931" />
+      <window_info anchor="bottom" id="Version Control" />
+      <window_info anchor="bottom" id="Python Console" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="Terminal" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info id="Favorites" side_tool="true" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+    </layout>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Main.py</url>
+          <line>25</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+      <option name="time" value="2" />
+    </breakpoint-manager>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/gradient.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="14" selection-start-line="5" selection-start-column="6" selection-end-line="5" selection-end-column="14" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="20" column="16" lean-forward="true" selection-start-line="20" selection-start-column="16" selection-end-line="20" selection-end-column="16" />
+          <folding>
+            <element signature="e#0#70#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
