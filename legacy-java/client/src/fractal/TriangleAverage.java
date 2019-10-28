@@ -12,7 +12,7 @@ import util.Vector2;
 
 /**
  * A layer which uses a rendering method called 'Triangle Average Inequality'. Please refer to
- * "Härkönen, Jussi: On Smooth Fractal Coloring Techniques" for more information
+ * "Hrknen, Jussi: On Smooth Fractal Coloring Techniques" for more information
  * @author Calvin
  *
  */
