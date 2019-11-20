@@ -11,7 +11,6 @@ Layer::~Layer() {
 
 float Layer::getOpacity() {
 	return this->opacity;
-	this->parameters = Parameters();
 }
 void Layer::setOpacity(float newopacity) {
 	this->opacity = newopacity;
@@ -20,11 +19,6 @@ Palette Layer::getPalette() {
 	return Palette();
 }
 void Layer::setPalettte(Palette palette) {
-}
-Parameters Layer::getParameters() {
-	return this->parameters;
-}
-void Layer::setParameter(std::string name, entry new_entry) {
 }
 bool Layer::getVisiblity() {
 	return this->isVisible;

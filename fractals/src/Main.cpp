@@ -1,58 +1,27 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #include <iostream>
-#include "LayerPy.h"
-#include "ParametersPy.h"
+#include "FractalPy.h"
 
-typedef struct {
-    PyObject_HEAD
-    /* Type-specific fields go here. */
-	int myVal;	
-} MyData;
-
-static PyTypeObject MyDatatype = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-    "fractal.MyData",             /* tp_name */
-    sizeof(MyData), /* tp_basicsize */
-    0,                         /* tp_itemsize */
-    0,                         /* tp_dealloc */
-    0,                         /* tp_print */
-    0,                         /* tp_getattr */
-    0,                         /* tp_setattr */
-    0,                         /* tp_reserved */
-    0,                         /* tp_repr */
-    0,                         /* tp_as_number */
-    0,                         /* tp_as_sequence */
-    0,                         /* tp_as_mapping */
-    0,                         /* tp_hash  */
-    0,                         /* tp_call */
-    0,                         /* tp_str */
-    0,                         /* tp_getattro */
-    0,                         /* tp_setattro */
-    0,                         /* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT,        /* tp_flags */
-    "Noddy objects",           /* tp_doc */
-};
-
+/*
 static PyObject * create_fractal(PyObject *self, PyObject *args) {
 
-    /*if (!PyArg_ParseTuple(args, "LL", &argument, &argument2))
+    if (!PyArg_ParseTuple(args, "LL", &argument, &argument2))
        return NULL;
    
-	std::cout << argument << " " << argument2 << std::endl;*/
+	std::cout << argument << " " << argument2 << std::endl;
 	
-	/*PyObject *myData;
-    if(!PyArg_ParseTuple(args, "O!", &MyDatatype, &myData))  /* type-checked */
+	PyObject *myData;
+    if(!PyArg_ParseTuple(args, "O!", &MyDatatype, &myData))
         return 0;
 	
-	/*std::cout << "C++ FUNCTION" << std::endl;*/
+	std::cout << "C++ FUNCTION" << std::endl;
     
     return PyLong_FromLong(1);
 }
+*/
 
-static PyMethodDef FractalMethods[] = {
-    {"render",  create_fractal, METH_VARARGS, "Render a fractal."},
-    
+static PyMethodDef FractalMethods[] = {    
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
@@ -69,28 +38,15 @@ PyMODINIT_FUNC
 PyInit_fractal(void) {
 	PyObject* m;
 
-    MyDatatype.tp_new = PyType_GenericNew;
-    if (PyType_Ready(&MyDatatype) < 0)
-        return NULL;
-
-    if (PyType_Ready(&LayerType) < 0)
-        return NULL;
-
-	if (PyType_Ready(&ParametersType) < 0)
+    if (PyType_Ready(&FractalType) < 0)
         return NULL;
 	
     m = PyModule_Create(&fractalModule);
     if (m == NULL)
         return NULL;
-
-    Py_INCREF(&MyDatatype);
-    PyModule_AddObject(m, "MyData", (PyObject *)&MyDatatype);
 	
-	Py_INCREF(&LayerType);
-    PyModule_AddObject(m, "Layer", (PyObject *)&LayerType);
-	
-	Py_INCREF(&ParametersType);
-    PyModule_AddObject(m, "Parameters", (PyObject *)&ParametersType);
+	Py_INCREF(&FractalType);
+    PyModule_AddObject(m, "Fractal", (PyObject *)&FractalType);
 	
     return m;
 }

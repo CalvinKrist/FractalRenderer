@@ -63,6 +63,10 @@ class Window(QMainWindow):
 
 import fractal
 
+def t():
+    fract = fractal.Fractal()
+    fract.render("ttt")
+
 if __name__ == '__main__':
     '''app = QApplication(sys.argv)
     ex = Window()
@@ -74,9 +78,4 @@ if __name__ == '__main__':
     ex.move(qtRectangle.topLeft())
 
     sys.exit(app.exec_())'''
-    import fractal
-    layer = fractal.Layer()
-    print(layer.get_opacity())
-    layer.set_opacity(0.5)
-    params = layer.get_parameters()
-    print(layer.get_opacity())
+    t()

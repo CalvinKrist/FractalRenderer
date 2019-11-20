@@ -10,7 +10,7 @@
 typedef struct {
     PyObject_HEAD
 	Layer * myLayer;
-	ParameterData parameterData;
+	ParameterData * parameterData;
 } LayerData;
 
 static PyObject *
@@ -25,15 +25,23 @@ Layer_new (PyTypeObject *type, PyObject *args, PyObject *kwds) {
             return NULL;
         }
     }
-
+	
+	self->parameterData = (ParameterData *)ParametersType.tp_alloc(&ParametersType, 0);
+	if (self->parameterData == NULL) {
+		Py_DECREF(self);
+		return NULL;
+	}
+	
+	self->parameterData->myParameters = &(self->myLayer->getParameters());
+	
     return (PyObject *)self;
 }
 
 static void
-Layer_dealloc(LayerData * obj)
+Layer_dealloc(LayerData * self)
 {
-    Py_TYPE(obj)->tp_free(obj);
-	delete obj->myLayer;
+	Py_XDECREF(self->parameterData);
+    Py_TYPE(self)->tp_free(self);
 }
 
 static PyObject *
@@ -58,7 +66,7 @@ Layer_set_opacity(LayerData *self, PyObject * pyOpacity)
 	float newOpacity = (float)PyFloat_AsDouble(pyOpacity);
 	self->myLayer->setOpacity(newOpacity);
 
-    return Py_BuildValue("");;
+    return Py_BuildValue("");
 }
 
 static PyObject *
@@ -69,10 +77,19 @@ Layer_get_parameters(LayerData *self)
         return NULL;
     }
 	
-	self->parameterData.myParameters = &(self->myLayer->getParameters());
-
-    return (PyObject*)(&(self->parameterData));
+	ParameterData * pParamData = self->parameterData;
+	pParamData->myParameters->test();
+	
+	Py_INCREF(pParamData);
+	
+    return (PyObject*)pParamData;
 }
+
+static PyMemberDef Layer_members[] = {
+    {"parameters", T_OBJECT, offsetof(LayerData, parameterData), 0,
+     "The layer's parameters"},
+    {NULL}  /* Sentinel */
+};
 
 static PyMethodDef Layer_methods[] = {
     {"get_opacity", (PyCFunction)Layer_get_opacity, METH_NOARGS,
@@ -117,7 +134,7 @@ static PyTypeObject LayerType {
     0,                         	/* tp_iter */
     0,                         	/* tp_iternext */
     Layer_methods,             	/* tp_methods */
-    0,							/* tp_members */
+    Layer_members,				/* tp_members */
     0,                         	/* tp_getset */
     0,                         	/* tp_base */
     0,                         	/* tp_dict */

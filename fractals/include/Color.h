@@ -1,8 +1,6 @@
-#ifndef Color_HEADER
-#define Color_HEADER
+#pragma once
 
 class Color {
 	
 };
 
-#endif

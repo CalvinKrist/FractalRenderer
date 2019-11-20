@@ -1,8 +1,9 @@
-#ifndef Palette_HEADER
-#define Palette_HEADER
+#pragma once
 
 class Palette {
 	
+	public:
+		Palette();
+		~Palette();
+	
 };
-
-#endif
