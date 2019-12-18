@@ -2,6 +2,7 @@
 
 #include "Layer.h"
 #include <vector>
+#include <string>
 
 /*
 A fractal consists of a series of different layers as 
@@ -18,11 +19,10 @@ class Fractal {
 		Color** render(int width, int height);
 		
 		// Layer manipulation functions
-		Layer * getLayer(int index);
-		void addLayer(Layer layer);
-		Layer * removeLayer(int index);
-		void insertLayer(int index, Layer layer);
-		Layer ** getLayers();
+		Layer* getLayer(int index);
+		Layer* removeLayer(int index);
+		void insertLayer(int index, Layer* layer);
+		int layerCount();
 		
 		// Getters and setters
 		double getX();
@@ -32,11 +32,13 @@ class Fractal {
 		double getViewportWidth();
 		void setViewportWidth(double width);
 		
+		std::string toString();
+		
 	private:
 		// Viewport parameters
 		double x;
 		double y;
 		double viewportWidth;
 		
-		std::vector<Layer> layers;
+		std::vector<Layer*> layers;
 };

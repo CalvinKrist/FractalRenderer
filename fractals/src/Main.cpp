@@ -1,25 +1,8 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #include <iostream>
+#include "HistogramLayerPy.h"
 #include "FractalPy.h"
-
-/*
-static PyObject * create_fractal(PyObject *self, PyObject *args) {
-
-    if (!PyArg_ParseTuple(args, "LL", &argument, &argument2))
-       return NULL;
-   
-	std::cout << argument << " " << argument2 << std::endl;
-	
-	PyObject *myData;
-    if(!PyArg_ParseTuple(args, "O!", &MyDatatype, &myData))
-        return 0;
-	
-	std::cout << "C++ FUNCTION" << std::endl;
-    
-    return PyLong_FromLong(1);
-}
-*/
 
 static PyMethodDef FractalMethods[] = {    
     {NULL, NULL, 0, NULL}        /* Sentinel */
@@ -41,12 +24,24 @@ PyInit_fractal(void) {
     if (PyType_Ready(&FractalType) < 0)
         return NULL;
 	
+	if (PyType_Ready(&LayerType) < 0)
+        return NULL;
+	
+	if (PyType_Ready(&HistogramLayerType) < 0)
+        return NULL;
+	
     m = PyModule_Create(&fractalModule);
     if (m == NULL)
         return NULL;
 	
 	Py_INCREF(&FractalType);
     PyModule_AddObject(m, "Fractal", (PyObject *)&FractalType);
+	
+	Py_INCREF(&LayerType);
+    PyModule_AddObject(m, "Layer", (PyObject *)&LayerType);
+	
+	Py_INCREF(&HistogramLayerType);
+    PyModule_AddObject(m, "HistogramLayer", (PyObject *)&HistogramLayerType);
 	
     return m;
 }

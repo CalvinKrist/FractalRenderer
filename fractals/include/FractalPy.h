@@ -3,6 +3,7 @@
 #include <Python.h>
 #include "structmember.h"
 #include "Fractal.h"
+#include "LayerPy.h"
 
 #include <iostream>
 
@@ -38,31 +39,94 @@ Fractal_new (PyTypeObject *type, PyObject *args, PyObject *kwds) {
 }
 
 static void
-Fractal_dealloc(FractalData * self)
-{
+Fractal_dealloc(FractalData * self) {
 	//Py_XDECREF(self->parameterData);
     Py_TYPE(self)->tp_free(self);
 }
 
 static PyObject *
-Fractal_render(FractalData* self, PyObject *args)
-{
+Fractal_render(FractalData* self, PyObject *args) {
     if (self->myFractal == NULL) {
         PyErr_SetString(PyExc_AttributeError, "myFractal");
         return NULL;
     }
-
-	std::cout << self->myFractal->getX() << std::endl;
 	
     return PyFloat_FromDouble(1);
+}
+
+/**********************************
+**  Layer manipulation functions **
+***********************************/
+
+// Layer manipulation functions
+static PyObject * 
+Fractal_getLayer(FractalData* self, PyObject * index) {
+	if (self->myFractal == NULL) {
+        PyErr_SetString(PyExc_AttributeError, "myFractal");
+        return NULL;
+    }
+	
+	// Extract argument
+	int n = (int)PyLong_AsLong(index);
+		
+	// TODO: potential memory leak
+	LayerData * pLayerData = (LayerData *)LayerType.tp_alloc(&LayerType, 0);
+	pLayerData->myLayer = self->myFractal->getLayer(n);
+	Py_INCREF(pLayerData);
+    return (PyObject*)pLayerData;
+}
+
+static PyObject *  
+Fractal_removeLayer(FractalData* self, PyObject * index) {
+	if (self->myFractal == NULL) {
+        PyErr_SetString(PyExc_AttributeError, "removeLayer: self is null");
+        return NULL;
+    }
+	
+	// Extract argument
+	int n = (int)PyLong_AsLong(index);
+		
+	// TODO: potential memory leak
+	LayerData * pLayerData = (LayerData *)LayerType.tp_alloc(&LayerType, 0);
+		
+	// TODO: pointer may be invalid, object might have been deinitialized
+	pLayerData->myLayer = self->myFractal->removeLayer(n);
+		
+	Py_INCREF(pLayerData);
+    return (PyObject*)pLayerData;
+}
+static PyObject * 
+Fractal_insertLayer(FractalData* self, PyObject * args) {
+	int index = 0;
+	PyObject * pyObj = NULL;
+		
+	if (!PyArg_ParseTuple(args, "iO", &index, &pyObj)) {
+        PyErr_SetString(PyExc_AttributeError, "insertLayer: failed to extract args");
+        return NULL;
+    }
+	
+	LayerData * pyLayer = (LayerData*)pyObj;
+	Layer * pLayer = pyLayer->myLayer; 
+	self->myFractal->insertLayer(index, pLayer);
+		
+	return Py_BuildValue("");
+}
+static PyObject *  
+Fractal_layerCount(FractalData* self) {
+	return PyLong_FromLong(self->myFractal->layerCount());
+}
+
+static PyObject *  
+Fractal_toString(FractalData* self) {
+	std::string description = self->myFractal->toString();
+	return PyUnicode_FromFormat(description.c_str()); 
 }
 
 /**************************
 **  Getters and Setters  **
 ***************************/
 static PyObject *
-Fractal_getX(FractalData* self, void *closure)
-{	
+Fractal_getX(FractalData* self, void *closure) {	
     return PyFloat_FromDouble(self->myFractal->getX());
 }
 
@@ -136,14 +200,16 @@ static PyGetSetDef Fractal_getseters[] = {
     {NULL}  /* Sentinel */
 };
 
-static PyMemberDef Fractal_members[] = {
-    /*{"parameters", T_OBJECT, offsetof(FractalData, parameterData), 0,
-     "The Fractal's parameters"},*/
-    {NULL}  /* Sentinel */
-};
-
 static PyMethodDef Fractal_methods[] = {
     {"render", (PyCFunction)Fractal_render, METH_VARARGS,
+    "Renders the fractal and returns a 2D color array"},
+	{"get_layer", (PyCFunction)Fractal_getLayer, METH_O,
+    "Renders the fractal and returns a 2D color array"},
+	{"remove_layer", (PyCFunction)Fractal_removeLayer, METH_O,
+    "Renders the fractal and returns a 2D color array"},
+	{"insert_layer", (PyCFunction)Fractal_insertLayer, METH_VARARGS,
+    "Renders the fractal and returns a 2D color array"},
+	{"layer_count", (PyCFunction)Fractal_layerCount, METH_NOARGS,
     "Renders the fractal and returns a 2D color array"},
     {NULL}  /* Sentinel */
 };
@@ -165,7 +231,7 @@ static PyTypeObject FractalType {
     0,                         	/* tp_as_mapping */
     0,                         	/* tp_hash  */
     0,                         	/* tp_call */
-    0,            				/* tp_str */
+    (reprfunc)Fractal_toString,            				/* tp_str */
     0,                         	/* tp_getattro */
     0,                         	/* tp_setattro */
     0,                         	/* tp_as_buffer */
@@ -178,7 +244,7 @@ static PyTypeObject FractalType {
     0,                         	/* tp_iter */
     0,                         	/* tp_iternext */
     Fractal_methods,            /* tp_methods */
-    Fractal_members,			/* tp_members */
+    0,							/* tp_members */
     Fractal_getseters,          /* tp_getset */
     0,                         	/* tp_base */
     0,                         	/* tp_dict */

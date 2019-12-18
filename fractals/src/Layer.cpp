@@ -26,10 +26,4 @@ bool Layer::getVisiblity() {
 void Layer::setVisible(bool isVisible) {
 }
 
-RenderMethod Layer::getRenderMethod() {
-	return RenderMethod::HISTORGRAM;
-}
-void Layer::setRenderMethod(RenderMethod method) {
-}
-
 // python also needs to include name
