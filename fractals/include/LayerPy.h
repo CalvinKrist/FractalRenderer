@@ -48,7 +48,7 @@ Layer_dealloc(LayerData * self)
 ***************************/
 
 static PyObject *
-Layer_get_opacity(LayerData* self)
+Layer_getOpacity(LayerData* self)
 {
     if (self->myLayer == NULL) {
         PyErr_SetString(PyExc_AttributeError, "myLayer");
@@ -59,7 +59,7 @@ Layer_get_opacity(LayerData* self)
 }
 
 static PyObject *
-Layer_set_opacity(LayerData *self, PyObject * pyOpacity)
+Layer_setOpacity(LayerData *self, PyObject * pyOpacity)
 {
     if (self->myLayer == NULL) {
         PyErr_SetString(PyExc_AttributeError, "myLayer");
@@ -72,10 +72,45 @@ Layer_set_opacity(LayerData *self, PyObject * pyOpacity)
     return 0;
 }
 
+static PyObject *
+Layer_getName(LayerData* self)
+{
+    if (self->myLayer == NULL) {
+        PyErr_SetString(PyExc_AttributeError, "myLayer");
+        return NULL;
+    }
+
+    return PyUnicode_FromFormat(self->myLayer->getName().c_str()); 
+}
+
+static PyObject *
+Layer_setName(LayerData *self, PyObject * pyString)
+{
+    if (self->myLayer == NULL) {
+        PyErr_SetString(PyExc_AttributeError, "myLayer");
+        return NULL;
+    }
+	
+	const char* newName = PyUnicode_AsUTF8(pyString);
+	self->myLayer->setName(std::string(newName));
+
+    return 0;
+}
+
+static PyObject *  
+Layer_toString(LayerData* self) {
+	std::string description = self->myLayer->toString();
+	return PyUnicode_FromFormat(description.c_str()); 
+}
+
 static PyGetSetDef Layer_getseters[] = {
     {"opacity",
-     (getter)Layer_get_opacity, (setter)Layer_set_opacity,
+     (getter)Layer_getOpacity, (setter)Layer_setOpacity,
      "Layer opacity as a float",
+     NULL},
+	 {"name",
+     (getter)Layer_getName, (setter)Layer_setName,
+     "Layer name as UTF-8 string",
      NULL},
     {NULL}  /* Sentinel */
 };
@@ -106,7 +141,7 @@ static PyTypeObject LayerType {
     0,                         	/* tp_as_mapping */
     0,                         	/* tp_hash  */
     0,                         	/* tp_call */
-    0,            				/* tp_str */
+    (reprfunc)Layer_toString, /* tp_str */
     0,                         	/* tp_getattro */
     0,                         	/* tp_setattro */
     0,                         	/* tp_as_buffer */

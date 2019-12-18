@@ -35,15 +35,10 @@ HistogramLayer_dealloc(HistogramLayerData * self)
     Py_TYPE(self)->tp_free(self);
 }
 
-static PyObject *
-HistogramLayer_test(HistogramLayerData* self)
-{
-    if (self->myLayer == NULL) {
-        PyErr_SetString(PyExc_AttributeError, "myLayer");
-        return NULL;
-    }
-
-    return PyFloat_FromDouble(101.1);
+static PyObject *  
+HistogramLayer_toString(HistogramLayerData* self) {
+	std::string description = self->myLayer->toString();
+	return PyUnicode_FromFormat(description.c_str()); 
 }
 
 static PyMemberDef HistogramLayer_members[] = {
@@ -54,7 +49,7 @@ static PyMemberDef HistogramLayer_members[] = {
 ***  Make Polymorphism work for methods  ***
 ********************************************/
 
-int numHistogramMethods = 1;
+int numHistogramMethods = 0;
 int numLayerMethods = sizeof(Layer_methods) / sizeof(PyMethodDef) - 1;
 static int numMethods = numLayerMethods + numHistogramMethods + 1;
 static PyMethodDef* HistogramLayer_methods = new PyMethodDef[numMethods];
@@ -62,11 +57,7 @@ static PyMethodDef* HistogramLayer_methods = new PyMethodDef[numMethods];
 struct MethodInitializer
 {
     MethodInitializer()
-    {
-		HistogramLayer_methods[0] = {"test", (PyCFunction)HistogramLayer_test, METH_NOARGS,
-									"Return the opacity of the layer"
-									};
-									
+    {					
 		for(int i = 0; i < numLayerMethods; i++)
 			HistogramLayer_methods[numHistogramMethods + i] = Layer_methods[i];
 
@@ -75,6 +66,32 @@ struct MethodInitializer
 };
 
 MethodInitializer initializer;
+
+/*****************************************************
+***  Make Polymorphism work for getters / setters  ***
+******************************************************/
+
+int numHistogramGetSetters = 0;
+int numLayerGetSetters = sizeof(Layer_getseters) / sizeof(PyGetSetDef) - 1;
+static int numGetSetters = numHistogramGetSetters + numLayerGetSetters + 1;
+static PyGetSetDef* HistogramLayer_getseters = new PyGetSetDef[numGetSetters];
+
+struct GetSetInitializer
+{
+    GetSetInitializer()
+    {
+		/*HistogramLayer_methods[0] = {"test", (PyCFunction)HistogramLayer_test, METH_NOARGS,
+									"Return the opacity of the layer"
+									};*/
+									
+		for(int i = 0; i < numLayerGetSetters; i++)
+			HistogramLayer_getseters[numHistogramGetSetters + i] = Layer_getseters[i];
+
+		HistogramLayer_getseters[numGetSetters - 1] = {NULL}; /* Sentinel */
+    }
+};
+
+GetSetInitializer getSetInitializer;
 
 static PyTypeObject HistogramLayerType {
     PyVarObject_HEAD_INIT(NULL, 0)
@@ -92,7 +109,7 @@ static PyTypeObject HistogramLayerType {
     0,                         	/* tp_as_mapping */
     0,                         	/* tp_hash  */
     0,                         	/* tp_call */
-    0,            				/* tp_str */
+    (reprfunc)HistogramLayer_toString, /* tp_str */
     0,                         	/* tp_getattro */
     0,                         	/* tp_setattro */
     0,                         	/* tp_as_buffer */
@@ -106,7 +123,7 @@ static PyTypeObject HistogramLayerType {
     0,                         	/* tp_iternext */
     HistogramLayer_methods,             	/* tp_methods */
     HistogramLayer_members,				/* tp_members */
-    0,                         	/* tp_getset */
+    HistogramLayer_getseters,                         	/* tp_getset */
     0,                         	/* tp_base */
     0,                         	/* tp_dict */
     0,                         	/* tp_descr_get */
