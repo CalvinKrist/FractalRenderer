@@ -50,15 +50,6 @@ static PyMemberDef HistogramLayer_members[] = {
     {NULL}  /* Sentinel */
 };
 
-/*
-static PyMethodDef HistogramLayer_methods[] = {
-	Layer_methods[0],
-    {"test", (PyCFunction)HistogramLayer_test, METH_NOARGS,
-     "Return the opacity of the layer"
-    },
-    {NULL}  /* Sentinel */
-//};
-
 /*******************************************
 ***  Make Polymorphism work for methods  ***
 ********************************************/
@@ -68,9 +59,9 @@ int numLayerMethods = sizeof(Layer_methods) / sizeof(PyMethodDef) - 1;
 static int numMethods = numLayerMethods + numHistogramMethods + 1;
 static PyMethodDef* HistogramLayer_methods = new PyMethodDef[numMethods];
 
-struct Initializer
+struct MethodInitializer
 {
-    Initializer()
+    MethodInitializer()
     {
 		HistogramLayer_methods[0] = {"test", (PyCFunction)HistogramLayer_test, METH_NOARGS,
 									"Return the opacity of the layer"
@@ -83,7 +74,7 @@ struct Initializer
     }
 };
 
-Initializer initializer;
+MethodInitializer initializer;
 
 static PyTypeObject HistogramLayerType {
     PyVarObject_HEAD_INIT(NULL, 0)

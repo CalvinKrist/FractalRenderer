@@ -43,6 +43,10 @@ Layer_dealloc(LayerData * self)
     Py_TYPE(self)->tp_free(self);
 }
 
+/**************************
+**  Getters and Setters  **
+***************************/
+
 static PyObject *
 Layer_get_opacity(LayerData* self)
 {
@@ -65,25 +69,16 @@ Layer_set_opacity(LayerData *self, PyObject * pyOpacity)
 	float newOpacity = (float)PyFloat_AsDouble(pyOpacity);
 	self->myLayer->setOpacity(newOpacity);
 
-    return Py_BuildValue("");
+    return 0;
 }
 
-static PyObject *
-Layer_get_parameters(LayerData *self)
-{
-    /*if (self->myLayer == NULL) {
-        PyErr_SetString(PyExc_AttributeError, "myLayer");
-        return NULL;
-    }
-	
-	ParameterData * pParamData = self->parameterData;
-	pParamData->myParameters->test();
-	
-	Py_INCREF(pParamData);
-	
-    return (PyObject*)pParamData;*/
-	return NULL;
-}
+static PyGetSetDef Layer_getseters[] = {
+    {"opacity",
+     (getter)Layer_get_opacity, (setter)Layer_set_opacity,
+     "Layer opacity as a float",
+     NULL},
+    {NULL}  /* Sentinel */
+};
 
 static PyMemberDef Layer_members[] = {
     /*{"parameters", T_OBJECT, offsetof(LayerData, parameterData), 0,
@@ -92,12 +87,6 @@ static PyMemberDef Layer_members[] = {
 };
 
 static PyMethodDef Layer_methods[] = {
-    {"get_opacity", (PyCFunction)Layer_get_opacity, METH_NOARGS,
-     "Return the opacity of the layer"
-    },
-	{"set_opacity", (PyCFunction)Layer_set_opacity, METH_O,
-     "Set the opacity of the layer"
-    },
     {NULL}  /* Sentinel */
 };
 
@@ -131,7 +120,7 @@ static PyTypeObject LayerType {
     0,                         	/* tp_iternext */
     Layer_methods,             	/* tp_methods */
     Layer_members,				/* tp_members */
-    0,                         	/* tp_getset */
+    Layer_getseters,            /* tp_getset */
     0,                         	/* tp_base */
     0,                         	/* tp_dict */
     0,                         	/* tp_descr_get */

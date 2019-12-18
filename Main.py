@@ -65,14 +65,14 @@ import fractal
 
 def t(fract):
 
-    layer = fractal.HistogramLayer()
+    layer = fractal.Layer()
+    layer.opacity = 3
+    print(layer.opacity)
 
     print(fract.layer_count())
     fract.insert_layer(0, layer)
     print(fract.layer_count())
     lNew = (fractal.HistogramLayer)(fract.remove_layer(0))
-    t = lNew.test()
-    print(lNew.get_opacity())
     print(fract.layer_count())
 
 if __name__ == '__main__':
