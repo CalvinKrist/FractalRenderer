@@ -2,6 +2,7 @@
 #include <Python.h>
 #include <iostream>
 #include "HistogramLayerPy.h"
+#include "PalettePy.h"
 #include "FractalPy.h"
 
 static PyMethodDef FractalMethods[] = {    
@@ -11,7 +12,7 @@ static PyMethodDef FractalMethods[] = {
 static struct PyModuleDef fractalModule = {
     PyModuleDef_HEAD_INIT,
     "fractal",   /* name of module */
-    "some docss", /* module documentation, may be NULL */
+    "some docs", /* module documentation, may be NULL */
     -1,       /* size of per-interpreter state of the module,
                  or -1 if the module keeps state in global variables. */
     FractalMethods
@@ -30,6 +31,9 @@ PyInit_fractal(void) {
 	if (PyType_Ready(&HistogramLayerType) < 0)
         return NULL;
 	
+	if (PyType_Ready(&PaletteType) < 0)
+        return NULL;
+	
     m = PyModule_Create(&fractalModule);
     if (m == NULL)
         return NULL;
@@ -42,6 +46,9 @@ PyInit_fractal(void) {
 	
 	Py_INCREF(&HistogramLayerType);
     PyModule_AddObject(m, "HistogramLayer", (PyObject *)&HistogramLayerType);
+	
+	Py_INCREF(&PaletteType);
+    PyModule_AddObject(m, "Palette", (PyObject *)&PaletteType);
 	
     return m;
 }

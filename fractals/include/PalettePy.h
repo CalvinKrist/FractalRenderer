@@ -1,88 +1,241 @@
-#ifndef PalettePy_HEADER
-#define PalettePy_HEADER
+#pragma once
 
 #include <Python.h>
-#include "Layer.h"
+#include "structmember.h"
+#include "Palette.h"
 
-typedef struct PyPaletteObject {
-    PyObject_VAR_HEAD
-    const char *tp_name; /* For printing, in format "<module>.<name>" */
-    Py_ssize_t tp_basicsize, tp_itemsize; /* For allocation */
+// Python wrapper around a C++ Palette class
+typedef struct {
+    PyObject_HEAD
+	Palette * myPalette;
+	//ParameterData * parameterData;
+} PaletteData;
 
-    /* Methods to implement standard operations */
+static PyObject *
+Palette_new (PyTypeObject *type, PyObject *args, PyObject *kwds) {
+	PaletteData *self;
 
-    destructor tp_dealloc;
-    printfunc tp_print;
-    getattrfunc tp_getattr;
-    setattrfunc tp_setattr;
-    PyAsyncMethods *tp_as_async; /* formerly known as tp_compare (Python 2)
-                                    or tp_reserved (Python 3) */
-    reprfunc tp_repr;
+    self = (PaletteData *)type->tp_alloc(type, 0);
+    if (self != NULL) {
+        self->myPalette = new Palette();
+        if (self->myPalette == NULL) {
+            Py_DECREF(self);
+            return NULL;
+        }
+    }
+	
+	/*self->parameterData = (ParameterData *)ParametersType.tp_alloc(&ParametersType, 0);
+	if (self->parameterData == NULL) {
+		Py_DECREF(self);
+		return NULL;
+	}
+	
+	self->parameterData->myParameters = &(self->myPalette->getParameters());*/
+	
+    return (PyObject *)self;
+}
 
-    /* Method suites for standard classes */
+static void
+Palette_dealloc(PaletteData * self)
+{
+	//Py_XDECREF(self->parameterData);
+    Py_TYPE(self)->tp_free(self);
+}
 
-    PyNumberMethods *tp_as_number;
-    PySequenceMethods *tp_as_sequence;
-    PyMappingMethods *tp_as_mapping;
+static PyObject *
+Palette_colorAt(PaletteData* self, PyObject * pyX) {
+	if (self->myPalette == NULL) {
+        PyErr_SetString(PyExc_AttributeError, "colorAt: self is null");
+        return NULL;
+    }
+	
+	// Extract argument
+	double x = PyFloat_AsDouble(pyX);
+	
+	Color color = self->myPalette->colorAt(x);
+	return Py_BuildValue("iii", color.r, color.g, color.b);
+}
 
-    /* More standard operations (here for binary compatibility) */
+static PyObject *
+Palette_opacityAt(PaletteData* self, PyObject * pyX) {
+	if (self->myPalette == NULL) {
+        PyErr_SetString(PyExc_AttributeError, "opacityAt: self is null");
+        return NULL;
+    }
+	
+	// Extract argument
+	double x = PyFloat_AsDouble(pyX);
 
-    hashfunc tp_hash;
-    ternaryfunc tp_call;
-    reprfunc tp_str;
-    getattrofunc tp_getattro;
-    setattrofunc tp_setattro;
+	return PyFloat_FromDouble(self->myPalette->opacityAt(x));
+}
+	
+	
+static PyObject *
+Palette_addColor(PaletteData* self, PyObject * args) {
+	int r, g, b;
+	double x;
+		
+	PyObject * colorTuple;
+	
+	if (!PyArg_ParseTuple(args, "Od", &colorTuple, &x)) {
+        PyErr_SetString(PyExc_AttributeError, "addColor: failed to seperate color and x");
+        return NULL;
+    }
+	
+	if (!PyArg_ParseTuple(colorTuple, "iii", &r, &g, &b)) {
+        PyErr_SetString(PyExc_AttributeError, "addColor: failed to parse color");
+        return NULL;
+    }
+	
+	return Py_True;
+}
 
-    /* Functions to access object as input/output buffer */
-    PyBufferProcs *tp_as_buffer;
+static PyObject *
+Palette_removeColor(PaletteData* self, PyObject * pyX) {
+	if (self->myPalette == NULL) {
+        PyErr_SetString(PyExc_AttributeError, "removeColor: self is null");
+        return NULL;
+    }
+	
+	// Extract argument
+	double x = PyFloat_AsDouble(pyX);
+	
+	return Py_True;
+}
 
-    /* Flags to define presence of optional/expanded features */
-    unsigned long tp_flags;
+static PyObject *
+Palette_addOpacity(PaletteData* self, PyObject * args) {
+	double opacity, x;
+		
+	if (!PyArg_ParseTuple(args, "dd", &opacity, &x)) {
+        PyErr_SetString(PyExc_AttributeError, "addOpacity: failed to extract args");
+        return NULL;
+    }
+	
+	return Py_True;
+}
 
-    const char *tp_doc; /* Documentation string */
+static PyObject *
+Palette_removeOpacity(PaletteData* self, PyObject * pyX) {
+	if (self->myPalette == NULL) {
+        PyErr_SetString(PyExc_AttributeError, "removeOpacity: self is null");
+        return NULL;
+    }
+	
+	// Extract argument
+	double x = PyFloat_AsDouble(pyX);
+	
+	return Py_True;
+}
 
-    /* call function for all accessible objects */
-    traverseproc tp_traverse;
+/**************************
+**  Getters and Setters  **
+***************************/
 
-    /* delete references to contained objects */
-    inquiry tp_clear;
+static PyObject *
+Palette_getInteriorColor(PaletteData* self)
+{
+    if (self->myPalette == NULL) {
+        PyErr_SetString(PyExc_AttributeError, "myPalette");
+        return NULL;
+    }
 
-    /* rich comparisons */
-    richcmpfunc tp_richcompare;
+	Color interior = self->myPalette->getInteriorColor();
+    return Py_BuildValue("iii", interior.r, interior.g, interior.b);
+}
 
-    /* weak reference enabler */
-    Py_ssize_t tp_weaklistoffset;
+static PyObject *
+Palette_setInteriorColor(PaletteData *self, PyObject * pyColor)
+{
+    if (self->myPalette == NULL) {
+        PyErr_SetString(PyExc_AttributeError, "myPalette");
+        return NULL;
+    }
+	
+	int* interior = new int[3];
+	if (!PyArg_ParseTuple(pyColor, "iii", &interior[0], &interior[1], &interior[2])) {
+        PyErr_SetString(PyExc_AttributeError, "setInteriorColor: failed to extract args");
+        return NULL;
+    }
+	
+	self->myPalette->setInteriorColor(Color(interior[0], interior[1], interior[2]));
 
-    /* Iterators */
-    getiterfunc tp_iter;
-    iternextfunc tp_iternext;
+    return 0;
+}
 
-    /* Attribute descriptor and subclassing stuff */
-    struct PyMethodDef *tp_methods;
-    struct PyMemberDef *tp_members;
-    struct PyGetSetDef *tp_getset;
-    struct _typeobject *tp_base;
-    PyObject *tp_dict;
-    descrgetfunc tp_descr_get;
-    descrsetfunc tp_descr_set;
-    Py_ssize_t tp_dictoffset;
-    initproc tp_init;
-    allocfunc tp_alloc;
-    newfunc tp_new;
-    freefunc tp_free; /* Low-level free-memory routine */
-    inquiry tp_is_gc; /* For PyObject_IS_GC */
-    PyObject *tp_bases;
-    PyObject *tp_mro; /* method resolution order */
-    PyObject *tp_cache;
-    PyObject *tp_subclasses;
-    PyObject *tp_weaklist;
-    destructor tp_del;
+static PyObject *  
+Palette_toString(PaletteData* self) {
+	std::string description = self->myPalette->toString();
+	return PyUnicode_FromFormat(description.c_str()); 
+}
 
-    /* Type attribute cache version tag. Added in version 2.6 */
-    unsigned int tp_version_tag;
+static PyGetSetDef Palette_getseters[] = {
+    {"interior_color",
+     (getter)Palette_getInteriorColor, (setter)Palette_setInteriorColor,
+     "Palette interior color as a tuple of three integers from 0-255",
+     NULL},
+    {NULL}  /* Sentinel */
+};
 
-    destructor tp_finalize;
+static PyMemberDef Palette_members[] = {
+    /*{"parameters", T_OBJECT, offsetof(PaletteData, parameterData), 0,
+     "The Palette's parameters"},*/
+    {NULL}  /* Sentinel */
+};
 
-} PyTypeObject;
+static PyMethodDef Palette_methods[] = {
+	{"color_at", (PyCFunction)Palette_colorAt, METH_O,
+    "Returns the color at a point in the palette ranging from 0 to 1"},
+	{"opacity_at", (PyCFunction)Palette_opacityAt, METH_O,
+    "Returns the opacity at a point in the palette ranging from 0 to 1"},
+	{"add_color", (PyCFunction)Palette_addColor, METH_VARARGS,
+    "Adds a color at a point in the palette ranging from 0 to 1. Returns success value."},
+	{"remove_color", (PyCFunction)Palette_removeColor, METH_O,
+    "Removes a color at a point in the palette ranging from 0 to 1. Returns success value."},
+	{"add_opacity", (PyCFunction)Palette_addOpacity, METH_VARARGS,
+    "Adds an opacity at a point in the palette ranging from 0 to 1. Returns success value."},
+	{"remove_opacity", (PyCFunction)Palette_removeOpacity, METH_O,
+    "Removes an opacity at a point in the palette ranging from 0 to 1. Returns success value."},
+    {NULL}  /* Sentinel */
+};
 
-#endif
+static PyTypeObject PaletteType {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    "fractal.Palette",           	/* tp_name */
+    sizeof(PaletteData), 			/* tp_basicsize */
+    0,                         	/* tp_itemsize */
+    (destructor)Palette_dealloc,  /* tp_dealloc */
+    0,                         	/* tp_print */
+    0,                         	/* tp_getattr */
+    0,                         	/* tp_setattr */
+    0,                         	/* tp_reserved */
+    0,                         	/* tp_repr */
+    0,                         	/* tp_as_number */
+    0,                         	/* tp_as_sequence */
+    0,                         	/* tp_as_mapping */
+    0,                         	/* tp_hash  */
+    0,                         	/* tp_call */
+    (reprfunc)Palette_toString, /* tp_str */
+    0,                         	/* tp_getattro */
+    0,                         	/* tp_setattro */
+    0,                         	/* tp_as_buffer */
+    Py_TPFLAGS_DEFAULT,        	/* tp_flags */
+    "Abstract Palette superclass",     	/* tp_doc */
+	0,                         	/* tp_traverse */
+    0,                         	/* tp_clear */
+    0,                         	/* tp_richcompare */
+    0,                         	/* tp_weaklistoffset */
+    0,                         	/* tp_iter */
+    0,                         	/* tp_iternext */
+    Palette_methods,             	/* tp_methods */
+    Palette_members,				/* tp_members */
+    Palette_getseters,            /* tp_getset */
+    0,                         	/* tp_base */
+    0,                         	/* tp_dict */
+    0,                         	/* tp_descr_get */
+    0,                         	/* tp_descr_set */
+    0,                         	/* tp_dictoffset */
+    0,      					/* tp_init */
+    0,                         	/* tp_alloc */
+    Palette_new,                 	/* tp_new */
+};
