@@ -2,13 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b48620fc-4852-420c-9c95-61ca23331a06" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fractals/include/HistogramLayerPy.h" beforeDir="false" afterPath="$PROJECT_DIR$/fractals/include/HistogramLayerPy.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fractals/include/Layer.h" beforeDir="false" afterPath="$PROJECT_DIR$/fractals/include/Layer.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fractals/include/LayerPy.h" beforeDir="false" afterPath="$PROJECT_DIR$/fractals/include/LayerPy.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fractals/src/Layer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/fractals/src/Layer.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fractals/src/Main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/fractals/src/Main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -58,8 +54,8 @@
       <file leaf-file-name="test.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="391">
-              <caret line="23" column="33" selection-start-line="23" selection-start-column="33" selection-end-line="23" selection-end-column="33" />
+            <state relative-caret-position="328">
+              <caret line="25" column="30" selection-start-line="25" selection-start-column="30" selection-end-line="25" selection-end-column="30" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -591,8 +587,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="23" column="33" selection-start-line="23" selection-start-column="33" selection-end-line="23" selection-end-column="33" />
+        <state relative-caret-position="328">
+          <caret line="25" column="30" selection-start-line="25" selection-start-column="30" selection-end-line="25" selection-end-column="30" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>

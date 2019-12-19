@@ -23,5 +23,12 @@ class HistogramLayer(unittest.TestCase):
         layer.name = "Layer 1"
         self.assertEqual("Layer 1", layer.name)
 
+    def test_is_visible(self):
+        layer = fractal.HistogramLayer()
+
+        self.assertEqual(True, layer.is_visible)
+        layer.is_visible = False
+        self.assertEqual(False, layer.is_visible)
+
 if __name__ == '__main__':
     unittest.main()

@@ -97,6 +97,35 @@ Layer_setName(LayerData *self, PyObject * pyString)
     return 0;
 }
 
+static PyObject *
+Layer_getIsVisible(LayerData* self)
+{
+    if (self->myLayer == NULL) {
+        PyErr_SetString(PyExc_AttributeError, "myLayer");
+        return NULL;
+    }
+
+    if(self->myLayer->isVisible())
+		return Py_True;
+	return Py_False;
+}
+
+static PyObject *
+Layer_setIsVisible(LayerData *self, PyObject * pyString)
+{
+    if (self->myLayer == NULL) {
+        PyErr_SetString(PyExc_AttributeError, "myLayer");
+        return NULL;
+    }
+	
+	if(pyString == Py_True)
+		self->myLayer->setVisible(true);
+	else
+		self->myLayer->setVisible(false);
+		
+    return 0;
+}
+
 static PyObject *  
 Layer_toString(LayerData* self) {
 	std::string description = self->myLayer->toString();
@@ -111,6 +140,10 @@ static PyGetSetDef Layer_getseters[] = {
 	 {"name",
      (getter)Layer_getName, (setter)Layer_setName,
      "Layer name as UTF-8 string",
+     NULL},
+	 {"is_visible",
+     (getter)Layer_getIsVisible, (setter)Layer_setIsVisible,
+     "Layer visibility as a boolean",
      NULL},
     {NULL}  /* Sentinel */
 };

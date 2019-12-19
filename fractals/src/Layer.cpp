@@ -3,7 +3,7 @@
 
 Layer::Layer() {
 	this->opacity = 1;
-	this->isVisible = true;
+	this->visible = true;
 	this->name = "My Layer";
 }
 
@@ -21,11 +21,11 @@ Palette Layer::getPalette() {
 }
 void Layer::setPalettte(Palette palette) {
 }
-bool Layer::getVisiblity() {
-	return this->isVisible;
+bool Layer::isVisible() {
+	return this->visible;
 }
-void Layer::setVisible(bool visible) {
-	this->isVisible = visible;
+void Layer::setVisible(bool isVisible) {
+	this->visible = isVisible;
 }
 std::string Layer::getName() {
 	return this->name;
