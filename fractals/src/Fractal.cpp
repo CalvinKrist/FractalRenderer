@@ -2,7 +2,9 @@
 #include <iostream>
 	
 Fractal::Fractal() {
-	this->x = -10;
+	this->x = 0;
+	this->y = 0;
+	this->viewportWidth = 4;
 }
 Fractal::~Fractal() {
 }
@@ -32,10 +34,10 @@ int Fractal::layerCount() {
 }
 
 std::string Fractal::toString() {
-	std::string desc = "fractal: ";
+	std::string desc = "fractal: \n";
 	
 	for(int i = 0; i < layers.size(); i++) 
-		desc += layers[i]->toString() + " : ";
+		desc += "\t" + layers[i]->toString() + "\n";
 		
 	return desc;
 }

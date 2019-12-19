@@ -69,6 +69,11 @@ Fractal_getLayer(FractalData* self, PyObject * index) {
 	// Extract argument
 	int n = (int)PyLong_AsLong(index);
 		
+	if(n < 0 || n >= self->myFractal->layerCount()) {
+		PyErr_SetString(PyExc_IndexError, "Layer index invalid");
+		return NULL;
+	}
+		
 	// TODO: potential memory leak
 	LayerData * pLayerData = (LayerData *)LayerType.tp_alloc(&LayerType, 0);
 	pLayerData->myLayer = self->myFractal->getLayer(n);
@@ -85,6 +90,11 @@ Fractal_removeLayer(FractalData* self, PyObject * index) {
 	
 	// Extract argument
 	int n = (int)PyLong_AsLong(index);
+	
+	if(n < 0 || n >= self->myFractal->layerCount()) {
+		PyErr_SetString(PyExc_IndexError, "Layer index invalid");
+		return NULL;
+	}
 		
 	// TODO: potential memory leak
 	LayerData * pLayerData = (LayerData *)LayerType.tp_alloc(&LayerType, 0);
@@ -104,6 +114,11 @@ Fractal_insertLayer(FractalData* self, PyObject * args) {
         PyErr_SetString(PyExc_AttributeError, "insertLayer: failed to extract args");
         return NULL;
     }
+	
+	if(index < 0 || index > self->myFractal->layerCount()) {
+		PyErr_SetString(PyExc_IndexError, "Layer index invalid");
+		return NULL;
+	}
 	
 	LayerData * pyLayer = (LayerData*)pyObj;
 	Layer * pLayer = pyLayer->myLayer; 
