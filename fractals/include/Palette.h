@@ -29,6 +29,10 @@ class Palette {
 		Palette();
 		~Palette();
 		
+		// Return sorted lists by location of the points
+		std::vector<ColorPoint> getColors();
+		std::vector<OpacityPoint> getOpacities();
+		
 		Color colorAt(double x);
 		Opacity opacityAt(double x);
 		

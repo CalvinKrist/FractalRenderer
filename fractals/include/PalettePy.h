@@ -87,7 +87,8 @@ Palette_addColor(PaletteData* self, PyObject * args) {
         return NULL;
     }
 	
-	return Py_True;
+	PyObject * result = self->myPalette->addColor(Color(r, g, b), x) ? Py_True : Py_False;
+	return result;
 }
 
 static PyObject *
@@ -100,7 +101,8 @@ Palette_removeColor(PaletteData* self, PyObject * pyX) {
 	// Extract argument
 	double x = PyFloat_AsDouble(pyX);
 	
-	return Py_True;
+	PyObject * result = self->myPalette->removeColor(x) ? Py_True : Py_False;
+	return result;
 }
 
 static PyObject *
@@ -112,7 +114,8 @@ Palette_addOpacity(PaletteData* self, PyObject * args) {
         return NULL;
     }
 	
-	return Py_True;
+	PyObject * result = self->myPalette->addOpacity(opacity, x) ? Py_True : Py_False;
+	return result;
 }
 
 static PyObject *
@@ -125,7 +128,46 @@ Palette_removeOpacity(PaletteData* self, PyObject * pyX) {
 	// Extract argument
 	double x = PyFloat_AsDouble(pyX);
 	
-	return Py_True;
+	PyObject * result = self->myPalette->removeOpacity(x) ? Py_True : Py_False;
+	return result;
+}
+
+static PyObject *
+Palette_getColors(PaletteData* self) {
+	if (self->myPalette == NULL) {
+        PyErr_SetString(PyExc_AttributeError, "removeOpacity: self is null");
+        return NULL;
+    }
+	
+	std::vector<ColorPoint> colorList = self->myPalette->getColors();
+	
+	int size = colorList.size();
+	PyObject* python_val = PyList_New(size);
+    for (int i = 0; i < size; ++i) {
+		ColorPoint point = colorList[i];
+        PyObject* colorPoint = Py_BuildValue("iiid", point.color.r, point.color.g, point.color.b, point.location);
+        PyList_SetItem(python_val, i, colorPoint);
+    }
+    return python_val;
+}
+
+static PyObject *
+Palette_getOpacities(PaletteData* self) {
+	if (self->myPalette == NULL) {
+        PyErr_SetString(PyExc_AttributeError, "removeOpacity: self is null");
+        return NULL;
+    }
+	
+	std::vector<OpacityPoint> opacityList = self->myPalette->getOpacities();
+	
+	int size = opacityList.size();
+	PyObject* python_val = PyList_New(size);
+    for (int i = 0; i < size; ++i) {
+		OpacityPoint point = opacityList[i];
+        PyObject* opacityPoint = Py_BuildValue("dd", point.opacity, point.location);
+        PyList_SetItem(python_val, i, opacityPoint);
+    }
+    return python_val;
 }
 
 /**************************
@@ -157,6 +199,11 @@ Palette_setInteriorColor(PaletteData *self, PyObject * pyColor)
         PyErr_SetString(PyExc_AttributeError, "setInteriorColor: failed to extract args");
         return NULL;
     }
+	
+	if(interior[0] < 0 || interior[0] > 255 || interior[1] < 0 || interior[1] > 255 || interior[2] < 0 || interior[2] > 255) {
+		PyErr_SetString(PyExc_AttributeError, "setInteriorColor: invalid color");
+        return NULL;
+	}
 	
 	self->myPalette->setInteriorColor(Color(interior[0], interior[1], interior[2]));
 
@@ -196,6 +243,10 @@ static PyMethodDef Palette_methods[] = {
     "Adds an opacity at a point in the palette ranging from 0 to 1. Returns success value."},
 	{"remove_opacity", (PyCFunction)Palette_removeOpacity, METH_O,
     "Removes an opacity at a point in the palette ranging from 0 to 1. Returns success value."},
+	{"get_colors", (PyCFunction)Palette_getColors, METH_NOARGS,
+    "Returns a sorted list of the Color points, where each one is represented as (r, g, b, x)"},
+	{"get_opacities", (PyCFunction)Palette_getOpacities, METH_NOARGS,
+    "Returns a sorted list of the Opacity points, where each one is represented as (o, x)"},
     {NULL}  /* Sentinel */
 };
 

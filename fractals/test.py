@@ -61,6 +61,7 @@ class FractalTester(unittest.TestCase):
         frac.viewport_width = 1.11
         self.assertEqual(1.11, frac.viewport_width)
 
+    # TODO: test adding in between two layers and at front of list
     def test_insert_layer(self):
         frac = fractal.Fractal()
         layer = fractal.HistogramLayer()
@@ -135,48 +136,184 @@ class Palette(unittest.TestCase):
         palette = fractal.Palette()
         self.assertEqual("palette string", str(palette))
 
-    def test_interior_color(self):
+    def test_interior_color_valid(self):
         palette = fractal.Palette()
         self.assertEqual(palette.interior_color, (255, 255, 255))
 
         palette.interior_color = (10, 11, 12)
         self.assertEqual(palette.interior_color, (10, 11, 12))
 
-    # TODO: fix with features
+    # TODO: how to assert raises with a setter?
+    def test_interior_color_invalid_color(self):
+        palette = fractal.Palette()
+
+        with self.assertRaises(AttributeError):
+            palette.interior_color = (-1, 0, 0)
+
     def test_color_at_valid(self):
         palette = fractal.Palette()
 
-        self.assertEqual(palette.color_at(0.5), (255, 255, 255))
+        # Test only a single color
+        palette.remove_color(0)
+        self.assertEqual(palette.color_at(0), (255, 255, 255))
 
-    # TODO: fix with features
+        palette.add_color((0, 0, 0), 0)
+
+        self.assertEqual(palette.color_at(0.5), ((int)(255/2), (int)(255/2), (int)(255/2)))
+        self.assertEqual(palette.color_at(1), (255, 255, 255))
+
+        palette.add_color((0, 0, 0), 0.9)
+        self.assertEqual(palette.color_at(0.5), (0, 0, 0))
+
     def test_opacity_at_valid(self):
         palette = fractal.Palette()
 
-        self.assertEqual(palette.opacity_at(0.5), 1.0)
+        # Test only a single opacity
+        palette.remove_opacity(0)
+        self.assertEqual(palette.opacity_at(0.5), 1)
 
-    # TODO: fix with features
+        # Test basic interpolation
+        palette.add_opacity(0, 0)
+        self.assertEqual(palette.opacity_at(0.5), 0.5)
+
     def test_add_color_valid(self):
         palette = fractal.Palette()
 
-        self.assertEqual(palette.add_color((255, 255, 255), 0.5), True)
+        result = palette.add_color((0, 0, 0), 0.0009) and palette.add_color((0, 0, 0), 0.00091)
+        self.assertEqual(result, True)
 
-    # TODO: fix with features
+    def test_add_color_invalid_location(self):
+        palette = fractal.Palette()
+
+        # Test for duplicate location
+        result = palette.add_color((0, 0, 0), 0.0)
+        self.assertEqual(result, False)
+
+        # Test for above and below valid location
+        result = palette.add_color((0, 0, 0), -0.001)
+        self.assertEqual(result, False)
+        result = palette.add_color((0, 0, 0), 1.001)
+        self.assertEqual(result, False)
+
+    def test_add_color_invalid_color(self):
+        palette = fractal.Palette()
+
+        # Test with negative color
+        self.assertEqual(palette.add_color((-1, 0, 0), 0.5), False)
+        # Test with too high a color color
+        self.assertEqual(palette.add_color((0, 256, 0), 0.5), False)
+        # Test with a float value
+        self.assertRaises(AttributeError, palette.add_color, (0, 0, 0.5), 0.5)
+
     def test_add_opacity_valid(self):
         palette = fractal.Palette()
 
-        self.assertEqual(palette.add_opacity(1.0, 0.5), True)
+        result = palette.add_opacity(0.5, 0.0009) and palette.add_opacity(0.5, 0.00091)
+        self.assertEqual(result, True)
 
-    # TODO: fix with features
+    def test_add_opacity_invalid_location(self):
+        palette = fractal.Palette()
+
+        # Test for duplicate location
+        result = palette.add_opacity(0, 0.0)
+        self.assertEqual(result, False)
+
+        # Test for above and below valid location
+        result = palette.add_opacity(0, -0.001)
+        self.assertEqual(result, False)
+        result = palette.add_opacity(0, 1.001)
+        self.assertEqual(result, False)
+
+    def test_add_opacity_invalid_opacity(self):
+        palette = fractal.Palette()
+
+        # Test with negative opacity
+        self.assertEqual(palette.add_opacity(-0.0001, 0.5), False)
+        # Test with too high a opacity
+        self.assertEqual(palette.add_opacity(1.0001, 0.5), False)
+        # Test with too high a non-numerical value
+        self.assertRaises(AttributeError, palette.add_opacity, "o", 0.5)
+
     def test_remove_color_valid(self):
         palette = fractal.Palette()
 
-        self.assertEqual(palette.remove_color(0.5), True)
+        result = palette.remove_color(0)
+        self.assertEqual(result, True)
+        self.assertEqual(palette.color_at(0.5), (255, 255, 255))
 
-    # TODO: fix with features
+    def test_remove_color_invalid_location(self):
+        palette = fractal.Palette()
+
+        # Test for invalid location within valid location range
+        result = palette.remove_color(0.5)
+        self.assertEqual(result, False)
+
+        # Test for above and below valid location range
+        result = palette.remove_color(-0.001)
+        self.assertEqual(result, False)
+        result = palette.remove_color(1.001)
+        self.assertEqual(result, False)
+
     def test_remove_opacity_valid(self):
         palette = fractal.Palette()
 
-        self.assertEqual(palette.remove_opacity(0.5), True)
+        # Check if we can remove valid opacity
+        result = palette.remove_opacity(0)
+        self.assertEqual(result, True)
+        self.assertEqual(len(palette.get_opacities()), 1)
+        self.assertEqual(palette.get_opacities(), [(1, 1)])
+
+    def test_remove_opacity_invalid_location(self):
+        palette = fractal.Palette()
+
+        # Test for invalid location within valid location range
+        result = palette.remove_opacity(0.5)
+        self.assertEqual(result, False)
+
+        # Test for above and below valid location range
+        result = palette.remove_opacity(-0.001)
+        self.assertEqual(result, False)
+        result = palette.remove_opacity(1.001)
+        self.assertEqual(result, False)
+
+    def test_color_at_when_empty(self):
+        palette = fractal.Palette()
+
+        palette.remove_color(0)
+        palette.remove_color(1)
+        palette.interior_color = (10, 11, 12)
+
+        self.assertEqual(palette.color_at(0.5), (10, 11, 12))
+
+    def test_opacity_at_when_empty(self):
+        palette = fractal.Palette()
+
+        palette.remove_opacity(0)
+        palette.remove_opacity(1)
+
+        self.assertEqual(palette.opacity_at(0.5), 1)
+
+    def test_get_colors(self):
+        palette = fractal.Palette()
+        palette.add_color((100, 100, 100), 0.5)
+
+        color_list = palette.get_colors()
+
+        self.assertEqual(len(color_list), 3)
+        self.assertEqual(color_list[0], (0, 0, 0, 0))
+        self.assertEqual(color_list[1], (100, 100, 100, 0.5))
+        self.assertEqual(color_list[2], (255, 255, 255, 1))
+
+    def test_get_colors(self):
+        palette = fractal.Palette()
+        palette.add_opacity(0.2, 0.5)
+
+        opacity_list = palette.get_opacities()
+
+        self.assertEqual(len(opacity_list), 3)
+        self.assertEqual(opacity_list[0], (1, 0))
+        self.assertEqual(opacity_list[1], (0.2, 0.5))
+        self.assertEqual(opacity_list[2], (1, 1))
 
 if __name__ == '__main__':
     unittest.main()
