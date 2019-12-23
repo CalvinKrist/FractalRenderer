@@ -26,7 +26,7 @@ void HistogramLayer::render(int** image, double rX, double rY, int width, int he
 				z = newz;
 			}
 			
-			Color col = palette.colorAt((double)iterations / maxIterations);
+			Color col = palette->colorAt((double)iterations / maxIterations);
 			
 			index *= 3;
 			(*image)[index] = col.r;

@@ -24,21 +24,11 @@ Palette_new (PyTypeObject *type, PyObject *args, PyObject *kwds) {
         }
     }
 	
-	/*self->parameterData = (ParameterData *)ParametersType.tp_alloc(&ParametersType, 0);
-	if (self->parameterData == NULL) {
-		Py_DECREF(self);
-		return NULL;
-	}
-	
-	self->parameterData->myParameters = &(self->myPalette->getParameters());*/
-	
     return (PyObject *)self;
 }
 
 static void
-Palette_dealloc(PaletteData * self)
-{
-	//Py_XDECREF(self->parameterData);
+Palette_dealloc(PaletteData * self) {
     Py_TYPE(self)->tp_free(self);
 }
 

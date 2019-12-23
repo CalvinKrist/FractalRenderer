@@ -109,9 +109,7 @@ Fractal_removeLayer(FractalData* self, PyObject * index) {
 	}
 		
 	// TODO: potential memory leak
-	LayerData * pLayerData = (LayerData *)LayerType.tp_alloc(&LayerType, 0);
-		
-	// TODO: pointer may be invalid, object might have been deinitialized
+	LayerData * pLayerData = (LayerData *)LayerType.tp_alloc(&LayerType, 0);		
 	pLayerData->myLayer = self->myFractal->removeLayer(n);
 		
 	Py_INCREF(pLayerData);

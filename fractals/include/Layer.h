@@ -22,8 +22,8 @@ class Layer {
 		// Getters and setters
 		float getOpacity();
 		void setOpacity(float opacity);
-		Palette getPalette();
-		void setPalettte(Palette palette);
+		Palette* getPalette();
+		void setPalette(Palette* palette);
 		bool isVisible();
 		void setVisible(bool isVisible);
 		std::string getName();
@@ -31,7 +31,7 @@ class Layer {
 		
 	protected:
 		float opacity;
-		Palette palette;
+		Palette * palette;
 		bool visible;
 		
 		std::string name;
