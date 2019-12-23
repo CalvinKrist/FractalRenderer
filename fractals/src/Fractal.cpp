@@ -5,8 +5,30 @@ Fractal::Fractal() {
 	this->x = 0;
 	this->y = 0;
 	this->viewportWidth = 4;
+	this->width = 600;
+	this->height = 400;
+	
+	image = new int[width * height * 3];
+	layerImage = new int[width * height * 3];
 }
 Fractal::~Fractal() {
+	delete[] image;
+	delete[] layerImage;
+}
+
+void Fractal::updateImageMemory() {
+	delete[] image;
+	delete[] layerImage;
+	
+	image = new int[width * height * 3];
+	layerImage = new int[width * height * 3];
+}
+
+int** Fractal::render() {
+	for(int i = 0; i < layers.size(); i++)
+		layers[i]->render(&image, x, y, width, height, viewportWidth);
+	
+	return &image;
 }
 
 /***************************
@@ -65,4 +87,18 @@ double Fractal::getViewportWidth() {
 }
 void Fractal::setViewportWidth(double width) {
 	this->viewportWidth = width;
+}
+int Fractal::getWidth() {
+	return this->width;
+}
+void Fractal::setWidth(int newWidth) {
+	this->width = newWidth;
+	updateImageMemory();
+}
+int Fractal::getHeight() {
+	return this->height;
+}
+void Fractal::setHeight(int newHeight) {
+	this->height = newHeight;
+	updateImageMemory();
 }

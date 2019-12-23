@@ -16,7 +16,7 @@ class Fractal {
 		/*
 		Takes width and height in pixels of rendered image
 		*/
-		Color** render(int width, int height);
+		int** render();
 		
 		// Layer manipulation functions
 		Layer* getLayer(int index);
@@ -31,6 +31,10 @@ class Fractal {
 		void setY(double y);
 		double getViewportWidth();
 		void setViewportWidth(double width);
+		int getWidth();
+		void setWidth(int width);
+		int getHeight();
+		void setHeight(int height);
 		
 		std::string toString();
 		
@@ -38,7 +42,12 @@ class Fractal {
 		// Viewport parameters
 		double x;
 		double y;
-		double viewportWidth;
+		double viewportWidth; // zoom level
+		int width, height;
 		
 		std::vector<Layer*> layers;
+		
+		int* image;
+		int* layerImage;
+		void updateImageMemory();
 };

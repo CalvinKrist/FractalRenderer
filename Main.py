@@ -2,24 +2,26 @@ from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QDesktopWidget, 
 from view.OptionsWindow import OptionsWindow
 from view.FractalWindow import FractalRenderer
 from view.gradient import *
+import fractal
 
 '''
 Central wiget: places the fractal renderer, layer window, and gradient together on screen
 '''
 class CentralWidget(QWidget):
-    def __init__(self):
+    def __init__(self, fract):
         super().__init__()
 
+        self.fract = fract
         self.initUI()
 
     def initUI(self):
         grid = QGridLayout()
         self.setLayout(grid)
 
-        fractal = FractalRenderer()
-        grid.addWidget(fractal, 0, 0, 1, 1)
+        fractRenderer = FractalRenderer(self.fract)
+        grid.addWidget(fractRenderer, 0, 0, 1, 1)
 
-        options = OptionsWindow(fractal)
+        options = OptionsWindow(fractRenderer)
         grid.addWidget(options, 0, 1, 1, 1)
 
         gradient = Gradient()
@@ -37,6 +39,9 @@ class Window(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        self.fract = fractal.Fractal()
+        layer = fractal.HistogramLayer()
+        self.fract.insert_layer(0, layer)
         self.initUI()
 
     def initUI(self):
@@ -55,28 +60,14 @@ class Window(QMainWindow):
         networkMenu = menubar.addMenu('Network')
         networkMenu.addAction(exitAct)
 
-        widget = CentralWidget()
+        widget = CentralWidget(self.fract)
         self.setCentralWidget(widget)
 
         self.setWindowTitle('FractalFun')
         self.show()
 
-import fractal
-
-def t(fract):
-
-    layer = fractal.HistogramLayer()
-    layer.opacity = 3
-    print(str(layer))
-
-    print(fract.layer_count())
-    fract.insert_layer(0, layer)
-    print(fract.layer_count())
-    lNew = (fractal.HistogramLayer)(fract.remove_layer(0))
-    print(fract.layer_count())
-
 if __name__ == '__main__':
-    '''app = QApplication(sys.argv)
+    app = QApplication(sys.argv)
     ex = Window()
 
     # Center the window
@@ -85,6 +76,4 @@ if __name__ == '__main__':
     qtRectangle.moveCenter(centerPoint)
     ex.move(qtRectangle.topLeft())
 
-    sys.exit(app.exec_())'''
-    fract = fractal.Fractal()
-    t(fract)
+    sys.exit(app.exec_())

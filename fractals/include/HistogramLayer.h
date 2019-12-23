@@ -4,7 +4,7 @@
 
 class HistogramLayer : public Layer {
 	public:
-		Color** render(double x, double y, int width, int height, double zoom);
+		void render(int** image, double x, double y, int width, int height, double viewportWidth);
 		
 		std::string toString();
 		

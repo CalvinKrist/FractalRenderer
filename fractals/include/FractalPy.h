@@ -51,7 +51,19 @@ Fractal_render(FractalData* self, PyObject *args) {
         return NULL;
     }
 	
-    return PyFloat_FromDouble(1);
+	int** image = self->myFractal->render();
+	
+	int size = self->myFractal->getWidth() * self->myFractal->getHeight();
+    int length = size * 3;
+		
+	int sizeIndex = 0;
+	
+	PyObject* python_val = PyList_New(size);
+    for (int i = 0; i < length; i+=3) {
+        PyObject* color = Py_BuildValue("iii", (*image)[i], (*image)[i + 1], (*image)[i + 2]);
+        PyList_SetItem(python_val, sizeIndex++, color);
+    }
+    return python_val;
 }
 
 /**********************************
@@ -199,6 +211,46 @@ Fractal_setViewportWidth(FractalData* self, PyObject *value, void *closure)
     return 0;
 }
 
+static PyObject *
+Fractal_getWidth(FractalData* self, void *closure)
+{	
+    return PyLong_FromLong(self->myFractal->getWidth());
+}
+
+static int
+Fractal_setWidth(FractalData* self, PyObject *value, void *closure)
+{	
+	if (self->myFractal == NULL) {
+        PyErr_SetString(PyExc_AttributeError, "myFractal");
+        return NULL;
+    }
+	
+	int newWidth = (int)PyLong_AsLong(value);
+	self->myFractal->setWidth(newWidth);
+	
+    return 0;
+}
+
+static PyObject *
+Fractal_getHeight(FractalData* self, void *closure)
+{	
+    return PyLong_FromLong(self->myFractal->getHeight());
+}
+
+static int
+Fractal_setHeight(FractalData* self, PyObject *value, void *closure)
+{	
+	if (self->myFractal == NULL) {
+        PyErr_SetString(PyExc_AttributeError, "myFractal");
+        return NULL;
+    }
+	
+	int newHeight = (int)PyLong_AsLong(value);
+	self->myFractal->setHeight(newHeight);
+	
+    return 0;
+}
+
 static PyGetSetDef Fractal_getseters[] = {
     {"x",
      (getter)Fractal_getX, (setter)Fractal_setX,
@@ -207,6 +259,14 @@ static PyGetSetDef Fractal_getseters[] = {
 	{"y",
      (getter)Fractal_getY, (setter)Fractal_setY,
      "viewport y value as a real number",
+     NULL},
+	 {"width",
+     (getter)Fractal_getWidth, (setter)Fractal_setWidth,
+     "pixel width value as an int",
+     NULL},
+	 {"height",
+     (getter)Fractal_getHeight, (setter)Fractal_setHeight,
+     "pixel height value as an int",
      NULL},
 	{"viewport_width",
      (getter)Fractal_getViewportWidth, (setter)Fractal_setViewportWidth,

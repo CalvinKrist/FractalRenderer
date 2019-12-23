@@ -54,6 +54,22 @@ class FractalTester(unittest.TestCase):
         frac.y = 1.11
         self.assertEqual(1.11, frac.y)
 
+    def test_width(self):
+        frac = fractal.Fractal()
+
+        frac.width = 1000
+        self.assertEqual(1000, frac.width)
+        frac.width = 1001
+        self.assertEqual(1001, frac.width)
+
+    def test_height(self):
+        frac = fractal.Fractal()
+
+        frac.height = 1000
+        self.assertEqual(1000, frac.height)
+        frac.height = 1001
+        self.assertEqual(1001, frac.height)
+
     def test_viewport_width(self):
         frac = fractal.Fractal()
 
@@ -130,7 +146,8 @@ class FractalTester(unittest.TestCase):
         self.assertRaises(IndexError, frac.insert_layer, 1, layer)
         self.assertRaises(IndexError, frac.insert_layer, -1, layer)
 
-class Palette(unittest.TestCase):
+
+class PaletteTester(unittest.TestCase):
 
     def test_toString(self):
         palette = fractal.Palette()
@@ -142,13 +159,6 @@ class Palette(unittest.TestCase):
 
         palette.interior_color = (10, 11, 12)
         self.assertEqual(palette.interior_color, (10, 11, 12))
-
-    # TODO: how to assert raises with a setter?
-    def test_interior_color_invalid_color(self):
-        palette = fractal.Palette()
-
-        with self.assertRaises(AttributeError):
-            palette.interior_color = (-1, 0, 0)
 
     def test_color_at_valid(self):
         palette = fractal.Palette()
