@@ -29,6 +29,22 @@ class HistogramLayerTester(unittest.TestCase):
         layer.is_visible = False
         self.assertEqual(False, layer.is_visible)
 
+    def test_palette(self):
+        layer = fractal.HistogramLayer()
+        palette = layer.palette
+        colors = palette.get_colors()
+        #palette.remove_color(0)
+        #self.assertEqual(len(layer.palette.get_colors()), 1)
+
+    def test_palette_memory_leak(self):
+        layer = fractal.HistogramLayer()
+        new_palette = fractal.Palette()
+
+        layer.palette = new_palette
+        layer_palette = layer.palette
+
+        self.assertEqual(new_palette, layer_palette)
+
 
 class FractalTester(unittest.TestCase):
 

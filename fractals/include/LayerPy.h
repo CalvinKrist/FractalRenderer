@@ -4,6 +4,7 @@
 #include "structmember.h"
 #include "Layer.h"
 #include "HistogramLayer.h"
+#include "PalettePy.h"
 
 // Python wrapper around a C++ Layer class
 typedef struct {
@@ -126,6 +127,35 @@ Layer_setIsVisible(LayerData *self, PyObject * pyString)
     return 0;
 }
 
+static PyObject *
+Layer_getPalette(LayerData* self)
+{
+    if (self->myLayer == NULL) {
+        PyErr_SetString(PyExc_AttributeError, "myLayer");
+        return NULL;
+    }
+
+    // TODO: potential memory leak
+	PaletteData * pPaletteData = (PaletteData *)PaletteType.tp_alloc(&PaletteType, 0);
+	pPaletteData->myPalette = &(self->myLayer->getPalette());
+	Py_INCREF(pPaletteData);
+    return (PyObject*)pPaletteData;
+}
+
+static PyObject *
+Layer_setPalette(LayerData *self, PyObject * arg)
+{
+    if (self->myLayer == NULL) {
+        PyErr_SetString(PyExc_AttributeError, "myLayer");
+        return NULL;
+    }
+	
+	PaletteData * pyPalette = (PaletteData*)arg;
+	self->myLayer->setPalette(*(pyPalette->myPalette));
+		
+    return 0;
+}
+
 static PyObject *  
 Layer_toString(LayerData* self) {
 	std::string description = self->myLayer->toString();
@@ -134,17 +164,21 @@ Layer_toString(LayerData* self) {
 
 static PyGetSetDef Layer_getseters[] = {
     {"opacity",
-     (getter)Layer_getOpacity, (setter)Layer_setOpacity,
-     "Layer opacity as a float",
-     NULL},
-	 {"name",
-     (getter)Layer_getName, (setter)Layer_setName,
-     "Layer name as UTF-8 string",
-     NULL},
-	 {"is_visible",
-     (getter)Layer_getIsVisible, (setter)Layer_setIsVisible,
-     "Layer visibility as a boolean",
-     NULL},
+    (getter)Layer_getOpacity, (setter)Layer_setOpacity,
+    "Layer opacity as a float",
+    NULL},
+	{"name",
+    (getter)Layer_getName, (setter)Layer_setName,
+    "Layer name as UTF-8 string",
+    NULL},
+	{"is_visible",
+    (getter)Layer_getIsVisible, (setter)Layer_setIsVisible,
+    "Layer visibility as a boolean",
+    NULL},
+	{"palette",
+    (getter)Layer_getPalette, (setter)Layer_setPalette,
+    "Layer palette object",
+    NULL},
     {NULL}  /* Sentinel */
 };
 

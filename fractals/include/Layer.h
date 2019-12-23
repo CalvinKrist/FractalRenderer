@@ -23,7 +23,7 @@ class Layer {
 		float getOpacity();
 		void setOpacity(float opacity);
 		Palette getPalette();
-		void setPalettte(Palette palette);
+		void setPalette(Palette palette);
 		bool isVisible();
 		void setVisible(bool isVisible);
 		std::string getName();

@@ -17,9 +17,10 @@ void Layer::setOpacity(float newopacity) {
 	this->opacity = newopacity;
 }
 Palette Layer::getPalette() {
-	return Palette();
+	return this->palette;
 }
-void Layer::setPalettte(Palette palette) {
+void Layer::setPalette(Palette newPalette) {
+	this->palette = newPalette;
 }
 bool Layer::isVisible() {
 	return this->visible;

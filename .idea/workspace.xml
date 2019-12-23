@@ -2,17 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b48620fc-4852-420c-9c95-61ca23331a06" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fractals/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/fractals/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fractals/include/Fractal.h" beforeDir="false" afterPath="$PROJECT_DIR$/fractals/include/Fractal.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fractals/include/FractalPy.h" beforeDir="false" afterPath="$PROJECT_DIR$/fractals/include/FractalPy.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fractals/include/HistogramLayer.h" beforeDir="false" afterPath="$PROJECT_DIR$/fractals/include/HistogramLayer.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fractals/include/Layer.h" beforeDir="false" afterPath="$PROJECT_DIR$/fractals/include/Layer.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fractals/src/Fractal.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/fractals/src/Fractal.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fractals/src/HistogramLayer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/fractals/src/HistogramLayer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fractals/include/LayerPy.h" beforeDir="false" afterPath="$PROJECT_DIR$/fractals/include/LayerPy.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fractals/src/Layer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/fractals/src/Layer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fractals/src/Main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/fractals/src/Main.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fractals/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/fractals/test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/view/FractalWindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/view/FractalWindow.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -35,11 +29,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FractalWindow.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="FractalWindow.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/view/FractalWindow.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="14" column="31" selection-start-line="14" selection-start-column="31" selection-end-line="14" selection-end-column="31" />
+            <state relative-caret-position="289">
+              <caret line="17" selection-start-line="17" selection-end-line="17" />
               <folding>
                 <element signature="e#0#35#0" expanded="true" />
               </folding>
@@ -59,11 +53,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="test.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="test.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/fractals/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="224">
-              <caret line="187" selection-start-line="187" selection-end-line="187" />
+            <state relative-caret-position="238">
+              <caret line="40" column="60" selection-start-line="40" selection-start-column="60" selection-end-line="40" selection-end-column="60" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -98,9 +92,9 @@
         <option value="$PROJECT_DIR$/view/OptionsWindow.py" />
         <option value="$PROJECT_DIR$/setup.py" />
         <option value="$PROJECT_DIR$/test.py" />
-        <option value="$PROJECT_DIR$/fractals/test.py" />
         <option value="$PROJECT_DIR$/Main.py" />
         <option value="$PROJECT_DIR$/view/FractalWindow.py" />
+        <option value="$PROJECT_DIR$/fractals/test.py" />
       </list>
     </option>
   </component>
@@ -164,7 +158,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.Main">
+  <component name="RunManager" selected="Python.test">
     <configuration name="Main" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="DistributedFractalNetwork" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -254,7 +248,7 @@
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5005208" side_tool="true" weight="0.34218916" />
       <window_info anchor="bottom" id="Version Control" order="9" />
       <window_info anchor="bottom" id="Python Console" order="8" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49947917" visible="true" weight="0.53347504" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49947917" visible="true" weight="0.2763018" />
       <window_info id="Structure" order="1" sideWeight="0.50061053" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -660,16 +654,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fractals/test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="187" selection-start-line="187" selection-end-line="187" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="198">
@@ -682,10 +666,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/view/FractalWindow.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="14" column="31" selection-start-line="14" selection-start-column="31" selection-end-line="14" selection-end-column="31" />
+        <state relative-caret-position="289">
+          <caret line="17" selection-start-line="17" selection-end-line="17" />
           <folding>
             <element signature="e#0#35#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fractals/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="40" column="60" selection-start-line="40" selection-start-column="60" selection-end-line="40" selection-end-column="60" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>
