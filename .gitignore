@@ -1,7 +1,17 @@
 .idea/*
 legacy-java/.idea/*
 
-__pycache__/*
+**/__pycache__/
 build/*
-model/__pycache__/*
-view/__pycache__/*
+venv/
+
+**/*.so
+*.egg-info/
+
+#Added by cargo
+#
+#already existing elements are commented out
+
+/target
+**/*.rs.bk
+

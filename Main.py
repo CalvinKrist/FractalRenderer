@@ -67,6 +67,9 @@ class Window(QMainWindow):
         self.show()
 
 if __name__ == '__main__':
+    print(fractal)
+    print(fractal.render(1, 2))
+    raise SystemExit
     app = QApplication(sys.argv)
     ex = Window()
 

@@ -1,4 +1,4 @@
-from distutils.core import setup, Extension
+'''from distutils.core import setup, Extension
 import os
 
 # Documentation here:
@@ -23,4 +23,16 @@ def main():
           ext_modules=[module])
 
 if __name__ == "__main__":
-    main()
+    main()'''
+
+from setuptools import setup
+from setuptools_rust import Binding, RustExtension
+
+setup(
+    name="fractal",
+    version="1.0",
+    rust_extensions=[RustExtension("fractal.fractal", binding=Binding.PyO3)],
+    packages=["fractal"],
+    # rust extensions are not zip safe, just like C-extensions.
+    zip_safe=False,
+)
