@@ -21,6 +21,7 @@ class CentralWidget(QWidget):
 
     def color_added_callback(self, event):
         self.current_layer.palette.add_color(hex_to_rgb(event['color']), event["location"])
+        print(self.current_layer.palette.get_colors())
         self.fractRenderer.update()
 
     def color_removed_callback(self, event):
@@ -31,6 +32,8 @@ class CentralWidget(QWidget):
         pal = self.current_layer.palette
         if pal.remove_color(event["old_location"]):
             pal.add_color(hex_to_rgb(event['color']), event["location"])
+
+        print(self.current_layer.palette.get_colors())
         self.fractRenderer.update()
 
     def color_changed_callback(self, event):

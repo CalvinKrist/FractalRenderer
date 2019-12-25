@@ -36,13 +36,21 @@ Color Palette::colorAt(double x) {
 	if(x >= 1)
 		return colorList[colorList.size() - 1].color;
 	
+	// Check for valid x before / after first / last color
+	if(x <= colorList[0].location)
+		return colorList[0].color;
+	if(x >= colorList[colorList.size() - 1].location)
+		return colorList[colorList.size() - 1].color;
+	
 	// Find the two color values on either size of x
 	ColorPoint * c1;
 	ColorPoint * c2;
-	for(int i = 0; i < colorList.size() - 1; i++)
+	
+	for(int i = colorList.size() - 2; i >= 0 ; i--)
 		if(colorList[i].location <= x) {
 			c1 = &(colorList[i]);
 			c2 = &(colorList[i + 1]);
+			break;
 		}
 		
 	// Find the fractional x distance between the two
