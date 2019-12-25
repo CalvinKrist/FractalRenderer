@@ -5,6 +5,7 @@ Layer::Layer() {
 	this->opacity = 1;
 	this->visible = true;
 	this->name = "My Layer";
+	this->palette = new Palette();
 }
 
 Layer::~Layer() {
@@ -16,10 +17,11 @@ float Layer::getOpacity() {
 void Layer::setOpacity(float newopacity) {
 	this->opacity = newopacity;
 }
-Palette Layer::getPalette() {
-	return Palette();
+Palette* Layer::getPalette() {
+	return this->palette;
 }
-void Layer::setPalettte(Palette palette) {
+void Layer::setPalette(Palette* newPalette) {
+	this->palette = newPalette;
 }
 bool Layer::isVisible() {
 	return this->visible;
