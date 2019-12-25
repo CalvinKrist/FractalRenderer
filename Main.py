@@ -20,12 +20,10 @@ class CentralWidget(QWidget):
         self.fractRenderer.update()
 
     def colorRemovedCallback(self, event):
-        print("deleted")
-        print(self.current_layer.palette.remove_color(event["location"]))
+        self.current_layer.palette.remove_color(event["location"])
         self.fractRenderer.update()
 
     def colorMovedCallback(self, event):
-        print("moved callback")
         pal = self.current_layer.palette
         if pal.remove_color(event["old_location"]):
             pal.add_color((255, 255, 255), event["location"])

@@ -1,9 +1,11 @@
 import fractal
 from time import process_time
 from view.FractalWindow import FractalRenderer
-from PyQt5.QtGui import QPainter, QColor
+from PyQt5.QtGui import QPainter, QColor, QPixmap, QImage
 from PyQt5.QtWidgets import QApplication
 import sys
+import PIL
+from PIL import Image
 
 
 def verify(width, height, value):
@@ -36,23 +38,18 @@ class TimedFractalRenderer(FractalRenderer):
         self.elapsed = 0
 
     def paintEvent(self, event):
-
-        image = self.result
-        cols = self.fract.width
-        rows = self.fract.height
-
         start = process_time()
-
         qp = QPainter()
         qp.begin(self)
-        for y in range(rows):
-            for x in range(cols):
-                color = image[y * cols + x]
-                qp.fillRect(x, y, 1, 1, QColor(color[0], color[1], color[2]))
-        qp.end()
 
+        image = QImage(bytes(self.result), self.fract.width, self.fract.height, self.fract.width * 3, QImage.Format_RGB888)
+        pix = QPixmap(image)
+
+        qp.drawPixmap(self.rect(), pix)
+        qp.end()
         end = process_time()
         self.elapsed = end - start
+
 
 def main():
     frac = fractal.Fractal()
@@ -75,11 +72,11 @@ def main():
 
     times = []
 
-    for i in range(30):
+    for i in range(300):
         fractRenderer.paintEvent(None)
         times.append(fractRenderer.elapsed)
     average = sum(times) / len(times)
-    print("Average time rendered in PyQt5: " + str(average))
+    print("Average time rendered in PyQt5 over 300 trials: " + str(average))
 
 
 if __name__ == '__main__':

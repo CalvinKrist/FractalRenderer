@@ -53,15 +53,12 @@ Fractal_render(FractalData* self, PyObject *args) {
 	
 	int** image = self->myFractal->render();
 	
-	int size = self->myFractal->getWidth() * self->myFractal->getHeight();
-    int length = size * 3;
-		
-	int sizeIndex = 0;
+	int size = self->myFractal->getWidth() * self->myFractal->getHeight() * 3;
 	
 	PyObject* python_val = PyList_New(size);
-    for (int i = 0; i < length; i+=3) {
-        PyObject* color = Py_BuildValue("iii", (*image)[i], (*image)[i + 1], (*image)[i + 2]);
-        PyList_SetItem(python_val, sizeIndex++, color);
+    for (int i = 0; i < size; i++) {
+        PyObject* color = Py_BuildValue("i", (*image)[i]);
+        PyList_SetItem(python_val, i, color);
     }
     return python_val;
 }
