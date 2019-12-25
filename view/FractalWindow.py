@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtGui import QPainter, QColor
 
+
 class FractalRenderer(QWidget):
 
     def __init__(self, fract):

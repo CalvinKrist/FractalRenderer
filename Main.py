@@ -12,19 +12,39 @@ class CentralWidget(QWidget):
         super().__init__()
 
         self.fract = fract
+        self.current_layer = self.fract.get_layer(0)
         self.initUI()
+
+    def colorAddedCallback(self, event):
+        self.current_layer.palette.add_color((255, 255, 255), event["location"])
+        self.fractRenderer.update()
+
+    def colorRemovedCallback(self, event):
+        print("deleted")
+        print(self.current_layer.palette.remove_color(event["location"]))
+        self.fractRenderer.update()
+
+    def colorMovedCallback(self, event):
+        print("moved callback")
+        pal = self.current_layer.palette
+        if pal.remove_color(event["old_location"]):
+            pal.add_color((255, 255, 255), event["location"])
+        self.fractRenderer.update()
 
     def initUI(self):
         grid = QGridLayout()
         self.setLayout(grid)
 
-        fractRenderer = FractalRenderer(self.fract)
-        grid.addWidget(fractRenderer, 0, 0, 1, 1)
+        self.fractRenderer = FractalRenderer(self.fract)
+        grid.addWidget(self.fractRenderer, 0, 0, 1, 1)
 
-        options = OptionsWindow(fractRenderer)
+        options = OptionsWindow(self.fractRenderer)
         grid.addWidget(options, 0, 1, 1, 1)
 
         gradient = Gradient()
+        gradient.registerColorAddCallback(self.colorAddedCallback)
+        gradient.registerColorRemovedCallback(self.colorRemovedCallback)
+        gradient.registerColorMovedCallback(self.colorMovedCallback)
         gradient.setMaximumHeight(100)
         grid.addWidget(gradient, 1, 0, 1, 2)
 

@@ -29,6 +29,20 @@ class Gradient(QtWidgets.QWidget):
         self._handle_h = 10
 
         self._drag_position = None
+        self._old_position = None
+
+        self.colorAddedCallbacks = []
+        self.colorRemovedCallbacks = []
+        self.colorMovedCallbacks = []
+
+    def registerColorAddCallback(self, func):
+        self.colorAddedCallbacks.append(func)
+
+    def registerColorRemovedCallback(self, func):
+        self.colorRemovedCallbacks.append(func)
+
+    def registerColorMovedCallback(self, func):
+        self.colorMovedCallbacks.append(func)
 
     def paintEvent(self, e):
         painter = QtGui.QPainter(self)
@@ -40,7 +54,7 @@ class Gradient(QtWidgets.QWidget):
         for stop, color in self._gradient:
             gradient.setColorAt(stop, QtGui.QColor(color))
 
-        rect = QtCore.QRect(0, 0, width, height)
+        rect = QtCore.QRect(0, height * 0.25, width, height * 0.75)
         painter.fillRect(rect, gradient)
 
         pen = QtGui.QPen()
@@ -53,14 +67,12 @@ class Gradient(QtWidgets.QWidget):
             pen.setColor(QtGui.QColor('white'))
             painter.setPen(pen)
 
-            painter.drawLine(stop * width, y - self._handle_h, stop * width, y + self._handle_h)
-
             pen.setColor(QtGui.QColor('red'))
             painter.setPen(pen)
 
             rect = QtCore.QRect(
                 stop * width - self._handle_w/2,
-                y - self._handle_h/2,
+                self._handle_h/2,
                 self._handle_w,
                 self._handle_h
             )
@@ -69,7 +81,7 @@ class Gradient(QtWidgets.QWidget):
         painter.end()
 
     def sizeHint(self):
-        return QtCore.QSize(200, 50)
+        return QtCore.QSize(200, 80)
 
     def _sort_gradient(self):
         self._gradient = sorted(self._gradient, key=lambda g:g[0])
@@ -100,17 +112,28 @@ class Gradient(QtWidgets.QWidget):
         # in the list.
         assert 0.0 <= stop <= 1.0
 
+        index = 0
         for n, g in enumerate(self._gradient):
+
             if g[0] > stop:
                 # Insert before this entry, with specified or next color.
                 self._gradient.insert(n, (stop, color or g[1]))
+                index = n
                 break
         self._constrain_gradient()
+
+        for callback in self.colorAddedCallbacks:
+            callback({"color" : self._gradient[index][1], "location": self._gradient[index][0]})
+
         self.gradientChanged.emit()
         self.update()
 
     def removeStopAtPosition(self, n):
         if n not in self._end_stops:
+
+            for callback in self.colorRemovedCallbacks:
+                callback({"color": self._gradient[n][1], "location": self._gradient[n][0]})
+
             del self._gradient[n]
             self.gradientChanged.emit()
             self.update()
@@ -133,7 +156,7 @@ class Gradient(QtWidgets.QWidget):
     def _find_stop_handle_for_event(self, e, to_exclude=None):
         width = self.width()
         height = self.height()
-        midpoint = height / 2
+        midpoint = self._handle_h
 
         # Are we inside a stop point? First check y.
         if (
@@ -163,10 +186,17 @@ class Gradient(QtWidgets.QWidget):
             n = self._find_stop_handle_for_event(e, to_exclude=self._end_stops)
             if n is not None:
                 # Activate drag mode.
+                self._old_position = self._gradient[n][0]
                 self._drag_position = n
 
 
     def mouseReleaseEvent(self, e):
+        if self._drag_position:
+            for callback in self.colorMovedCallbacks:
+                callback({"color": self._gradient[self._drag_position][1],
+                          "location": self._gradient[self._drag_position][0],
+                          "old_location" : self._old_position})
+
         self._drag_position = None
         self._sort_gradient()
 
