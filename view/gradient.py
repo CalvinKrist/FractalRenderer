@@ -31,18 +31,22 @@ class Gradient(QtWidgets.QWidget):
         self._drag_position = None
         self._old_position = None
 
-        self.colorAddedCallbacks = []
-        self.colorRemovedCallbacks = []
-        self.colorMovedCallbacks = []
+        self.color_added_callbacks = []
+        self.color_removed_callbacks = []
+        self.color_moved_callbacks = []
+        self.color_changed_callbacks = []
 
-    def registerColorAddCallback(self, func):
-        self.colorAddedCallbacks.append(func)
+    def register_color_added_callback(self, func):
+        self.color_added_callbacks.append(func)
 
-    def registerColorRemovedCallback(self, func):
-        self.colorRemovedCallbacks.append(func)
+    def register_color_removed_callback(self, func):
+        self.color_removed_callbacks.append(func)
 
-    def registerColorMovedCallback(self, func):
-        self.colorMovedCallbacks.append(func)
+    def register_color_moved_callback(self, func):
+        self.color_moved_callbacks.append(func)
+
+    def register_color_changed_callback(self, func):
+        self.color_changed_callbacks.append(func)
 
     def paintEvent(self, e):
         painter = QtGui.QPainter(self)
@@ -122,7 +126,7 @@ class Gradient(QtWidgets.QWidget):
                 break
         self._constrain_gradient()
 
-        for callback in self.colorAddedCallbacks:
+        for callback in self.color_added_callbacks:
             callback({"color" : self._gradient[index][1], "location": self._gradient[index][0]})
 
         self.gradientChanged.emit()
@@ -131,7 +135,7 @@ class Gradient(QtWidgets.QWidget):
     def removeStopAtPosition(self, n):
         if n not in self._end_stops:
 
-            for callback in self.colorRemovedCallbacks:
+            for callback in self.color_removed_callbacks:
                 callback({"color": self._gradient[n][1], "location": self._gradient[n][0]})
 
             del self._gradient[n]
@@ -142,6 +146,10 @@ class Gradient(QtWidgets.QWidget):
         if n < len(self._gradient):
             stop, _ = self._gradient[n]
             self._gradient[n] = stop, color
+
+            for callback in self.color_changed_callbacks:
+                callback({"color": self._gradient[n][1], "location": self._gradient[n][0]})
+
             self.gradientChanged.emit()
             self.update()
 
@@ -192,7 +200,7 @@ class Gradient(QtWidgets.QWidget):
 
     def mouseReleaseEvent(self, e):
         if self._drag_position:
-            for callback in self.colorMovedCallbacks:
+            for callback in self.color_moved_callbacks:
                 callback({"color": self._gradient[self._drag_position][1],
                           "location": self._gradient[self._drag_position][0],
                           "old_location" : self._old_position})
