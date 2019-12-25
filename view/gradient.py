@@ -26,9 +26,9 @@ class Gradient(QtWidgets.QWidget):
 
         # Stop point handle sizes.
         self._handle_w = 10
-        self._handle_h = 10
+        self._handle_h = 15
 
-        self.x_left_padding = 60
+        self.left_start = self._handle_w / 2
 
         self._drag_position = None
         self._old_position = None
@@ -52,34 +52,43 @@ class Gradient(QtWidgets.QWidget):
 
     def paintEvent(self, e):
         painter = QtGui.QPainter(self)
-        width = painter.device().width()
+        width = painter.device().width() - self.left_start
         height = painter.device().height()
 
         # Draw the linear horizontal gradient.
-        gradient = QtGui.QLinearGradient(self.x_left_padding, 0, width, 0)
+        gradient = QtGui.QLinearGradient(self.left_start, 0, width + self.left_start, 0)
         for stop, color in self._gradient:
             gradient.setColorAt(stop, QtGui.QColor(color))
 
-        rect = QtCore.QRect(self.x_left_padding, height * 0.25, width - self.x_left_padding, height * 0.75)
+        rect = QtCore.QRect(self.left_start, height * 0.25, width, height * 0.75)
         painter.fillRect(rect, gradient)
 
-        pen = QtGui.QPen()
-
         # Draw the stop handles.
-        for stop, _ in self._gradient:
-            pen.setColor(QtGui.QColor('white'))
-            painter.setPen(pen)
+        for stop, color in self._gradient:
+            painter.setBrush(QtGui.QBrush(QtGui.QColor(color), Qt.SolidPattern))
 
-            pen.setColor(QtGui.QColor('red'))
-            painter.setPen(pen)
-
+            translated_stop = stop * width + self.left_start
             rect = QtCore.QRect(
-                stop * width - self._handle_w/2,
-                self._handle_h/2,
+                translated_stop - self._handle_w/2,
+                0,
                 self._handle_w,
-                self._handle_h
+                self._handle_h / 1.5
+            )
+            rect = QtCore.QRect(
+                translated_stop - self._handle_w / 2,
+                0,
+                self._handle_w,
+                self._handle_h * 2 / 3
             )
             painter.drawRect(rect)
+
+            points = [
+                QtCore.QPoint(translated_stop - self._handle_w / 2, self._handle_h / 1.5),
+                QtCore.QPoint(translated_stop + self._handle_w / 2, self._handle_h / 1.5),
+                QtCore.QPoint(translated_stop, self._handle_h)
+
+            ]
+            painter.drawPolygon(QtGui.QPolygon(points))
 
         painter.end()
 
@@ -122,7 +131,7 @@ class Gradient(QtWidgets.QWidget):
             # Insert at end of list
             index = len(self._gradient)
             self._gradient.append((stop, color or '#ffffff'))
-            
+
         self._constrain_gradient()
 
         for callback in self.color_added_callbacks:
@@ -161,7 +170,7 @@ class Gradient(QtWidgets.QWidget):
             self.setColorAtPosition(n, dlg.currentColor().name())
 
     def _find_stop_handle_for_event(self, e):
-        width = self.width()
+        width = self.width() - self.left_start
         midpoint = self._handle_h
 
         # Are we inside a stop point? First check y.
@@ -170,9 +179,10 @@ class Gradient(QtWidgets.QWidget):
             e.y() <= midpoint + self._handle_h
         ):
             for n, (stop, color) in enumerate(self._gradient):
+                translated_stop = stop * width + self.left_start
                 if (
-                    e.x() >= stop * width - self._handle_w and
-                    e.x() <= stop * width + self._handle_w
+                    e.x() >= translated_stop - self._handle_w and
+                    e.x() <= translated_stop + self._handle_w
                 ):
                     return n
 
@@ -205,7 +215,9 @@ class Gradient(QtWidgets.QWidget):
     def mouseMoveEvent(self, e):
         # If drag active, move the stop.
         if self._drag_position != None:
-            stop = e.x() / self.width()
+            width = self.width() - self.left_start
+            translated_x = e.x() - self.left_start
+            stop = translated_x / width
             _, color = self._gradient[self._drag_position]
             self._gradient[self._drag_position] = stop, color
             self._constrain_gradient()
@@ -221,7 +233,9 @@ class Gradient(QtWidgets.QWidget):
                 self.removeStopAtPosition(n)
 
         else:
-            stop = e.x() / self.width()
+            width = self.width() - self.left_start
+            translated_x = e.x() - self.left_start
+            stop = translated_x / width
             self.addStop(stop)
 
 
