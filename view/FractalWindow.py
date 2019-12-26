@@ -17,6 +17,8 @@ class FractalRenderer(QWidget):
         self.qp = QPainter()
 
     def paintEvent(self, event):
+        self.fract.width = self.width()
+        self.fract.height = self.height()
         image = self.fract.render()
 
         self.qp.begin(self)

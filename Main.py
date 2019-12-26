@@ -21,7 +21,6 @@ class CentralWidget(QWidget):
 
     def color_added_callback(self, event):
         self.current_layer.palette.add_color(hex_to_rgb(event['color']), event["location"])
-        print(self.current_layer.palette.get_colors())
         self.fractRenderer.update()
 
     def color_removed_callback(self, event):
@@ -33,13 +32,17 @@ class CentralWidget(QWidget):
         if pal.remove_color(event["old_location"]):
             pal.add_color(hex_to_rgb(event['color']), event["location"])
 
-        print(self.current_layer.palette.get_colors())
         self.fractRenderer.update()
 
     def color_changed_callback(self, event):
         pal = self.current_layer.palette
         if pal.remove_color(event["location"]):
             pal.add_color(hex_to_rgb(event['color']), event["location"])
+        self.fractRenderer.update()
+
+    def interior_color_changed_callback(self, event):
+        pal = self.current_layer.palette
+        pal.interior_color = hex_to_rgb(event['color'])
         self.fractRenderer.update()
 
     def initUI(self):
@@ -57,6 +60,7 @@ class CentralWidget(QWidget):
         gradient.register_color_removed_callback(self.color_removed_callback)
         gradient.register_color_moved_callback(self.color_moved_callback)
         gradient.register_color_changed_callback(self.color_changed_callback)
+        gradient.register_interior_color_changed_callback(self.interior_color_changed_callback)
         gradient.setMaximumHeight(100)
         grid.addWidget(gradient, 1, 0, 1, 2)
 
