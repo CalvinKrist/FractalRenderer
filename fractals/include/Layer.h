@@ -16,7 +16,7 @@ class Layer {
 		@param height pixel height of the buffer
 		@param viewportWidth width of the camera in real world coordinates
 		*/
-		virtual void render(int** image, double x, double y, int width, int height, double viewportWidth) = 0;
+		virtual void render(unsigned char** image, double x, double y, int width, int height, double viewportWidth) = 0;
 		virtual std::string toString() = 0;
 	
 		// Getters and setters

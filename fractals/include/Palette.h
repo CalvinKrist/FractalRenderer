@@ -9,9 +9,9 @@ using Opacity = double;
 class Color {
 	public:
 		Color();
-		Color(int red, int green, int blue);
+		Color(unsigned char red, unsigned char green, unsigned char blue);
 		
-		int r,g,b;
+		unsigned char r,g,b;
 };
 
 struct ColorPoint {

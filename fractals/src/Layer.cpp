@@ -20,7 +20,7 @@ void Layer::setOpacity(float newopacity) {
 Palette* Layer::getPalette() {
 	return this->palette;
 }
-void Layer::setPalette(Palette* newPalette) {
+void Layer::setPalette(Palette* newPalette) {	
 	this->palette = newPalette;
 }
 bool Layer::isVisible() {

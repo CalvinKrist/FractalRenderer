@@ -1,7 +1,7 @@
 #include "HistogramLayer.h"
 #include <iostream>
 
-void HistogramLayer::render(int** image, double rX, double rY, int width, int height, double viewportWidth) {
+void HistogramLayer::render(unsigned char** image, double rX, double rY, int width, int height, double viewportWidth) {
 	double viewportHeight = height * viewportWidth / width;
 	
 	for(int r = 0; r < height; r++)

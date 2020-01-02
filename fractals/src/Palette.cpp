@@ -7,7 +7,7 @@ Color::Color() {
 	g = 255;
 	b = 255;
 }
-Color::Color(int red, int green, int blue) {
+Color::Color(unsigned char red, unsigned char green, unsigned char blue) {
 	r = red;
 	g = green;
 	b = blue;

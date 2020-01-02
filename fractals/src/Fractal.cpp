@@ -8,8 +8,8 @@ Fractal::Fractal() {
 	this->width = 600;
 	this->height = 400;
 	
-	image = new int[width * height * 3];
-	layerImage = new int[width * height * 3];
+	image = new unsigned char[width * height * 3];
+	layerImage = new unsigned char[width * height * 3];
 }
 Fractal::~Fractal() {
 	delete[] image;
@@ -20,11 +20,11 @@ void Fractal::updateImageMemory() {
 	delete[] image;
 	delete[] layerImage;
 	
-	image = new int[width * height * 3];
-	layerImage = new int[width * height * 3];
+	image = new unsigned char[width * height * 3];
+	layerImage = new unsigned char[width * height * 3];
 }
 
-int** Fractal::render() {
+unsigned char** Fractal::render() {
 	for(int i = 0; i < layers.size(); i++)
 		layers[i]->render(&image, x, y, width, height, viewportWidth);
 	
