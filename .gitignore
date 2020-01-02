@@ -5,3 +5,6 @@ __pycache__/*
 build/*
 model/__pycache__/*
 view/__pycache__/*
+fractal/*
+build/*
+**/__pycache__/*
