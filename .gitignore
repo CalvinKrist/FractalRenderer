@@ -11,6 +11,7 @@ venv/*
 /target
 **/*.rs.bk
 
+modules/c/build/*
 model/__pycache__/*
 view/__pycache__/*
 fractal/*
