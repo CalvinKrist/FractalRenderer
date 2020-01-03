@@ -3,6 +3,7 @@ legacy-java/.idea/*
 
 __pycache__/*
 build/*
+modules/c/build/*
 model/__pycache__/*
 view/__pycache__/*
 fractal/*
