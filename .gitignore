@@ -8,3 +8,4 @@ view/__pycache__/*
 fractal/*
 build/*
 **/__pycache__/*
+modules/c/build/*
