@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QDesktopWidget, 
 from view.OptionsWindow import OptionsWindow
 from view.FractalWindow import FractalRenderer
 from view.gradient import *
-from fractal import fractal
+import fractal
 
 def hex_to_rgb(hex):
     hex = hex.lstrip("#")
@@ -74,7 +74,6 @@ class Window(QMainWindow):
 
     def __init__(self):
         super().__init__()
-
         print(fractal.test())
         self.fract = fractal.Fractal()
         print(repr(self.fract))

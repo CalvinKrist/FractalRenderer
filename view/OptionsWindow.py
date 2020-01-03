@@ -2,7 +2,9 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QFrame, Q
 from PyQt5.QtGui import QFont, QIcon
 from PyQt5.QtCore import Qt
 
-from model.Layer import Layer
+class Layer():
+    def __init__():
+        pass
 
 class LayerView(QWidget):
     def __init__(self, name):
