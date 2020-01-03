@@ -1,0 +1,1 @@
+/home/david/Desktop/FractalRenderer/modules/rust/target/debug/libfractal.so: /home/david/Desktop/FractalRenderer/modules/rust/src/fractal.rs /home/david/Desktop/FractalRenderer/modules/rust/src/lib.rs
