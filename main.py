@@ -74,7 +74,6 @@ class Window(QMainWindow):
 
     def __init__(self):
         super().__init__()
-
         self.fract = fractal.Fractal()
         layer = fractal.HistogramLayer()
         self.fract.insert_layer(0, layer)

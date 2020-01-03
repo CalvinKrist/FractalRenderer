@@ -1,10 +1,20 @@
 .idea/*
 legacy-java/.idea/*
 
-__pycache__/*
+**/__pycache__/*
 build/*
+venv/*
+
+**/*.so
+*.egg-info/
+
+/target
+**/*.rs.bk
+
 model/__pycache__/*
 view/__pycache__/*
 fractal/*
 build/*
 **/__pycache__/*
+
+.vscode/*
