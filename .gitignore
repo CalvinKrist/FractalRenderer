@@ -1,17 +1,18 @@
 .idea/*
 legacy-java/.idea/*
 
-**/__pycache__/
+**/__pycache__/*
 build/*
-venv/
+venv/*
 
 **/*.so
 *.egg-info/
 
-#Added by cargo
-#
-#already existing elements are commented out
-
 /target
 **/*.rs.bk
 
+model/__pycache__/*
+view/__pycache__/*
+fractal/*
+build/*
+**/__pycache__/*

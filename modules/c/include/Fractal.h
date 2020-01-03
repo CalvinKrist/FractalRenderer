@@ -16,7 +16,7 @@ class Fractal {
 		/*
 		Takes width and height in pixels of rendered image
 		*/
-		int** render();
+		unsigned char** render();
 		
 		// Layer manipulation functions
 		Layer* getLayer(int index);
@@ -47,7 +47,7 @@ class Fractal {
 		
 		std::vector<Layer*> layers;
 		
-		int* image;
-		int* layerImage;
+		unsigned char* image;
+		unsigned char* layerImage;
 		void updateImageMemory();
 };

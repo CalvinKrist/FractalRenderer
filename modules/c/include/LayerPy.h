@@ -137,7 +137,8 @@ Layer_getPalette(LayerData* self)
 
     // TODO: potential memory leak
 	PaletteData * pPaletteData = (PaletteData *)PaletteType.tp_alloc(&PaletteType, 0);
-	pPaletteData->myPalette = &(self->myLayer->getPalette());
+	pPaletteData->myPalette = self->myLayer->getPalette();
+	
 	Py_INCREF(pPaletteData);
     return (PyObject*)pPaletteData;
 }
@@ -151,7 +152,7 @@ Layer_setPalette(LayerData *self, PyObject * arg)
     }
 	
 	PaletteData * pyPalette = (PaletteData*)arg;
-	self->myLayer->setPalette(*(pyPalette->myPalette));
+	self->myLayer->setPalette(pyPalette->myPalette);
 		
     return 0;
 }

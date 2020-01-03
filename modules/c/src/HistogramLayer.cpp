@@ -1,7 +1,7 @@
 #include "HistogramLayer.h"
 #include <iostream>
 
-void HistogramLayer::render(int** image, double rX, double rY, int width, int height, double viewportWidth) {
+void HistogramLayer::render(unsigned char** image, double rX, double rY, int width, int height, double viewportWidth) {
 	double viewportHeight = height * viewportWidth / width;
 	
 	for(int r = 0; r < height; r++)
@@ -26,7 +26,11 @@ void HistogramLayer::render(int** image, double rX, double rY, int width, int he
 				z = newz;
 			}
 			
-			Color col = palette.colorAt((double)iterations / maxIterations);
+			Color col;
+			if(iterations == maxIterations)
+				col = palette->getInteriorColor();
+			else
+				col = palette->colorAt((double)iterations / maxIterations);
 			
 			index *= 3;
 			(*image)[index] = col.r;

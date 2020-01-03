@@ -1,6 +1,7 @@
 import unittest
 import fractal
 
+
 class HistogramLayerTester(unittest.TestCase):
 
     def test_toString(self):
@@ -31,10 +32,17 @@ class HistogramLayerTester(unittest.TestCase):
 
     def test_palette(self):
         layer = fractal.HistogramLayer()
-        palette = layer.palette
-        colors = palette.get_colors()
-        #palette.remove_color(0)
-        #self.assertEqual(len(layer.palette.get_colors()), 1)
+
+        # Ensure that the getter points to the real one
+        pal = layer.palette
+        pal.add_color((1,1,1), 0.5)
+        self.assertEqual(len(layer.palette.get_colors()), 3)
+
+        # Ensure the setter works
+        newPal = fractal.Palette()
+        newPal.remove_color(0)
+        layer.palette = newPal
+        self.assertEqual(len(layer.palette.get_colors()), 1)
 
     def test_palette_memory_leak(self):
         layer = fractal.HistogramLayer()
@@ -330,7 +338,7 @@ class PaletteTester(unittest.TestCase):
         self.assertEqual(color_list[1], (100, 100, 100, 0.5))
         self.assertEqual(color_list[2], (255, 255, 255, 1))
 
-    def test_get_colors(self):
+    def test_get_opacities(self):
         palette = fractal.Palette()
         palette.add_opacity(0.2, 0.5)
 
@@ -340,6 +348,54 @@ class PaletteTester(unittest.TestCase):
         self.assertEqual(opacity_list[0], (1, 0))
         self.assertEqual(opacity_list[1], (0.2, 0.5))
         self.assertEqual(opacity_list[2], (1, 1))
+
+    def test_palette_white_not_at_edge(self):
+        palette = fractal.Palette()
+        palette.remove_color(1)
+        palette.add_color((255, 255, 255), 0.75)
+
+        error_pixels = 0
+        i = 0.75
+        while i <= 1.0:
+            color = palette.color_at(i)
+            if color != (255, 255, 255):
+                error_pixels += 1
+
+            i += 0.01
+
+        self.assertEqual(error_pixels, 0)
+
+    def test_palette_black_not_at_edge(self):
+        palette = fractal.Palette()
+        palette.remove_color(0)
+        palette.add_color((0, 0, 0), 0.25)
+
+        error_pixels = []
+        i = 0
+        while i <= 0.25:
+            color = palette.color_at(0.01)
+            if color != (0, 0, 0):
+                error_pixels.append(i)
+
+            i += 0.01
+
+        self.assertEqual(error_pixels, [])
+
+    def test_palette_three_points(self):
+        palette = fractal.Palette()
+        palette.add_color((255, 255, 255), 0.5)
+
+        error_pixels = []
+        i = 0.25
+        while i <= 75:
+            c = palette.color_at(i)
+            if c[0] < 0 or c[0] > 255 or c[1] < 0 or c[1] > 255 or c[2] < 0 or c[2] > 255:
+                error_pixels.append((i, c))
+
+            i += 0.01
+
+        self.assertEqual(error_pixels, [])
+
 
 if __name__ == '__main__':
     unittest.main()

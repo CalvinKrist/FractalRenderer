@@ -4,6 +4,10 @@ from view.FractalWindow import FractalRenderer
 from view.gradient import *
 from fractal import fractal
 
+def hex_to_rgb(hex):
+    hex = hex.lstrip("#")
+    return tuple(int(hex[i:i + 2], 16) for i in (0, 2, 4))
+
 '''
 Central wiget: places the fractal renderer, layer window, and gradient together on screen
 '''
@@ -12,19 +16,51 @@ class CentralWidget(QWidget):
         super().__init__()
 
         self.fract = fract
+        self.current_layer = self.fract.get_layer(0)
         self.initUI()
+
+    def color_added_callback(self, event):
+        self.current_layer.palette.add_color(hex_to_rgb(event['color']), event["location"])
+        self.fractRenderer.update()
+
+    def color_removed_callback(self, event):
+        self.current_layer.palette.remove_color(event["location"])
+        self.fractRenderer.update()
+
+    def color_moved_callback(self, event):
+        pal = self.current_layer.palette
+        if pal.remove_color(event["old_location"]):
+            pal.add_color(hex_to_rgb(event['color']), event["location"])
+
+        self.fractRenderer.update()
+
+    def color_changed_callback(self, event):
+        pal = self.current_layer.palette
+        if pal.remove_color(event["location"]):
+            pal.add_color(hex_to_rgb(event['color']), event["location"])
+        self.fractRenderer.update()
+
+    def interior_color_changed_callback(self, event):
+        pal = self.current_layer.palette
+        pal.interior_color = hex_to_rgb(event['color'])
+        self.fractRenderer.update()
 
     def initUI(self):
         grid = QGridLayout()
         self.setLayout(grid)
 
-        fractRenderer = FractalRenderer(self.fract)
-        grid.addWidget(fractRenderer, 0, 0, 1, 1)
+        self.fractRenderer = FractalRenderer(self.fract)
+        grid.addWidget(self.fractRenderer, 0, 0, 1, 1)
 
-        options = OptionsWindow(fractRenderer)
+        options = OptionsWindow(self.fractRenderer)
         grid.addWidget(options, 0, 1, 1, 1)
 
         gradient = Gradient()
+        gradient.register_color_added_callback(self.color_added_callback)
+        gradient.register_color_removed_callback(self.color_removed_callback)
+        gradient.register_color_moved_callback(self.color_moved_callback)
+        gradient.register_color_changed_callback(self.color_changed_callback)
+        gradient.register_interior_color_changed_callback(self.interior_color_changed_callback)
         gradient.setMaximumHeight(100)
         grid.addWidget(gradient, 1, 0, 1, 2)
 

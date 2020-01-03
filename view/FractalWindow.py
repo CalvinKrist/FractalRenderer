@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QWidget
-from PyQt5.QtGui import QPainter, QColor
+from PyQt5.QtGui import QPainter, QColor, QImage, QPixmap
+
 
 class FractalRenderer(QWidget):
 
@@ -13,17 +14,16 @@ class FractalRenderer(QWidget):
         self.setMinimumSize(800, 650)
         self.fract.width = 800
         self.fract.height = 650
+        self.qp = QPainter()
 
     def paintEvent(self, event):
-
+        self.fract.width = self.width()
+        self.fract.height = self.height()
         image = self.fract.render()
-        cols = self.fract.width
-        rows = self.fract.height
 
-        qp = QPainter()
-        qp.begin(self)
-        for y in range(rows):
-            for x in range(cols):
-                color = image[y * cols + x]
-                qp.fillRect(x, y, 1, 1, QColor(color[0], color[1], color[2]))
-        qp.end()
+        self.qp.begin(self)
+        image = QImage(bytes(image), self.fract.width, self.fract.height, self.fract.width * 3, QImage.Format_RGB888)
+        pix = QPixmap(image)
+
+        self.qp.drawPixmap(self.rect(), pix)
+        self.qp.end()
