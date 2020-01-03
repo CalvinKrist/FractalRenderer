@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QDesktopWidget, 
 from view.OptionsWindow import OptionsWindow
 from view.FractalWindow import FractalRenderer
 from view.gradient import *
-import fractal
+from fractal import fractal
 
 '''
 Central wiget: places the fractal renderer, layer window, and gradient together on screen
@@ -39,7 +39,9 @@ class Window(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        print(fractal.test())
         self.fract = fractal.Fractal()
+        print(repr(self.fract))
         layer = fractal.HistogramLayer()
         self.fract.insert_layer(0, layer)
         self.initUI()
@@ -67,9 +69,6 @@ class Window(QMainWindow):
         self.show()
 
 if __name__ == '__main__':
-    print(fractal)
-    print(fractal.render(1, 2))
-    raise SystemExit
     app = QApplication(sys.argv)
     ex = Window()
 
