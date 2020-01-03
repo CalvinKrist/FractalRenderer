@@ -6,20 +6,20 @@ import os
 module = Extension('fractal',
                     define_macros = [('MAJOR_VERSION', '1'),
                                      ('MINOR_VERSION', '0')],
-                    include_dirs = ['fractals/include'],
-                    sources = ['fractals/src/Main.cpp'])
+                    include_dirs = ['include'],
+                    sources = ['src/Main.cpp'])
 
 def main():
 
-    cFiles = os.listdir("fractals/src")
-    cFiles = ["fractals/src/" + fileName for fileName in cFiles]
+    cFiles = os.listdir("src")
+    cFiles = ["src/" + fileName for fileName in cFiles]
     module.sources = cFiles
 
     setup(name="fractal",
-          version="1.0.0",
-          description="Python interface for the  C library function",
-          author="<your name>",
-          author_email="your_email@gmail.com",
+          version="0.1.0",
+          description="Python interface for C fractal libraries",
+          author="Calvin Krist",
+          author_email="calvin.krist@yahoo.com",
           ext_modules=[module])
 
 if __name__ == "__main__":
