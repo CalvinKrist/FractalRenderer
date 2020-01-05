@@ -1,14 +1,20 @@
 ### Run Instructions
 
-- install rust
-- install setuptools_rust
-- install pip dependencies
+- install rust nightly
+This can be done by running the rustup install script
+```
+rustup set nightly
+rustup default nightly
+```
+- install pip dependencies (use a virtual env!)
+```
+pip3 install -r requirements.txt
+```
 
 - Run the following
 
 ```
-cargo build
-python ./setup debug
+python ./setup develop
 python Main.py
 ```
 
