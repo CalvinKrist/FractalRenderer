@@ -32,7 +32,7 @@ pub trait Layer {
     fn render(&self) -> Vec<u8>;
 }
 
-
+#[pyclass]
 #[derive(Debug)]
 pub struct HistogramLayer {
     pub opacity: f32,
@@ -45,16 +45,4 @@ impl Layer for HistogramLayer {
     fn render(&self) -> Vec<u8> {
         vec!()
     }
-}
-
-#[pyclass]
-pub struct Fractal {
-    pub x: f64,
-    pub y: f64,
-    pub viewport_width: f64,
-    pub width: i32,
-    pub height: i32,
-    pub layers: Vec<Box<dyn Layer>>,
-    pub image: Vec<u8>,
-    pub layer_image: Vec<u8>,
 }

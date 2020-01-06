@@ -115,7 +115,6 @@ class Window(QMainWindow):
     def __init__(self):
         super().__init__()
         self.fract = fractal.Fractal()
-
         self.initUI()
 
     def initUI(self):
