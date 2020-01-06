@@ -1,5 +1,7 @@
 #![allow(non_snake_case)]
 #![allow(dead_code)]
+extern crate rand;
+use rand::prelude::*;
 use pyo3::prelude::*;
 use pyo3::wrap_pyfunction;
 
@@ -11,21 +13,21 @@ fn test() -> PyResult<String> {
     Ok(result)
 }
 
-#[pyfunction]
-/// Creates a default fractal
-fn Fractal() -> Fractal {
-    let f = Fractal {
-            x: 0.0,
-            y: 0.0,
-            viewport_width: 4.0,
-            width: 600,
-            height: 400,
-            layers: vec!(),
-            image: vec!(),
-            layer_image: vec!()
-        };
-    return f;
-}
+// #[pyfunction]
+// /// Creates a default fractal
+// fn Fractal() -> Fractal {
+//     let f = Fractal {
+//             x: 0.0,
+//             y: 0.0,
+//             viewport_width: 4.0,
+//             width: 600,
+//             height: 400,
+//             layers: vec!(),
+//             image: vec!(),
+//             layer_image: vec!()
+//         };
+//     return f;
+// }
 
 #[pyfunction]
 /// Creates a default histogram layer
@@ -137,6 +139,14 @@ impl Fractal {
             image: vec!(),
             layer_image: vec!()
         });
+    }
+
+    fn render(&self, _py: Python<'_>,) -> PyResult<Vec<u8>> {
+
+        let length: usize =  3 * self.width as usize * self.height as usize;
+        //let vals: Vec<u8> = (0..length).map(|_v| rand::thread_rng().gen_range(0,256) as u8).collect();
+        let vals: Vec<u8> = vec![0; length];
+        Ok(vals)
     }
 
     fn yeet(&self, _py: Python<'_>,) -> PyResult<String> {

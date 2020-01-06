@@ -10,6 +10,9 @@ edition = "2018"
 name = "fractal"
 crate-type = ["cdylib"]
 
+[dependencies.rand]
+version = "*"
+
 [dependencies.pyo3]
 version = "0.8.4"
 features = ["extension-module"]
