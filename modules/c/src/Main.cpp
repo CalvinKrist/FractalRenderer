@@ -12,7 +12,7 @@ static PyMethodDef FractalMethods[] = {
 static struct PyModuleDef fractalModule = {
     PyModuleDef_HEAD_INIT,
     "fractal",   /* name of module */
-    "some docs", /* module documentation, may be NULL */
+    "some docss", /* module documentation, may be NULL */
     -1,       /* size of per-interpreter state of the module,
                  or -1 if the module keeps state in global variables. */
     FractalMethods
