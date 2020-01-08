@@ -73,13 +73,13 @@ class CentralWidget(QWidget):
         self.fractRenderer.update()
 
     def selected_layer_changed(self, event):
-        print(event)
         self.current_layer = self.fract.get_layer(event["index"])
         self.update_palette()
         self.fractRenderer.update()
 
     def layer_toggled_callback(self, event):
         self.fract.get_layer(event["index"]).is_visible = event["value"]
+        self.fractRenderer.update()
 
     def initUI(self):
         grid = QGridLayout()
