@@ -1,20 +1,31 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QFrame, QCheckBox, QPushButton
-from PyQt5.QtGui import QFont, QIcon
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QPushButton, QFrame
+from PyQt5.QtGui import QFont, QIcon, QPainter
 from PyQt5.QtCore import Qt
 from Messenger import messenger
 
 
 class LayerView(QWidget):
+
     def __init__(self, name):
         super().__init__()
 
         self.initUI(name)
 
+    def visibility_toggled(self):
+        self.checked = not self.checked
+        icon = self.visible_icon if self.checked else QIcon()
+        self.toggle_visible.setIcon(icon)
+
+        if self.checked:
+            self.toggle_visible.setStyleSheet('border:none')
+        else:
+            self.toggle_visible.setStyleSheet('border:black')
+
+        messenger.publish("layer_gui_toggled", {"value" : self.checked, "elem": self})
+
     def initUI(self, name):
         self.setMinimumSize(240, 40)
         self.setMaximumWidth(300)
-        #self.setStyleSheet("border: 1px solid red")
-        self.setStyleSheet("background-color: white")
         self.font = QFont()
         self.font.setFamily("Arial")
         self.font.setPointSize(14)
@@ -23,15 +34,24 @@ class LayerView(QWidget):
         self.setLayout(layout)
         layout.setContentsMargins(0,0,0,0)
 
+        # Add toggle visibility button
+        self.toggle_visible = QPushButton()
+        self.checked = True
+        self.toggle_visible.setFlat(True)
+        self.visible_icon = QIcon("resources/visible.png")
+        self.toggle_visible.setIcon(self.visible_icon)
+        self.toggle_visible.setMaximumWidth(18)
+        self.toggle_visible.clicked.connect(self.visibility_toggled)
+
+        self.toggle_visible.setStyleSheet("background-color: rgb(205, 205, 205);")
+        layout.addWidget(self.toggle_visible)
+
+        # Add layer name
         label = QLabel(name)
         label.setFont(self.font)
-
-        box = QCheckBox()
-        box.setMaximumWidth(18)
-        layout.addWidget(box)
         layout.addWidget(label)
 
-        # Add dropdown button
+        # Add settings button
         settingsIcon = QIcon("resources/settings.png")
         settings = QPushButton()
         settings.setIcon(settingsIcon)
@@ -48,7 +68,7 @@ class LayerView(QWidget):
         delete.setStyleSheet("background-color: white; shadow: none")
         layout.addWidget(delete)
 
-        # Setup click behavior
+        # Setup behavior when layer is clicked
         selected_action = lambda event: messenger.publish("layer_gui_selected", {"elem": self})
         self.mouseReleaseEvent = selected_action
         selected_action(None)
@@ -62,26 +82,35 @@ class OptionsWindow(QFrame):
 
         messenger.subscribe("delete_gui_clicked", self.remove_layer)
         messenger.subscribe("layer_gui_selected", self.layer_selected)
+        messenger.subscribe("layer_gui_toggled", self.forward_layer_toggle_event)
 
         self.selected_layer = None
 
         self.initUI()
 
+    def forward_layer_toggle_event(self, event):
+        event["index"] = self.gui_index_to_fractal_index(event["elem"])
+        del event["elem"]
+        messenger.publish("layer_toggled", event)
+
+    def gui_index_to_fractal_index(self, elem):
+        layer_index = self.layout.count() - self.layout.indexOf(elem) - 1
+        if self.layout.indexOf(elem) == -1:
+            layer_index -= 1
+        return layer_index
+
     def layer_selected(self, event):
-        event["elem"].setStyleSheet("background-color: blue; shadow: none")
         if self.selected_layer:
-            self.selected_layer.setStyleSheet("background-color: white; shadow: none")
+            self.selected_layer.setStyleSheet("background-color: white")
+        event["elem"].setStyleSheet("background-color: rgb(205, 205, 205)")
         self.selected_layer = event["elem"]
 
-
-        layer_index = self.layout.count() - self.layout.indexOf(event["elem"]) - 1
-        if self.layout.indexOf(event["elem"]) == -1:
-            layer_index -= 1
+        layer_index = self.gui_index_to_fractal_index(event["elem"])
         messenger.publish("selected_layer_changed", {"index": layer_index})
 
 
     def remove_layer(self, event):
-        layer_index = self.layout.count() - self.layout.indexOf(event["elem"]) - 1
+        layer_index = self.gui_index_to_fractal_index(event["elem"])
         if event["elem"] is self.selected_layer:
             self.selected_layer = None
         event["elem"].deleteLater()
