@@ -8,7 +8,7 @@
 
 ```
 cargo build
-python ./setup debug
+python ./setup develop
 python Main.py
 ```
 
