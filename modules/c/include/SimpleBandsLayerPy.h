@@ -2,7 +2,7 @@
 
 #include <Python.h>
 #include "structmember.h"
-#include "HistogramLayer.h"
+#include "SimpleBandsLayer.h"
 #include "LayerPy.h"
 
 // Python wrapper around a C++ Layer class
@@ -10,15 +10,15 @@ typedef struct {
     PyObject_HEAD
 	Layer * myLayer;
 	//ParameterData * parameterData;
-} HistogramLayerData;
+} SimpleBandsLayerData;
 
 static PyObject *
-HistogramLayer_new (PyTypeObject *type, PyObject *args, PyObject *kwds) {
-	HistogramLayerData *self;
+SimpleBandsLayer_new (PyTypeObject *type, PyObject *args, PyObject *kwds) {
+	SimpleBandsLayerData *self;
 
-    self = (HistogramLayerData *)type->tp_alloc(type, 0);
+    self = (SimpleBandsLayerData *)type->tp_alloc(type, 0);
     if (self != NULL) {
-        self->myLayer = new HistogramLayer();
+        self->myLayer = new SimpleBandsLayer();
         if (self->myLayer == NULL) {
             Py_DECREF(self);
             return NULL;
@@ -29,19 +29,19 @@ HistogramLayer_new (PyTypeObject *type, PyObject *args, PyObject *kwds) {
 }
 
 static void
-HistogramLayer_dealloc(HistogramLayerData * self)
+SimpleBandsLayer_dealloc(SimpleBandsLayerData * self)
 {
 	//Py_XDECREF(self->parameterData);
     Py_TYPE(self)->tp_free(self);
 }
 
 static PyObject *  
-HistogramLayer_toString(HistogramLayerData* self) {
+SimpleBandsLayer_toString(SimpleBandsLayerData* self) {
 	std::string description = self->myLayer->toString();
 	return PyUnicode_FromFormat(description.c_str()); 
 }
 
-static PyMemberDef HistogramLayer_members[] = {
+static PyMemberDef SimpleBandsLayer_members[] = {
     {NULL}  /* Sentinel */
 };
 
@@ -49,54 +49,54 @@ static PyMemberDef HistogramLayer_members[] = {
 ***  Make Polymorphism work for methods  ***
 ********************************************/
 
-int numHistogramMethods = 0;
-static int numHistoMethods = numLayerMethods + numHistogramMethods + 1;
-static PyMethodDef* HistogramLayer_methods = new PyMethodDef[numHistoMethods];
+int numSimpleBandsMethods = 0;
+static int numBandsMethods = numLayerMethods + numSimpleBandsMethods + 1;
+static PyMethodDef* SimpleBandsLayer_methods = new PyMethodDef[numBandsMethods];
 
-struct HistogramMethodInitializer
+struct SimpleBandsMethodInitializer
 {
-    HistogramMethodInitializer()
+    SimpleBandsMethodInitializer()
     {					
 		for(int i = 0; i < numLayerMethods; i++)
-			HistogramLayer_methods[numHistogramMethods + i] = Layer_methods[i];
+			SimpleBandsLayer_methods[numSimpleBandsMethods + i] = Layer_methods[i];
 
-		HistogramLayer_methods[numHistoMethods - 1] = {NULL}; /* Sentinel */
+		SimpleBandsLayer_methods[numBandsMethods - 1] = {NULL}; /* Sentinel */
     }
 };
 
-HistogramMethodInitializer histoInitializer;
+SimpleBandsMethodInitializer simpleBandsInitializer;
 
 /*****************************************************
 ***  Make Polymorphism work for getters / setters  ***
 ******************************************************/
 
-int numHistogramGetSetters = 0;
-static int numHistoGetSetters = numHistogramGetSetters + numLayerGetSetters + 1;
-static PyGetSetDef* HistogramLayer_getseters = new PyGetSetDef[numHistoGetSetters];
+int numSimpleBandsGetSetters = 0;
+static int numBandsGetSetters = numSimpleBandsGetSetters + numLayerGetSetters + 1;
+static PyGetSetDef* SimpleBandsLayer_getseters = new PyGetSetDef[numBandsGetSetters];
 
-struct HistogramGetSetInitializer
+struct SimpleBandsGetSetInitializer
 {
-    HistogramGetSetInitializer()
+    SimpleBandsGetSetInitializer()
     {
-		/*HistogramLayer_methods[0] = {"test", (PyCFunction)HistogramLayer_test, METH_NOARGS,
+		/*SimpleBandsLayer_methods[0] = {"test", (PyCFunction)SimpleBandsLayer_test, METH_NOARGS,
 									"Return the opacity of the layer"
 									};*/
 									
 		for(int i = 0; i < numLayerGetSetters; i++)
-			HistogramLayer_getseters[numHistogramGetSetters + i] = Layer_getseters[i];
+			SimpleBandsLayer_getseters[numSimpleBandsGetSetters + i] = Layer_getseters[i];
 
-		HistogramLayer_getseters[numHistoGetSetters - 1] = {NULL}; /* Sentinel */
+		SimpleBandsLayer_getseters[numBandsGetSetters - 1] = {NULL}; /* Sentinel */
     }
 };
 
-HistogramGetSetInitializer histogramGetSetInitializer;
+SimpleBandsGetSetInitializer simpleBandsGetSetInitializer;
 
-static PyTypeObject HistogramLayerType {
+static PyTypeObject SimpleBandsLayerType {
     PyVarObject_HEAD_INIT(NULL, 0)
-    "fractal.HistogramLayer",           	/* tp_name */
-    sizeof(HistogramLayerData), 			/* tp_basicsize */
+    "fractal.SimpleBandsLayer",           	/* tp_name */
+    sizeof(SimpleBandsLayerData), 			/* tp_basicsize */
     0,                         	/* tp_itemsize */
-    (destructor)HistogramLayer_dealloc,  /* tp_dealloc */
+    (destructor)SimpleBandsLayer_dealloc,  /* tp_dealloc */
     0,                         	/* tp_print */
     0,                         	/* tp_getattr */
     0,                         	/* tp_setattr */
@@ -107,21 +107,21 @@ static PyTypeObject HistogramLayerType {
     0,                         	/* tp_as_mapping */
     0,                         	/* tp_hash  */
     0,                         	/* tp_call */
-    (reprfunc)HistogramLayer_toString, /* tp_str */
+    (reprfunc)SimpleBandsLayer_toString, /* tp_str */
     0,                         	/* tp_getattro */
     0,                         	/* tp_setattro */
     0,                         	/* tp_as_buffer */
     Py_TPFLAGS_DEFAULT,        	/* tp_flags */
-    "HistogramLayer",     	/* tp_doc */
+    "SimpleBandsLayer",     	/* tp_doc */
 	0,                         	/* tp_traverse */
     0,                         	/* tp_clear */
     0,                         	/* tp_richcompare */
     0,                         	/* tp_weaklistoffset */
     0,                         	/* tp_iter */
     0,                         	/* tp_iternext */
-    HistogramLayer_methods,             	/* tp_methods */
-    HistogramLayer_members,				/* tp_members */
-    HistogramLayer_getseters,                         	/* tp_getset */
+    SimpleBandsLayer_methods,             	/* tp_methods */
+    SimpleBandsLayer_members,				/* tp_members */
+    SimpleBandsLayer_getseters,                         	/* tp_getset */
     0,                         	/* tp_base */
     0,                         	/* tp_dict */
     0,                         	/* tp_descr_get */
@@ -129,5 +129,5 @@ static PyTypeObject HistogramLayerType {
     0,                         	/* tp_dictoffset */
     0,      					/* tp_init */
     0,                         	/* tp_alloc */
-    HistogramLayer_new,                 	/* tp_new */
+    SimpleBandsLayer_new,                 	/* tp_new */
 };

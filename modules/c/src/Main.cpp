@@ -2,6 +2,8 @@
 #include <Python.h>
 #include <iostream>
 #include "HistogramLayerPy.h"
+#include "SimpleBandsLayerPy.h"
+#include "SmoothBandsLayerPy.h"
 #include "PalettePy.h"
 #include "FractalPy.h"
 
@@ -31,6 +33,12 @@ PyInit_fractal(void) {
 	if (PyType_Ready(&HistogramLayerType) < 0)
         return NULL;
 	
+	if (PyType_Ready(&SimpleBandsLayerType) < 0)
+        return NULL;
+	
+	if (PyType_Ready(&SmoothBandsLayerType) < 0)
+        return NULL;
+	
 	if (PyType_Ready(&PaletteType) < 0)
         return NULL;
 	
@@ -46,6 +54,12 @@ PyInit_fractal(void) {
 	
 	Py_INCREF(&HistogramLayerType);
     PyModule_AddObject(m, "HistogramLayer", (PyObject *)&HistogramLayerType);
+	
+	Py_INCREF(&SimpleBandsLayerType);
+    PyModule_AddObject(m, "SimpleBandsLayer", (PyObject *)&SimpleBandsLayerType);
+	
+	Py_INCREF(&SmoothBandsLayerType);
+    PyModule_AddObject(m, "SmoothBandsLayer", (PyObject *)&SmoothBandsLayerType);
 	
 	Py_INCREF(&PaletteType);
     PyModule_AddObject(m, "Palette", (PyObject *)&PaletteType);
