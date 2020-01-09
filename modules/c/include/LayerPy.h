@@ -4,6 +4,7 @@
 #include "structmember.h"
 #include "Layer.h"
 #include "HistogramLayer.h"
+#include "SimpleBandsLayer.h"
 #include "PalettePy.h"
 
 // Python wrapper around a C++ Layer class
@@ -19,7 +20,7 @@ Layer_new (PyTypeObject *type, PyObject *args, PyObject *kwds) {
 
     self = (LayerData *)type->tp_alloc(type, 0);
     if (self != NULL) {
-        self->myLayer = new HistogramLayer();
+        self->myLayer = new SimpleBandsLayer();
         if (self->myLayer == NULL) {
             Py_DECREF(self);
             return NULL;
@@ -233,3 +234,6 @@ static PyTypeObject LayerType {
     0,                         	/* tp_alloc */
     Layer_new,                 	/* tp_new */
 };
+
+int numLayerMethods = sizeof(Layer_methods) / sizeof(PyMethodDef) - 1;
+int numLayerGetSetters = sizeof(Layer_getseters) / sizeof(PyGetSetDef) - 1;

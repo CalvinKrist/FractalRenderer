@@ -1,22 +1,11 @@
-#include "HistogramLayer.h"
+#include "SmoothBandsLayer.h"
 #include <iostream>
 #include <algorithm>
 #include <cmath>
 
-struct IterPair {
-	double sn;
-	int index;
-};
-
-bool compareIterPair(IterPair p1, IterPair p2) {
-	return p1.sn < p2.sn;
-}
-
-void HistogramLayer::render(unsigned char** image, double rX, double rY, int width, int height, double viewportWidth) {
+void SmoothBandsLayer::render(unsigned char** image, double rX, double rY, int width, int height, double viewportWidth) {
 	double viewportHeight = height * viewportWidth / width;
-	
-	std::vector<IterPair> itersList;
-	
+		
 	int maxIterations = 200;
 	int bailout = 256;
 	
@@ -52,22 +41,14 @@ void HistogramLayer::render(unsigned char** image, double rX, double rY, int wid
 				double zSquared = zi * zi + z * z;				
 				double sn = iterations - std::log2(std::log2(zSquared)) + 4.0;
 				
-				IterPair pair = {sn, index};
-				itersList.push_back(pair);
+				Color col = palette->colorAt(sn / maxIterations);
+				(*image)[index] = col.r;
+				(*image)[index + 1] = col.g;
+				(*image)[index + 2] = col.b;
 			}
 		}
-
-	std::sort(itersList.begin(), itersList.end(), compareIterPair);
-	for(int i = 0; i < itersList.size(); i++) {
-		double frac = (double)i / itersList.size();
-		//std::cout << "sn: " << itersList[i].sn << ", i: " << i << std::endl;;
-		Color col = palette->colorAt(frac);
-		(*image)[itersList[i].index] = col.r;
-		(*image)[itersList[i].index + 1] = col.g;
-		(*image)[itersList[i].index + 2] = col.b;
-	}
 }
 
-std::string HistogramLayer::toString() {
-	return "histogramLayer";
+std::string SmoothBandsLayer::toString() {
+	return "SmoothBandsLayer";
 }
