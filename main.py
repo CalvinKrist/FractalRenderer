@@ -81,6 +81,18 @@ class CentralWidget(QWidget):
         self.fract.get_layer(event["index"]).is_visible = event["value"]
         self.fractRenderer.update()
 
+    def layer_moved_callback(self, event):
+        # Ignore bad values
+        if (event["index"] is 0 and event["value"] is "down") or (event["index"] is self.fract.layer_count() - 1 and event["value"] is "up"):
+            return
+
+        index = event["index"]
+        layer = self.fract.get_layer(index)
+        if self.fract.remove_layer(index):
+            new_index = index + 1 if event["value"] is "up" else index - 1
+            self.fract.insert_layer(new_index, layer)
+            self.fractRenderer.update()
+
     def initUI(self):
         grid = QGridLayout()
         self.setLayout(grid)
@@ -95,6 +107,7 @@ class CentralWidget(QWidget):
         messenger.subscribe("layer_added", self.layer_added_callback)
         messenger.subscribe("selected_layer_changed", self.selected_layer_changed)
         messenger.subscribe("layer_toggled", self.layer_toggled_callback)
+        messenger.subscribe("layer_moved", self.layer_moved_callback)
 
         # Create the gradient
         gradient = Gradient()
