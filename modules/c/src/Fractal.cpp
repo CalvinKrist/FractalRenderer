@@ -26,7 +26,8 @@ void Fractal::updateImageMemory() {
 
 unsigned char** Fractal::render() {
 	for(int i = 0; i < layers.size(); i++)
-		layers[i]->render(&image, x, y, width, height, viewportWidth);
+		if(layers[i]->isVisible())
+			layers[i]->render(&image, x, y, width, height, viewportWidth);
 	
 	return &image;
 }
