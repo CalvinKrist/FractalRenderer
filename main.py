@@ -81,6 +81,24 @@ class CentralWidget(QWidget):
         self.fract.get_layer(event["index"]).is_visible = event["value"]
         self.fractRenderer.update()
 
+    def layer_type_changed_callback(self, event):
+        index = event["index"]
+        palette = self.fract.get_layer(index).palette
+
+        new_layer = None
+        if self.fract.remove_layer(index):
+            if event["value"] == "Histogram":
+                new_layer = fractal.HistogramLayer()
+            elif event["value"] == "SmoothBands":
+                new_layer = fractal.SmoothBandsLayer()
+            elif event["value"] == "SimpleBands":
+                new_layer = fractal.SimpleBandsLayer()
+
+            new_layer.palette = palette
+            if self.fract.insert_layer(index, new_layer):
+                self.fractRenderer.update()
+
+
     def initUI(self):
         grid = QGridLayout()
         self.setLayout(grid)
@@ -95,6 +113,7 @@ class CentralWidget(QWidget):
         messenger.subscribe("layer_added", self.layer_added_callback)
         messenger.subscribe("selected_layer_changed", self.selected_layer_changed)
         messenger.subscribe("layer_toggled", self.layer_toggled_callback)
+        messenger.subscribe("layer_type_changed", self.layer_type_changed_callback)
 
         # Create the gradient
         gradient = Gradient()
