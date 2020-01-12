@@ -163,6 +163,14 @@ class Window(QMainWindow):
         self.setWindowTitle('FractalFun')
         self.show()
 
+    # Forward key events
+    def keyPressEvent(self, e):
+        messenger.publish("key_pressed", {"event": e})
+
+    # Forward mouse wheel events
+    def wheelEvent(self, event):
+        messenger.publish("mouse_wheel_moved", {"event": event})
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = Window()
