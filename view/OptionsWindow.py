@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QPushButton, QFrame
-from PyQt5.QtGui import QFont, QIcon, QPainter
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QPushButton, QFrame, QMainWindow, QComboBox
+from PyQt5.QtGui import QFont, QIcon
 from PyQt5.QtCore import Qt
 from Messenger import messenger
 
@@ -47,10 +47,69 @@ class ArrowButtons(QWidget):
         layout.addWidget(arrow_down)
 
 
+class CentralLayerSettingsWidget(QWidget):
+    def __init__(self, layer_view):
+        super().__init__()
+
+        self.layer_view = layer_view
+        self.initUI()
+
+        self.combo_text = "Histogram"
+
+    def initUI(self):
+        self.font = QFont()
+        self.font.setFamily("Arial")
+        self.font.setPointSize(14)
+
+        layout = QHBoxLayout()
+        self.setLayout(layout)
+        layout.setContentsMargins(0, 0, 0, 0)
+
+        self.setStyleSheet('background-color:white')
+
+        # Add layer selection tool
+        layer_type_label = QLabel("Layer Type")
+        layer_type_label.setFont(self.font)
+        layout.addWidget(layer_type_label)
+
+        # Add layer selection combo box
+        combo = QComboBox(self)
+        combo_font = QFont()
+        combo_font.setFamily("Arial")
+        combo_font.setPointSize(10)
+        combo.setFont(combo_font)
+
+        combo.addItem("Histogram")
+        combo.addItem("SmoothBands")
+        combo.addItem("SimpleBands")
+        layout.addWidget(combo)
+
+        combo.activated[str].connect(self.onChanged)
+
+    def onChanged(self, text):
+        if text != self.combo_text:
+            messenger.publish("layer_gui_type_changed", {"value": text, "elem": self.layer_view})
+            self.combo_text = text
+
+
+class LayerSettingsWindow(QMainWindow):
+    def __init__(self, layer_view, parent=None):
+        super(LayerSettingsWindow, self).__init__(parent)
+
+        central_widget = CentralLayerSettingsWidget(layer_view)
+        self.setStyleSheet('background-color:white')
+
+        self.setCentralWidget(central_widget)
+
+
+# The individual layer that shows up in the right hand window. This includes
+# the visibility button, name, arrows, settings button, etc
 class LayerView(QWidget):
 
     def __init__(self, name):
         super().__init__()
+
+        self.settings_windows = LayerSettingsWindow(self)
 
         self.initUI(name)
 
@@ -112,6 +171,7 @@ class LayerView(QWidget):
         settings.setIcon(settingsIcon)
         settings.setMaximumWidth(30)
         settings.setStyleSheet("background-color: white; shadow: none")
+        settings.clicked.connect(lambda: self.settings_windows.show())
         layout.addWidget(settings)
 
         # Add delete button
@@ -129,6 +189,8 @@ class LayerView(QWidget):
         selected_action(None)
 
 
+# Manages all the layers together from a GUI perspective.
+# Converts many GUI events into fractal events
 class OptionsWindow(QFrame):
 
     def __init__(self, fractalWindow):
@@ -139,6 +201,7 @@ class OptionsWindow(QFrame):
         messenger.subscribe("layer_gui_selected", self.layer_selected)
         messenger.subscribe("layer_gui_toggled", self.forward_layer_toggle_event)
         messenger.subscribe("layer_gui_moved", self.layer_moved)
+        messenger.subscribe("layer_gui_type_changed", self.layer_type_changed)
 
         self.selected_layer = None
 
@@ -172,6 +235,10 @@ class OptionsWindow(QFrame):
             self.selected_layer = None
         event["elem"].deleteLater()
         messenger.publish("layer_removed", {"index": layer_index})
+
+    def layer_type_changed(self, event):
+        layer_index = self.gui_index_to_fractal_index(event["elem"])
+        messenger.publish("layer_type_changed", {"index": layer_index, "value": event["value"]})
 
     def add_layer(self):
         # Add layer just below 'New Layer' button
