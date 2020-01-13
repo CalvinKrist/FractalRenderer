@@ -12,10 +12,12 @@ def verify(width, height, value):
     return True
 
 
-def test_c_by_size(frac, width, height, num=10):
-    # Get average time at 1000 by 1000
+def test_c_by_size(layer, width, height, num=10):
+    frac = fractal.Fractal()
     frac.width = width
     frac.height = height
+
+    frac.insert_layer(0, layer)
 
     times = []
     result = None
@@ -52,22 +54,49 @@ class TimedFractalRenderer(FractalRenderer):
 
 
 def main():
-    frac = fractal.Fractal()
+    print("Testing SIMPLE BAND LAYER")
 
     print("C calculations: ")
-    test_c_by_size(frac, 800, 650, 150)
+    test_c_by_size(fractal.SimpleBandsLayer(), 800, 650, 100)
     print("-----------------------------")
-    test_c_by_size(frac, 1000, 1000, 75)
+    test_c_by_size(fractal.SimpleBandsLayer(), 1000, 1000, 50)
     print("-----------------------------")
-    test_c_by_size(frac, 5000, 5000, 20)
+    test_c_by_size(fractal.SimpleBandsLayer(), 5000, 5000, 15)
     print("-----------------------------")
-    test_c_by_size(frac, 10000, 10000, 5)
+    test_c_by_size(fractal.SimpleBandsLayer(), 10000, 10000, 5)
+
+    print()
+
+    print("Testing SMOOTH BAND LAYER")
+
+    print("C calculations: ")
+    test_c_by_size(fractal.SmoothBandsLayer(), 800, 650, 100)
+    print("-----------------------------")
+    test_c_by_size(fractal.SmoothBandsLayer(), 1000, 1000, 50)
+    print("-----------------------------")
+    test_c_by_size(fractal.SmoothBandsLayer(), 5000, 5000, 15)
+    print("-----------------------------")
+    test_c_by_size(fractal.SmoothBandsLayer(), 10000, 10000, 5)
+
+    print()
+
+    print("Testing HISTOGRAM LAYER")
+
+    print("C calculations: ")
+    test_c_by_size(fractal.HistogramLayer(), 800, 650, 100)
+    print("-----------------------------")
+    test_c_by_size(fractal.HistogramLayer(), 1000, 1000, 50)
+    print("-----------------------------")
+    test_c_by_size(fractal.HistogramLayer(), 5000, 5000, 15)
+    print("-----------------------------")
+    test_c_by_size(fractal.HistogramLayer(), 10000, 10000, 5)
 
     print()
 
     print("Python Render Time")
     app = QApplication(sys.argv)
     frac = fractal.Fractal()
+    frac.insert_layer(0, fractal.SimpleBandsLayer())
     fractRenderer = TimedFractalRenderer(frac)
 
     times = []
