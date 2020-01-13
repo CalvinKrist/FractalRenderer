@@ -4,6 +4,49 @@ from PyQt5.QtCore import Qt
 from Messenger import messenger
 
 
+class ArrowButtons(QWidget):
+    def __init__(self):
+        super().__init__()
+
+        self.initUI()
+
+        self.arrow_up_callback = None
+        self.arrow_down_callback = None
+
+    def arrow_up_pressed(self):
+        if self.arrow_up_callback:
+            self.arrow_up_callback()
+
+    def arrow_down_pressed(self):
+        if self.arrow_down_callback:
+            self.arrow_down_callback()
+
+    def initUI(self):
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+        layout.setContentsMargins(0, 0, 0, 0)
+
+        # Add layer up icon
+        arrow_up_icon = QIcon("resources/arrow_up.png")
+        arrow_up = QPushButton()
+        arrow_up.setIcon(arrow_up_icon)
+        arrow_up.setMaximumWidth(30)
+        arrow_up.setMaximumHeight(15)
+        arrow_up.setStyleSheet("background-color: white; shadow: none")
+        arrow_up.clicked.connect(self.arrow_up_pressed)
+        layout.addWidget(arrow_up)
+
+        # Add layer down icon
+        arrow_down_icon = QIcon("resources/arrow_down.png")
+        arrow_down = QPushButton()
+        arrow_down.setIcon(arrow_down_icon)
+        arrow_down.setMaximumWidth(30)
+        arrow_down.setMaximumHeight(15)
+        arrow_down.setStyleSheet("background-color: white; shadow: none")
+        arrow_down.clicked.connect(self.arrow_down_pressed)
+        layout.addWidget(arrow_down)
+
+
 class CentralLayerSettingsWidget(QWidget):
     def __init__(self, layer_view):
         super().__init__()
@@ -82,6 +125,12 @@ class LayerView(QWidget):
 
         messenger.publish("layer_gui_toggled", {"value" : self.checked, "elem": self})
 
+    def arrow_up_pressed(self):
+        messenger.publish("layer_gui_moved", {"value" : "up", "elem": self})
+
+    def arrow_down_pressed(self):
+        messenger.publish("layer_gui_moved", {"value": "down", "elem": self})
+
     def initUI(self, name):
         self.setMinimumSize(240, 40)
         self.setMaximumWidth(300)
@@ -109,6 +158,12 @@ class LayerView(QWidget):
         label = QLabel(name)
         label.setFont(self.font)
         layout.addWidget(label)
+
+        # Add layer order buttons button
+        arrow_buttons = ArrowButtons()
+        arrow_buttons.arrow_up_callback = self.arrow_up_pressed
+        arrow_buttons.arrow_down_callback = self.arrow_down_pressed
+        layout.addWidget(arrow_buttons)
 
         # Add settings button
         settingsIcon = QIcon("resources/settings.png")
@@ -145,9 +200,12 @@ class OptionsWindow(QFrame):
         messenger.subscribe("delete_gui_clicked", self.remove_layer)
         messenger.subscribe("layer_gui_selected", self.layer_selected)
         messenger.subscribe("layer_gui_toggled", self.forward_layer_toggle_event)
+        messenger.subscribe("layer_gui_moved", self.layer_moved)
         messenger.subscribe("layer_gui_type_changed", self.layer_type_changed)
 
         self.selected_layer = None
+
+        self.layer_count = 1
 
         self.initUI()
 
@@ -186,8 +244,22 @@ class OptionsWindow(QFrame):
         # Add layer just below 'New Layer' button
         position = self.layout.count() - 1
         messenger.publish("layer_added", {"index": position})
-        name = "Layer " + str(position + 1)
+        name = "Layer " + str(self.layer_count)
+        self.layer_count += 1
         self.layout.insertWidget(1, LayerView(name), alignment=Qt.AlignCenter)
+
+    def layer_moved(self, event):
+        layer_index = self.gui_index_to_fractal_index(event["elem"])
+        gui_index = self.layout.indexOf(event["elem"])
+        # Ignore bad values
+        if (layer_index is 0 and event["value"] is "down") or (layer_index is self.layout.count() - 2 and event["value"] is "up"):
+            return
+
+        self.layout.removeWidget(event["elem"])
+        new_index = gui_index - 1 if event["value"] is "up" else gui_index + 1
+        self.layout.insertWidget(new_index, event["elem"])
+
+        messenger.publish("layer_moved", {"value": event["value"], "index": layer_index})
 
     def initUI(self):
         # Configure layout
