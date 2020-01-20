@@ -1,6 +1,6 @@
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QStyle, QStyleOptionSlider, QMainWindow, QLabel, QVBoxLayout
+from PyQt5.QtWidgets import QStyle, QStyleOptionSlider, QMainWindow, QLabel, QVBoxLayout, QPushButton, QHBoxLayout
 from PyQt5.QtCore import Qt, QPoint, QRect
 from PyQt5.QtGui import QPainter, QFont
 from PyQt5.QtCore import pyqtSignal as Signal
@@ -123,13 +123,52 @@ class LabeledSlider(QtWidgets.QWidget):
             pos=QPoint(left, bottom)
             painter.drawText(pos, v_str)
 
-        print(self.sl.value())
         return
 
 
-class CentralOpacityChooserWidget(QtWidgets.QWidget):
+class OpacityWidgetButtonLayer(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
+
+        self.font = QFont()
+        self.font.setFamily("Arial")
+        self.font.setPointSize(10)
+
+        self.initUI()
+
+    def initUI(self):
+        layout = QHBoxLayout()
+        self.setLayout(layout)
+        layout.setContentsMargins(0, 0, 0, 0)
+
+        self.setStyleSheet('background-color:#e1e1e1')
+
+        self.confirm = QPushButton()
+        self.confirm.setFont(self.font)
+        self.confirm.setText("OK")
+        self.confirm.setMaximumWidth(50)
+        layout.addWidget(self.confirm)
+
+        self.cancel = QPushButton()
+        self.cancel.setFont(self.font)
+        self.cancel.setText("Cancel")
+        self.cancel.setMaximumWidth(50)
+        layout.addWidget(self.cancel)
+
+
+class CentralOpacityChooserWidget(QtWidgets.QWidget):
+    def __init__(self, gradient_gui, parent_window):
+        super().__init__()
+
+        self.gradient_gui = gradient_gui
+        self.parent_window = parent_window
+
+        if hasattr(gradient_gui, "_opacity"):
+            for location, opacity, window in gradient_gui._opacity:
+                if window is self.parent_window:
+                    self.value = opacity
+        else:
+            self.value = 1
 
         self.initUI()
 
@@ -157,15 +196,41 @@ class CentralOpacityChooserWidget(QtWidgets.QWidget):
         selector.setFont(selector_font)
         layout.addWidget(selector)
 
+        selector.sl.valueChanged.connect(self.valueChanged)
+        selector.sl.setValue(self.value * 100)
+
+        win_button_layer = OpacityWidgetButtonLayer()
+        win_button_layer.cancel.clicked.connect(lambda e: print("cancel new"))
+        win_button_layer.confirm.clicked.connect(self.submit)
+        layout.addWidget(win_button_layer)
+
+    def submit(self):
+        opacity_list = self.gradient_gui._opacity
+        for location, opacity, window in opacity_list:
+            if window is self.parent_window:
+                messenger.publish("opacity_gui_changed", {"location": location, "value": self.value})
+
+        self.parent_window.hide()
+
+    def valueChanged(self, event):
+        self.value = float(event / 100)
+
 
 class OpacitySliderWindow(QMainWindow):
-    def __init__(self, parent=None):
+    def __init__(self, gradient_gui, parent=None):
         super(OpacitySliderWindow, self).__init__(parent)
 
-        central_widget = CentralOpacityChooserWidget()
+        self.gradient_gui = gradient_gui
+
+        central_widget = CentralOpacityChooserWidget(gradient_gui, self)
         self.setStyleSheet('background-color:white')
 
         self.setCentralWidget(central_widget)
+
+
+class OpacityHandle():
+    def __init__(self, opacity=1.0):
+        self.opacity = opacity
 
 
 class Gradient(QtWidgets.QWidget):
@@ -189,7 +254,7 @@ class Gradient(QtWidgets.QWidget):
                 (1.0, '#ffffff'),
             ]
 
-        self._opacity = [(0.0, 1, OpacitySliderWindow()), (1.0, 1, OpacitySliderWindow())]
+        self._opacity = [(0.0, 1, OpacitySliderWindow(self)), (1.0, 1, OpacitySliderWindow(self))]
 
         # Stop point handle sizes.
         self._handle_w = 10
@@ -205,6 +270,11 @@ class Gradient(QtWidgets.QWidget):
         self._opacity_old_position = None
 
         self.interior_color = "#ffffff"
+
+        messenger.subscribe("opacity_gui_changed", self.change_opacity)
+
+    def change_opacity(self, event):
+        print(event)
 
     def paintEvent(self, e):
         painter = QtGui.QPainter(self)
@@ -296,7 +366,7 @@ class Gradient(QtWidgets.QWidget):
     def _constrain_opacity(self):
         self._opacity = [
             # Ensure values within valid range.
-            (max(0.0, min(1.0, stop)), opacity)
+            (max(0.0, min(1.0, stop)), opacity, _)
             for stop, opacity, _ in self._opacity
         ]
 
@@ -340,13 +410,13 @@ class Gradient(QtWidgets.QWidget):
         for n, g in enumerate(self._opacity):
             if g[0] > stop:
                 # Insert before this entry, with specified or next color.
-                self._opacity.insert(n, (stop, 1.0, OpacitySliderWindow()))
+                self._opacity.insert(n, (stop, 1.0, OpacitySliderWindow(self)))
                 index = n
                 break
         if index == -1:
             # Insert at end of list
             index = len(self._gradient)
-            self._opacity.append((stop, 1.0, OpacitySliderWindow()))
+            self._opacity.append((stop, 1.0, OpacitySliderWindow(self)))
 
         message = {"opacity" : self._opacity[index][1], "location": self._opacity[index][0]}
         messenger.publish("opacity_added", message)
@@ -454,10 +524,10 @@ class Gradient(QtWidgets.QWidget):
         if e.button() == Qt.RightButton:
             n = self._find_gradient_stop_handle_for_event(e)
             m = self._find_opacity_stop_handle_for_event(e)
-            if n:
+            if n is not None:
                 _, color = self._gradient[n]
                 self.chooseColorAtPosition(n, color)
-            if m:
+            if m is not None:
                 _, opacity, _ = self._opacity[m]
                 self.chooseOpacityAtPosition(m, opacity)
 
@@ -467,22 +537,22 @@ class Gradient(QtWidgets.QWidget):
             else:
                 n = self._find_gradient_stop_handle_for_event(e)
                 m = self._find_opacity_stop_handle_for_event(e)
-                if n:
+                if n is not None:
                     # Activate drag mode.
                     self._old_position = self._gradient[n][0]
                     self._drag_position = n
-                elif m:
+                elif m is not None:
                     # Activate drag mode.
                     self._opacity_old_position = self._opacity[m][0]
                     self._opacity_drag_position = m
 
     def mouseReleaseEvent(self, e):
-        if self._drag_position:
+        if self._drag_position is not None:
             message = {"color": self._gradient[self._drag_position][1],
                           "location": self._gradient[self._drag_position][0],
                           "old_location" : self._old_position}
             messenger.publish("color_moved", message)
-        if self._opacity_drag_position:
+        if self._opacity_drag_position is not None:
             message = {"opacity": self._opacity[self._opacity_drag_position][1],
                           "location": self._opacity[self._opacity_drag_position][0],
                           "old_location" : self._opacity_old_position}
@@ -495,7 +565,7 @@ class Gradient(QtWidgets.QWidget):
 
     def mouseMoveEvent(self, e):
         # If drag active, move the stop.
-        if self._drag_position:
+        if self._drag_position is not None:
             width = self.right_end - self.left_start
             translated_x = e.x() - self.left_start
             stop = translated_x / width
@@ -503,7 +573,7 @@ class Gradient(QtWidgets.QWidget):
             self._gradient[self._drag_position] = stop, color
             self._constrain_gradient()
             self.update()
-        elif self._opacity_drag_position:
+        elif self._opacity_drag_position is not None:
             width = self.right_end - self.left_start
             translated_x = e.x() - self.left_start
             stop = translated_x / width
@@ -516,12 +586,12 @@ class Gradient(QtWidgets.QWidget):
         # Calculate the position of the click relative 0..1 to the width.
         n = self._find_gradient_stop_handle_for_event(e)
         m = self._find_opacity_stop_handle_for_event(e)
-        if n:
+        if n is not None:
             self._sort_gradient() # Ensure ordered.
             # Delete existing, if not at the ends.
             if len(self._gradient) > 1:
                 self.remove_gradient_stop_at_position(n)
-        elif m:
+        elif m is not None:
             self._sort_opacity()  # Ensure ordered.
             # Delete existing, if not at the ends.
             if len(self._opacity) > 1:
