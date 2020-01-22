@@ -87,7 +87,6 @@ class CentralWidget(QWidget):
             if pal.remove_opacity(event["location"]):
                 pal.add_opacity(event["value"], event["location"])
             self.fractRenderer.update()
-            print(pal.get_opacities())
 
     def opacity_moved_callback(self, event):
         if self.current_layer:
@@ -101,14 +100,40 @@ class CentralWidget(QWidget):
         if self.current_layer:
             self.current_layer.palette.add_opacity(event['opacity'], event["location"])
             self.fractRenderer.update()
-            print(self.current_layer.palette.get_opacities())
 
     def opacity_removed_callback(self, event):
         if self.current_layer:
             self.current_layer.palette.remove_opacity(event["location"])
             self.fractRenderer.update()
 
-            print(self.current_layer.palette.get_opacities())
+    def layer_moved_callback(self, event):
+        # Ignore bad values
+        if (event["index"] is 0 and event["value"] is "down") or (event["index"] is self.fract.layer_count() - 1 and event["value"] is "up"):
+            return
+
+        index = event["index"]
+        layer = self.fract.get_layer(index)
+        if self.fract.remove_layer(index):
+            new_index = index + 1 if event["value"] is "up" else index - 1
+            self.fract.insert_layer(new_index, layer)
+            self.fractRenderer.update()
+
+    def layer_type_changed_callback(self, event):
+        index = event["index"]
+        palette = self.fract.get_layer(index).palette
+
+        new_layer = None
+        if self.fract.remove_layer(index):
+            if event["value"] == "Histogram":
+                new_layer = fractal.HistogramLayer()
+            elif event["value"] == "SmoothBands":
+                new_layer = fractal.SmoothBandsLayer()
+            elif event["value"] == "SimpleBands":
+                new_layer = fractal.SimpleBandsLayer()
+
+            new_layer.palette = palette
+            if self.fract.insert_layer(index, new_layer):
+                self.fractRenderer.update()
 
     def initUI(self):
         grid = QGridLayout()
@@ -124,6 +149,8 @@ class CentralWidget(QWidget):
         messenger.subscribe("layer_added", self.layer_added_callback)
         messenger.subscribe("selected_layer_changed", self.selected_layer_changed)
         messenger.subscribe("layer_toggled", self.layer_toggled_callback)
+        messenger.subscribe("layer_moved", self.layer_moved_callback)
+        messenger.subscribe("layer_type_changed", self.layer_type_changed_callback)
 
         # Create the gradient
         gradient = Gradient()
@@ -176,6 +203,14 @@ class Window(QMainWindow):
 
         self.setWindowTitle('FractalFun')
         self.show()
+
+    # Forward key events
+    def keyPressEvent(self, e):
+        messenger.publish("key_pressed", {"event": e})
+
+    # Forward mouse wheel events
+    def wheelEvent(self, event):
+        messenger.publish("mouse_wheel_moved", {"event": event})
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
