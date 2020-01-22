@@ -81,6 +81,35 @@ class CentralWidget(QWidget):
         self.fract.get_layer(event["index"]).is_visible = event["value"]
         self.fractRenderer.update()
 
+    def opacity_changed_callback(self, event):
+        if self.current_layer:
+            pal = self.current_layer.palette
+            if pal.remove_opacity(event["location"]):
+                pal.add_opacity(event["value"], event["location"])
+            self.fractRenderer.update()
+            print(pal.get_opacities())
+
+    def opacity_moved_callback(self, event):
+        if self.current_layer:
+            pal = self.current_layer.palette
+            if pal.remove_opacity(event["old_location"]):
+                pal.add_opacity(event['opacity'], event["location"])
+
+            self.fractRenderer.update()
+
+    def opacity_added_callback(self, event):
+        if self.current_layer:
+            self.current_layer.palette.add_opacity(event['opacity'], event["location"])
+            self.fractRenderer.update()
+            print(self.current_layer.palette.get_opacities())
+
+    def opacity_removed_callback(self, event):
+        if self.current_layer:
+            self.current_layer.palette.remove_opacity(event["location"])
+            self.fractRenderer.update()
+
+            print(self.current_layer.palette.get_opacities())
+
     def initUI(self):
         grid = QGridLayout()
         self.setLayout(grid)
@@ -105,6 +134,10 @@ class CentralWidget(QWidget):
         messenger.subscribe("color_changed", self.color_changed_callback)
         messenger.subscribe("interior_color_changed", self.interior_color_changed_callback)
         messenger.subscribe("layer_removed", self.layer_removed_callback)
+        messenger.subscribe("opacity_changed", self.opacity_changed_callback)
+        messenger.subscribe("opacity_moved", self.opacity_moved_callback)
+        messenger.subscribe("opacity_added", self.opacity_added_callback)
+        messenger.subscribe("opacity_removed", self.opacity_removed_callback)
         gradient.setMaximumHeight(100)
         grid.addWidget(gradient, 1, 0, 1, 2)
 

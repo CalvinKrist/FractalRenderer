@@ -156,6 +156,9 @@ class OpacityWidgetButtonLayer(QtWidgets.QWidget):
         layout.addWidget(self.cancel)
 
 
+OPACITY_DEFAULT = 1
+
+
 class CentralOpacityChooserWidget(QtWidgets.QWidget):
     def __init__(self, gradient_gui, parent_window):
         super().__init__()
@@ -163,12 +166,8 @@ class CentralOpacityChooserWidget(QtWidgets.QWidget):
         self.gradient_gui = gradient_gui
         self.parent_window = parent_window
 
-        if hasattr(gradient_gui, "_opacity"):
-            for location, opacity, window in gradient_gui._opacity:
-                if window is self.parent_window:
-                    self.value = opacity
-        else:
-            self.value = 1
+        self.value = OPACITY_DEFAULT
+        self.original_value = OPACITY_DEFAULT
 
         self.initUI()
 
@@ -195,16 +194,18 @@ class CentralOpacityChooserWidget(QtWidgets.QWidget):
         selector_font.setPointSize(10)
         selector.setFont(selector_font)
         layout.addWidget(selector)
+        self.selector = selector
 
         selector.sl.valueChanged.connect(self.valueChanged)
         selector.sl.setValue(self.value * 100)
 
         win_button_layer = OpacityWidgetButtonLayer()
-        win_button_layer.cancel.clicked.connect(lambda e: print("cancel new"))
+        win_button_layer.cancel.clicked.connect(self.cancel)
         win_button_layer.confirm.clicked.connect(self.submit)
         layout.addWidget(win_button_layer)
 
     def submit(self):
+        self.original_value = self.value
         opacity_list = self.gradient_gui._opacity
         for location, opacity, window in opacity_list:
             if window is self.parent_window:
@@ -215,6 +216,11 @@ class CentralOpacityChooserWidget(QtWidgets.QWidget):
     def valueChanged(self, event):
         self.value = float(event / 100)
 
+    def cancel(self, event):
+        self.value = self.original_value
+        self.selector.sl.setValue(self.value * 100)
+        self.parent_window.hide()
+
 
 class OpacitySliderWindow(QMainWindow):
     def __init__(self, gradient_gui, parent=None):
@@ -223,14 +229,10 @@ class OpacitySliderWindow(QMainWindow):
         self.gradient_gui = gradient_gui
 
         central_widget = CentralOpacityChooserWidget(gradient_gui, self)
+
         self.setStyleSheet('background-color:white')
 
         self.setCentralWidget(central_widget)
-
-
-class OpacityHandle():
-    def __init__(self, opacity=1.0):
-        self.opacity = opacity
 
 
 class Gradient(QtWidgets.QWidget):
@@ -254,7 +256,7 @@ class Gradient(QtWidgets.QWidget):
                 (1.0, '#ffffff'),
             ]
 
-        self._opacity = [(0.0, 1, OpacitySliderWindow(self)), (1.0, 1, OpacitySliderWindow(self))]
+        self._opacity = [(0.0, OPACITY_DEFAULT, OpacitySliderWindow(self)), (1.0, OPACITY_DEFAULT, OpacitySliderWindow(self))]
 
         # Stop point handle sizes.
         self._handle_w = 10
@@ -274,7 +276,14 @@ class Gradient(QtWidgets.QWidget):
         messenger.subscribe("opacity_gui_changed", self.change_opacity)
 
     def change_opacity(self, event):
-        print(event)
+        changed = False
+        for i in range(len(self._opacity)):
+            if self._opacity[i][0] == event["location"]:
+                self._opacity[i] = (self._opacity[i][0], event["value"], self._opacity[i][2])
+                changed = True
+
+        if changed:
+            messenger.publish("opacity_changed", event)
 
     def paintEvent(self, e):
         painter = QtGui.QPainter(self)
@@ -284,6 +293,7 @@ class Gradient(QtWidgets.QWidget):
 
         # Draw the linear horizontal gradient.
         gradient = QtGui.QLinearGradient(self.left_start, 0, width + self.left_start, 0)
+        print(gradient)
         for stop, color in self._gradient:
             gradient.setColorAt(stop, QtGui.QColor(color))
 
@@ -312,8 +322,8 @@ class Gradient(QtWidgets.QWidget):
             painter.drawPolygon(QtGui.QPolygon(points))
 
         # Draw the stop opacity handles.
-        for stop, color, _ in self._opacity:
-            painter.setBrush(QtGui.QBrush(QtGui.QColor(color), Qt.SolidPattern))
+        for stop, opacity, _ in self._opacity:
+            painter.setBrush(QtGui.QBrush(QtGui.QColor(255 - opacity * 255, 255 - opacity * 255, 255 - opacity * 255), Qt.SolidPattern))
 
             translated_stop = stop * width + self.left_start
             rect = QtCore.QRect(
@@ -410,13 +420,13 @@ class Gradient(QtWidgets.QWidget):
         for n, g in enumerate(self._opacity):
             if g[0] > stop:
                 # Insert before this entry, with specified or next color.
-                self._opacity.insert(n, (stop, 1.0, OpacitySliderWindow(self)))
+                self._opacity.insert(n, (stop, OPACITY_DEFAULT, OpacitySliderWindow(self)))
                 index = n
                 break
         if index == -1:
             # Insert at end of list
-            index = len(self._gradient)
-            self._opacity.append((stop, 1.0, OpacitySliderWindow(self)))
+            index = len(self._gradient) - 1
+            self._opacity.append((stop, OPACITY_DEFAULT, OpacitySliderWindow(self)))
 
         message = {"opacity" : self._opacity[index][1], "location": self._opacity[index][0]}
         messenger.publish("opacity_added", message)
