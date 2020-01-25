@@ -9,7 +9,7 @@ Fractal::Fractal() {
 	this->height = 400;
 	
 	image = new unsigned char[width * height * 3];
-	layerImage = new unsigned char[width * height * 3];
+	layerImage = new unsigned char[width * height * 4];
 }
 Fractal::~Fractal() {
 	delete[] image;
@@ -21,13 +21,27 @@ void Fractal::updateImageMemory() {
 	delete[] layerImage;
 	
 	image = new unsigned char[width * height * 3];
-	layerImage = new unsigned char[width * height * 3];
+	layerImage = new unsigned char[width * height * 4];
 }
 
 unsigned char** Fractal::render() {
+	int length = width * height * 4;
+	int imageIndex;
+	
 	for(int i = 0; i < layers.size(); i++)
-		if(layers[i]->isVisible())
-			layers[i]->render(&image, x, y, width, height, viewportWidth);
+		if(layers[i]->isVisible()) {
+			layers[i]->render(&layerImage, x, y, width, height, viewportWidth);
+			
+			imageIndex = 0;
+			for(int layerIndex = 0; layerIndex < length; layerIndex += 4) {
+				double opacity = layerImage[layerIndex + 3] / 255.0;
+				double inv_opacity = 1 - opacity;
+				image[imageIndex] = image[imageIndex] * inv_opacity + layerImage[layerIndex] * opacity;
+				image[imageIndex + 1] = image[imageIndex + 1] * inv_opacity + layerImage[layerIndex + 1] * opacity;
+				image[imageIndex + 2] = image[imageIndex + 2] * inv_opacity + layerImage[layerIndex + 2] * opacity;
+				imageIndex += 3;
+			}
+		}
 	
 	return &image;
 }

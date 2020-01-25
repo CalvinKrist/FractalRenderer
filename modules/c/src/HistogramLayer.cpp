@@ -22,7 +22,7 @@ void HistogramLayer::render(unsigned char** image, double rX, double rY, int wid
 	
 	for(int r = 0; r < height; r++)
 		for(int c = 0; c < width; c ++) {
-			int index = (r * width + c) * 3;
+			int index = (r * width + c) * 4;
 			
 			// Convert pixel coordinates to real world coordinates
 			double x = rX + ((double)c / width - 0.5) * viewportWidth;
@@ -46,6 +46,7 @@ void HistogramLayer::render(unsigned char** image, double rX, double rY, int wid
 				(*image)[index] = col.r;
 				(*image)[index + 1] = col.g;
 				(*image)[index + 2] = col.b;
+				(*image)[index + 3] = 255;
 			}
 			else {
 				// Calculate a normalized fractional value of 1 - ln(log2(abs(z)))
@@ -60,11 +61,11 @@ void HistogramLayer::render(unsigned char** image, double rX, double rY, int wid
 	std::sort(itersList.begin(), itersList.end(), compareIterPair);
 	for(int i = 0; i < itersList.size(); i++) {
 		double frac = (double)i / itersList.size();
-		//std::cout << "sn: " << itersList[i].sn << ", i: " << i << std::endl;;
 		Color col = palette->colorAt(frac);
 		(*image)[itersList[i].index] = col.r;
 		(*image)[itersList[i].index + 1] = col.g;
 		(*image)[itersList[i].index + 2] = col.b;
+		(*image)[itersList[i].index + 3] = (int)(palette->opacityAt(frac) * 255);
 	}
 }
 
