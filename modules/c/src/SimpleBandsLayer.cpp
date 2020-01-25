@@ -6,7 +6,7 @@ void SimpleBandsLayer::render(unsigned char** image, double rX, double rY, int w
 	
 	for(int r = 0; r < height; r++)
 		for(int c = 0; c < width; c ++) {
-			int index = r * width + c;
+			int index = (r * width + c) * 4;
 			
 			// Convert pixel coordinates to real world coordinates
 			double x = rX + ((double)c / width - 0.5) * viewportWidth;
@@ -27,15 +27,21 @@ void SimpleBandsLayer::render(unsigned char** image, double rX, double rY, int w
 			}
 			
 			Color col;
-			if(iterations == maxIterations)
+			int opacity = 0;
+			if(iterations == maxIterations) {
 				col = palette->getInteriorColor();
-			else
-				col = palette->colorAt((double)iterations / maxIterations);
+				opacity = 255;
+			}
+			else {
+				double frac = (double)iterations / maxIterations;
+				opacity = (int)(palette->opacityAt(frac) * 255);
+				col = palette->colorAt(frac);
+			}
 			
-			index *= 3;
 			(*image)[index] = col.r;
 			(*image)[index + 1] = col.g;
 			(*image)[index + 2] = col.b;
+			(*image)[index + 3] = opacity;
 		}		
 }
 

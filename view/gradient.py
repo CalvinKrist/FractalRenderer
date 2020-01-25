@@ -160,14 +160,14 @@ OPACITY_DEFAULT = 1
 
 
 class CentralOpacityChooserWidget(QtWidgets.QWidget):
-    def __init__(self, gradient_gui, parent_window):
+    def __init__(self, gradient_gui, parent_window, val):
         super().__init__()
 
         self.gradient_gui = gradient_gui
         self.parent_window = parent_window
 
-        self.value = OPACITY_DEFAULT
-        self.original_value = OPACITY_DEFAULT
+        self.value = val
+        self.original_value = val
 
         self.initUI()
 
@@ -223,12 +223,12 @@ class CentralOpacityChooserWidget(QtWidgets.QWidget):
 
 
 class OpacitySliderWindow(QMainWindow):
-    def __init__(self, gradient_gui, parent=None):
+    def __init__(self, gradient_gui, val=OPACITY_DEFAULT, parent=None):
         super(OpacitySliderWindow, self).__init__(parent)
 
         self.gradient_gui = gradient_gui
 
-        central_widget = CentralOpacityChooserWidget(gradient_gui, self)
+        central_widget = CentralOpacityChooserWidget(gradient_gui, self, val)
 
         self.setStyleSheet('background-color:white')
 
@@ -251,12 +251,9 @@ class Gradient(QtWidgets.QWidget):
             self._gradient = gradient
 
         else:
-            self._gradient = [
-                (0.0, '#000000'),
-                (1.0, '#ffffff'),
-            ]
+            self._gradient = []
 
-        self._opacity = [(0.0, OPACITY_DEFAULT, OpacitySliderWindow(self)), (1.0, OPACITY_DEFAULT, OpacitySliderWindow(self))]
+        self._opacity = []
 
         # Stop point handle sizes.
         self._handle_w = 10
@@ -293,7 +290,6 @@ class Gradient(QtWidgets.QWidget):
 
         # Draw the linear horizontal gradient.
         gradient = QtGui.QLinearGradient(self.left_start, 0, width + self.left_start, 0)
-        print(gradient)
         for stop, color in self._gradient:
             gradient.setColorAt(stop, QtGui.QColor(color))
 

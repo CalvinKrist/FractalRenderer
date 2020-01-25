@@ -11,7 +11,7 @@ void SmoothBandsLayer::render(unsigned char** image, double rX, double rY, int w
 	
 	for(int r = 0; r < height; r++)
 		for(int c = 0; c < width; c ++) {
-			int index = (r * width + c) * 3;
+			int index = (r * width + c) * 4;
 			
 			// Convert pixel coordinates to real world coordinates
 			double x = rX + ((double)c / width - 0.5) * viewportWidth;
@@ -35,16 +35,19 @@ void SmoothBandsLayer::render(unsigned char** image, double rX, double rY, int w
 				(*image)[index] = col.r;
 				(*image)[index + 1] = col.g;
 				(*image)[index + 2] = col.b;
+				(*image)[index + 3] = 255;
 			}
 			else {
 				// Calculate a normalized fractional value of 1 - ln(log2(abs(z)))
 				double zSquared = zi * zi + z * z;				
 				double sn = iterations - std::log2(std::log2(zSquared)) + 4.0;
 				
-				Color col = palette->colorAt(sn / maxIterations);
+				double frac = sn / maxIterations;
+				Color col = palette->colorAt(frac);
 				(*image)[index] = col.r;
 				(*image)[index + 1] = col.g;
 				(*image)[index + 2] = col.b;
+				(*image)[index + 3] = (int)(palette->opacityAt(frac) * 255);
 			}
 		}
 }

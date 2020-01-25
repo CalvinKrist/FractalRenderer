@@ -23,11 +23,19 @@ class CentralWidget(QWidget):
 
         self.fract = fract
         self.current_layer = None
+        self.current_layer_index = None
         self.initUI()
+
+    def clear_palette(self):
+        self.gradient.interior_color = "#ffffff"
+        self.gradient._gradient = []
+        self.gradient._opacity = []
+        self.gradient.update()
 
     def update_palette(self):
         self.gradient.interior_color = rgb_to_hex(self.current_layer.palette.interior_color)
         self.gradient._gradient = [(color_point[3], rgb_to_hex(color_point)) for color_point in self.current_layer.palette.get_colors()]
+        self.gradient._opacity = [(opac_point[1], opac_point[0], OpacitySliderWindow(self.gradient, opac_point[0])) for opac_point in self.current_layer.palette.get_opacities()]
         self.gradient.update()
 
     def color_added_callback(self, event):
@@ -63,17 +71,24 @@ class CentralWidget(QWidget):
 
     def layer_added_callback(self, event):
         self.current_layer = fractal.HistogramLayer()
+        self.current_layer_index = event["index"]
         self.fract.insert_layer(event["index"], self.current_layer)
         self.update_palette()
         self.fractRenderer.update()
 
     def layer_removed_callback(self, event):
         self.fract.remove_layer(event["index"])
-        self.current_layer = None
+        if event["index"] == self.current_layer_index:
+            self.current_layer = None
+            self.current_layer_index = None
+            self.clear_palette()
+        elif event["index"] < self.current_layer_index:
+                self.current_layer_index -= 1
         self.fractRenderer.update()
 
     def selected_layer_changed(self, event):
         self.current_layer = self.fract.get_layer(event["index"])
+        self.current_layer_index = event["index"]
         self.update_palette()
         self.fractRenderer.update()
 
@@ -151,6 +166,7 @@ class CentralWidget(QWidget):
         messenger.subscribe("layer_toggled", self.layer_toggled_callback)
         messenger.subscribe("layer_moved", self.layer_moved_callback)
         messenger.subscribe("layer_type_changed", self.layer_type_changed_callback)
+        messenger.subscribe("layer_removed", self.layer_removed_callback)
 
         # Create the gradient
         gradient = Gradient()
@@ -160,7 +176,6 @@ class CentralWidget(QWidget):
         messenger.subscribe("color_moved", self.color_moved_callback)
         messenger.subscribe("color_changed", self.color_changed_callback)
         messenger.subscribe("interior_color_changed", self.interior_color_changed_callback)
-        messenger.subscribe("layer_removed", self.layer_removed_callback)
         messenger.subscribe("opacity_changed", self.opacity_changed_callback)
         messenger.subscribe("opacity_moved", self.opacity_moved_callback)
         messenger.subscribe("opacity_added", self.opacity_added_callback)
