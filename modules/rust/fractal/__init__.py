@@ -1,1 +1,0 @@
-from fractal.fractal import *

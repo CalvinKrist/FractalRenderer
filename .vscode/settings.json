@@ -1,0 +1,9 @@
+{
+    "go.toolsEnvVars": {
+        "CGO_ENABLED": "1"
+    },
+    "terminal.integrated.env.windows": {
+        "PATH": "C:\\msys64\\ucrt64\\bin;${env:PATH}",
+        "CGO_ENABLED": "1"
+    }
+}
